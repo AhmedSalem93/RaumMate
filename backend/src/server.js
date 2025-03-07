@@ -13,7 +13,6 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
-app.use('/static', express.static('static'));
 
 // Database connection
 mongoose.connect(process.env.MONGODB_URI)
@@ -24,6 +23,7 @@ mongoose.connect(process.env.MONGODB_URI)
 app.use('/api/auth', require('./routes/auth.routes'));
 app.use('/api/users', require('./routes/user.routes'));
 app.use('/api/properties', require('./routes/property.routes'));
+app.use('/api/static', express.static('static'));
 
 // Default route
 app.get('/', (req, res) => {
