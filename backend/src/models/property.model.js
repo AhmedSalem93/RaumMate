@@ -42,7 +42,7 @@ const propertySchema = new mongoose.Schema({
     end: Date
   },
   amenities: [String],
-  images: [String],
+  mediaPaths: [String],
   createdAt: {
     type: Date,
     default: Date.now
