@@ -1,7 +1,8 @@
 import { inject, Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Observable } from 'rxjs';
-import { Property } from '../../modules/property/property.interface';
+import { Property } from '../../modules/property/property.model';
+import { environment } from '../../../environments/environment';
 
 @Injectable({
   providedIn: 'root',
@@ -13,14 +14,19 @@ export class PropertyService {
   createListing(formData: FormData): Observable<any> {
     formData.append('owner', '67cad68e71e43adb9e8b8c2e');
     let httpParams = new HttpHeaders().set('Accept', '*/*');
-    return this.http.post('http://localhost:6969/api/properties/', formData, {
+
+    return this.http.post(environment.apiUrl + '/properties/', formData, {
       headers: httpParams,
     });
   }
 
-  getListings(): Observable<any[]> {
+  getListings(): Observable<Property[]> {
     // Adjust endpoint URL as needed
-    return this.http.get<any[]>('/api/listings');
+    let httpParams = new HttpHeaders().set('Accept', '*/*');
+
+    return this.http.get<Property[]>(environment.apiUrl + '/properties', {
+      headers: httpParams,
+    });
   }
 
   searchListings(query: string): Observable<any[]> {

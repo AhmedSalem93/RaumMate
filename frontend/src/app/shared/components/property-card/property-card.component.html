@@ -1,1 +1,15 @@
-<p>property-card works!</p>
+<mat-card>
+  <div class="card-header-row">
+    <img [src]="firstImageUrl" *ngIf="firstImageUrl" alt="Property image" />
+    <div class="header-info">
+      <h2>{{ property.title }}</h2>
+      <h4>Price: {{ property.price }}</h4>
+    </div>
+  </div>
+  <mat-card-content>
+    <p>{{ property.description }}</p>
+    <p *ngIf="property.location.address">
+      {{ property.location.city }} - {{ property.location.address }}
+    </p>
+  </mat-card-content>
+</mat-card>

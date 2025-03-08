@@ -1,0 +1,20 @@
+mat-card {
+  margin: 1rem 0;
+}
+mat-card-header {
+  background-color: #f0f0f0;
+}
+.card-header-row {
+  display: flex;
+  align-items: center;
+}
+.card-header-row img {
+  width: 150px;
+  height: 150px;
+  object-fit: cover;
+  margin-right: 1rem;
+}
+.header-info {
+  display: flex;
+  flex-direction: column;
+}
