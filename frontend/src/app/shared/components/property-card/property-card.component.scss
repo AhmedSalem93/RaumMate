@@ -1,20 +1,159 @@
 mat-card {
   margin: 1rem 0;
+  padding: 0;
+  overflow: hidden;
+  position: relative;
 }
-mat-card-header {
-  background-color: #f0f0f0;
+
+.card-container {
+  display: flex;
+  height: 220px;
 }
-.card-header-row {
+
+/* Image section - left side */
+.image-section {
+  flex: 0 0 33%;
+  position: relative;
+}
+
+.image-section img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.favorite-button {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+}
+
+.favorite-button mat-icon {
+  color: white;
+  filter: drop-shadow(0 2px 3px rgba(0, 0, 0, 0.3));
+  cursor: pointer;
+}
+
+.favorite-button mat-icon.favorited {
+  color: #ff4081;
+}
+
+/* Details section - right side */
+.details-section {
+  flex: 0 0 67%;
+  padding: 1.5rem;
+  position: relative;
+}
+
+/* Header area */
+.header {
+  margin-bottom: 1rem;
+}
+
+.title {
+  font-size: 1.25rem;
+  font-weight: 600;
+  margin: 0 0 0.5rem;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.subtitle {
+  color: #666;
+  font-size: 0.9rem;
+}
+
+.separator {
+  margin: 0 0.5rem;
+  color: #ccc;
+}
+
+/* Price information */
+.price-info {
   display: flex;
   align-items: center;
+  gap: 1rem;
+  margin-bottom: 1rem;
 }
-.card-header-row img {
-  width: 150px;
-  height: 150px;
+
+.price {
+  font-size: 1.5rem;
+  font-weight: 600;
+  color: #2e7d32;
+}
+
+.size {
+  font-size: 1.2rem;
+  font-weight: 500;
+}
+
+/* Rental period display */
+.rental-period {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  color: #666;
+  margin-bottom: 1rem;
+}
+
+.rental-period mat-icon {
+  font-size: 1.2rem;
+  width: 1.2rem;
+  height: 1.2rem;
+}
+
+/* Owner section at bottom */
+.owner-section {
+  position: absolute;
+  bottom: 1.5rem;
+  left: 1.5rem;
+}
+
+.owner-info {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.owner-avatar {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
   object-fit: cover;
-  margin-right: 1rem;
 }
-.header-info {
+
+.owner-details {
   display: flex;
   flex-direction: column;
+}
+
+.owner-name {
+  font-weight: 500;
+}
+
+.online-status {
+  font-size: 0.8rem;
+  color: #666;
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+}
+
+.status-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background-color: #ccc;
+}
+
+.online-status.online .status-dot {
+  background-color: #4caf50;
+}
+
+.close-button {
+  position: absolute;
+  bottom: 1rem;
+  right: 1rem;
+  color: #666;
 }
