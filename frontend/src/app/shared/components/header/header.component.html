@@ -1,1 +1,7 @@
-<p>header works!</p>
+<mat-toolbar color="primary">
+  <img src="/RaumMate_small.jpg" alt="RaumMate" style="height: 40px" />
+  <button mat-button [routerLink]="['/']">Home</button>
+  <span class="spacer"></span>
+  <button mat-button [routerLink]="['/user']">Profile</button>
+  <button mat-button [routerLink]="['/messaging']">Chats</button>
+</mat-toolbar>
