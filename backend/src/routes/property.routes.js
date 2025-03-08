@@ -24,6 +24,7 @@ router.post('/', upload.array('media'), async (req, res) => {
       // userId: req.userId,
       ...req.body
     });
+    console.log("UserID: " + req.userId);
     const savedProperty = await property.save();
     res.status(201).json(savedProperty);
   } catch (error) {

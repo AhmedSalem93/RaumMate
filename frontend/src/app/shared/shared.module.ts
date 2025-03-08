@@ -8,17 +8,16 @@ import { PropertyCardComponent } from './components/property-card/property-card.
 import { SearchComponent } from './components/search/search.component';
 
 @NgModule({
-  declarations: [
-    HeaderComponent,
-    FooterComponent,
-    PropertyCardComponent,
-    SearchComponent
-  ],
+  declarations: [],
   imports: [
     CommonModule,
     FormsModule,
     ReactiveFormsModule,
-    RouterModule
+    RouterModule,
+    HeaderComponent,
+    FooterComponent,
+    PropertyCardComponent,
+    SearchComponent,
   ],
   exports: [
     CommonModule,
@@ -28,7 +27,7 @@ import { SearchComponent } from './components/search/search.component';
     HeaderComponent,
     FooterComponent,
     PropertyCardComponent,
-    SearchComponent
-  ]
+    SearchComponent,
+  ],
 })
-export class SharedModule { }
+export class SharedModule {}
