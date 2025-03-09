@@ -1,8 +1,9 @@
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
+import { LandingComponent } from './pages/landing/landing.component';
 
 const routes: Routes = [
-  { path: '', redirectTo: '/property', pathMatch: 'full' },
+  { path: '', component: LandingComponent },
   { 
     path: 'auth', 
     loadChildren: () => import('./modules/auth/auth.module').then(m => m.AuthModule) 
