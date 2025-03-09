@@ -2,18 +2,18 @@ mat-card {
   margin: 1rem 0;
   padding: 0;
   overflow: hidden;
-  position: relative;
 }
 
 .card-container {
   display: flex;
-  height: 220px;
+  min-height: 160px;
 }
 
 /* Image section - left side */
 .image-section {
-  flex: 0 0 33%;
   position: relative;
+  width: 33%; /* Fixed width */
+  align-self: stretch; /* Make it stretch vertically */
 }
 
 .image-section img {
@@ -40,14 +40,16 @@ mat-card {
 
 /* Details section - right side */
 .details-section {
-  flex: 0 0 67%;
-  padding: 1.5rem;
-  position: relative;
+  flex: 1;
+  padding: 1rem;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between; /* Distribute content evenly */
 }
 
 /* Header area */
 .header {
-  margin-bottom: 1rem;
+  margin-bottom: 0.75rem;
 }
 
 .title {
@@ -62,6 +64,7 @@ mat-card {
 .subtitle {
   color: #666;
   font-size: 0.9rem;
+  margin-bottom: 0.25rem;
 }
 
 .separator {
@@ -69,12 +72,17 @@ mat-card {
   color: #ccc;
 }
 
+.posted-date {
+  color: #666;
+  font-size: 0.8rem;
+}
+
 /* Price information */
 .price-info {
   display: flex;
   align-items: center;
   gap: 1rem;
-  margin-bottom: 1rem;
+  margin: 0.5rem 0;
 }
 
 .price {
@@ -94,7 +102,7 @@ mat-card {
   align-items: center;
   gap: 0.5rem;
   color: #666;
-  margin-bottom: 1rem;
+  margin-bottom: 0.5rem;
 }
 
 .rental-period mat-icon {
@@ -105,9 +113,8 @@ mat-card {
 
 /* Owner section at bottom */
 .owner-section {
-  position: absolute;
-  bottom: 1.5rem;
-  left: 1.5rem;
+  margin-top: 0.75rem; /* Add some space above owner section */
+  padding-bottom: 0.5rem; /* Add padding to prevent clipping */
 }
 
 .owner-info {

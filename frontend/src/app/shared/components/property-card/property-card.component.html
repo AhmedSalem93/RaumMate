@@ -22,9 +22,8 @@
           >
           <span class="separator">|</span>
           <span>{{ property.location.city }}</span>
-          <span class="separator">|</span>
-          <span>{{ property.location.address | slice : 0 : 30 }}</span>
         </div>
+        <div class="posted-date">Posted {{ getFormattedCreatedAt() }}</div>
       </div>
 
       <div class="price-info">

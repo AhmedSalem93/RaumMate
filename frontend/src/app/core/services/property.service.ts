@@ -3,7 +3,10 @@ import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { Property } from '../../modules/property/property.model';
 import { environment } from '../../../environments/environment';
-
+type PaginationReturnType = {
+  pagination: { total: number; limit: number; page: number };
+  properties: Property[];
+};
 @Injectable({
   providedIn: 'root',
 })
@@ -20,13 +23,16 @@ export class PropertyService {
     });
   }
 
-  getListings(): Observable<Property[]> {
+  getListings(): Observable<PaginationReturnType> {
     // Adjust endpoint URL as needed
     let httpParams = new HttpHeaders().set('Accept', '*/*');
 
-    return this.http.get<Property[]>(environment.apiUrl + '/properties', {
-      headers: httpParams,
-    });
+    return this.http.get<PaginationReturnType>(
+      environment.apiUrl + '/properties',
+      {
+        headers: httpParams,
+      }
+    );
   }
 
   searchListings(query: string): Observable<any[]> {

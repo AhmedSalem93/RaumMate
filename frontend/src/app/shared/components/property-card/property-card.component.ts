@@ -80,7 +80,19 @@ export class PropertyCardComponent {
 
   getOnlineStatus(): string {
     // Implement actual online status logic here
-    return this.isOnline ? 'Online now' : 'Online: 5 hours ago';
+    return this.isOnline ? 'Online now' : 'Online: 9 hours ago';
+  }
+
+  getFormattedCreatedAt(): string {
+    if (!this.property.createdAt) return '';
+    const date = new Date(this.property.createdAt);
+    const now = new Date();
+    const diffTime = Math.abs(now.getTime() - date.getTime());
+    const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+
+    if (diffDays === 1) return 'yesterday';
+    if (diffDays < 7) return `${diffDays} days ago`;
+    return date.toLocaleDateString();
   }
 
   toggleFavorite(): void {

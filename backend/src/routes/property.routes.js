@@ -6,15 +6,115 @@ const authMiddleware = require('../middleware/auth.middleware');
 const fs = require('fs');
 
 require("../models/user.model");
-// Placeholder routes
+
+// get endpoint with multi-criteria search filtering
 router.get('/', async (req, res) => {
   try {
-    const properties = await Property.find().populate('owner');
-    res.status(200).json(properties);
+    const {
+      city,
+      minPrice,
+      maxPrice,
+      isSublet,
+      amenities,
+      subletStartDate,
+      subletEndDate,
+      sortBy,
+      sortOrder,
+      page = 1,
+      limit = 10
+    } = req.query;
+
+    // Build the query object
+    const query = {};
+
+    // Location filter
+    if (city) {
+      query['location.city'] = { $regex: new RegExp(city, 'i') };
+    }
+
+    // Price range filter
+    if (minPrice !== undefined || maxPrice !== undefined) {
+      query.price = {};
+      if (minPrice !== undefined) query.price.$gte = Number(minPrice);
+      if (maxPrice !== undefined) query.price.$lte = Number(maxPrice);
+    }
+
+    // Must be available filter
+    query.isAvailable = true;
+
+    // Sublet filter
+    if (isSublet !== undefined) {
+      query.isSublet = isSublet === 'true';
+    }
+
+    // Amenities filter
+    if (amenities) {
+      const amenitiesList = amenities.split(',');
+      query.amenities = { $all: amenitiesList };
+    }
+
+    // Sublet dates filter
+    if (subletStartDate || subletEndDate) {
+      query.subletDates = {};
+      if (subletStartDate) query.subletDates.start = { $lte: new Date(subletStartDate) };
+      if (subletEndDate) query.subletDates.end = { $gte: new Date(subletEndDate) };
+    }
+
+    // Create sort configuration
+    const sortConfig = {};
+
+    // Valid sort fields
+    const validSortFields = ['price', 'createdAt'];
+    // Default sort is by createdAt (newest first)
+    const field = validSortFields.includes(sortBy) ? sortBy : 'createdAt';
+
+    // Sort order (1 for ascending, -1 for descending)
+    // Default to descending for dates (newest first) and ascending for price (cheapest first)
+    let order = 1; // default ascending
+    if (sortOrder === 'desc') {
+      order = -1;
+    } else if (!sortOrder && field === 'createdAt') {
+      // If no order specified and sorting by date, use descending (newest first)
+      order = -1;
+    }
+
+    sortConfig[field] = order;
+
+    // Calculate skip value for pagination
+    const skip = (Number(page) - 1) * Number(limit);
+
+    // Get total count for pagination
+    const total = await Property.countDocuments(query);
+
+    // Apply pagination to query
+    const properties = await Property.find(query)
+      .sort(sortConfig)
+      .skip(skip)
+      .limit(Number(limit))
+      .populate('owner');
+
+    res.status(200).json({
+      properties,
+      pagination: {
+        total,
+        page: Number(page),
+        pages: Math.ceil(total / Number(limit))
+      }
+    });
   } catch (error) {
     res.status(500).json({ message: error.message });
   }
 });
+
+// Placeholder routes
+// router.get('/', async (req, res) => {
+//   try {
+//     const properties = await Property.find().populate('owner');
+//     res.status(200).json(properties);
+//   } catch (error) {
+//     res.status(500).json({ message: error.message });
+//   }
+// });
 
 router.post('/', upload.array('media'), async (req, res) => {
   try {

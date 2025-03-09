@@ -15,9 +15,9 @@ export class PropertyListComponent {
   properties: Property[] = [];
   constructor() {
     console.log('Property List Component Initialized');
-    this.propertyService.getListings().subscribe((properties) => {
-      console.log(properties);
-      this.properties = properties;
+    this.propertyService.getListings().subscribe((pageRet) => {
+      console.log(pageRet.properties);
+      this.properties = pageRet.properties;
     });
   }
 }

@@ -43,6 +43,18 @@ const propertySchema = new mongoose.Schema({
   },
   amenities: [String],
   mediaPaths: [String],
+
+  Reviews: {
+    averageRating: {
+      type: Number,
+      default: 0
+    },
+    count: {
+      type: Number,
+      default: 0
+    },
+  },
+
   createdAt: {
     type: Date,
     default: Date.now
