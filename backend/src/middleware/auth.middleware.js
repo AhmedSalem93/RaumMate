@@ -1,4 +1,6 @@
 const jwt = require('jsonwebtoken');
+const dotenv = require('dotenv');
+dotenv.config();
 
 const authMiddleware = (req, res, next) => {
   try {
@@ -11,4 +13,14 @@ const authMiddleware = (req, res, next) => {
   }
 };
 
-module.exports = authMiddleware;
+const requireRole = (role) => {
+  return (req, res, next) => {
+    if (req.user.role !== role) {
+      return res.status(403).json({ message: 'Forbidden' });
+    }
+    next();
+  };
+}
+
+module.exports = { authMiddleware, requireRole };
+

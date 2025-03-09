@@ -1,8 +1,9 @@
 const express = require('express');
 const router = express.Router();
+
 const Property = require('../models/property.model');
 const upload = require('../middleware/upload.middleware');
-const authMiddleware = require('../middleware/auth.middleware');
+const { authMiddleware, requireRole } = require('../middleware/auth.middleware');
 const fs = require('fs');
 
 require("../models/user.model");
@@ -130,6 +131,7 @@ router.get('/', async (req, res) => {
   }
 });
 
+
 // Placeholder routes
 // router.get('/', async (req, res) => {
 //   try {
@@ -140,7 +142,7 @@ router.get('/', async (req, res) => {
 //   }
 // });
 
-router.post('/', upload.array('media'), async (req, res) => {
+router.post('/', authMiddleware, requireRole('verified'), upload.array('media'), async (req, res) => {
   try {
     const filePaths = req.files.map(file => `/static/${file.filename}`);
     const property = new Property({
@@ -165,6 +167,7 @@ router.post('/', upload.array('media'), async (req, res) => {
   }
 });
 
+
 // Move the amenities route BEFORE the :id route to fix the routing order
 router.get('/amenities', async (req, res) => {
   try {
@@ -175,7 +178,7 @@ router.get('/amenities', async (req, res) => {
     console.log("Error in getting amenities: " + error);
     res.status(500).json({ message: error.message });
   }
-});
+
 
 // find property by id
 router.get('/:id', async (req, res) => {
