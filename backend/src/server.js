@@ -4,6 +4,17 @@ const mongoose = require('mongoose');
 const morgan = require('morgan');
 const dotenv = require('dotenv');
 
+
+const fs = require('fs');
+const path = require('path');
+
+// if /static folder does not exist, create it ,, this is to store images and videos uploaded by users
+const staticDir = path.join(__dirname, '../static');
+if (!fs.existsSync(staticDir)) {
+  fs.mkdirSync(staticDir);
+}
+
+
 // Load environment variables
 dotenv.config();
 
