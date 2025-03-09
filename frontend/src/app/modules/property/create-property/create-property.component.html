@@ -1,0 +1,210 @@
+<div class="form-container">
+  <h1 class="page-title">Create Property Listing</h1>
+
+  <form (ngSubmit)="onSubmit($event)">
+    <!-- Basic Information Card -->
+    <mat-card class="section-card">
+      <mat-card-header>
+        <mat-card-title>Property Details</mat-card-title>
+      </mat-card-header>
+      <mat-card-content>
+        <div class="form-section" [formGroup]="basicInfoForm">
+          <!-- Title -->
+          <mat-form-field appearance="outline" class="full-width">
+            <mat-label>Title</mat-label>
+            <input
+              matInput
+              formControlName="title"
+              placeholder="Enter property title"
+            />
+            <mat-error *ngIf="basicInfoForm.get('title')?.hasError('required')"
+              >Title is required</mat-error
+            >
+            <mat-error *ngIf="basicInfoForm.get('title')?.hasError('minlength')"
+              >Title must be at least 5 characters</mat-error
+            >
+          </mat-form-field>
+
+          <!-- Description -->
+          <mat-form-field appearance="outline" class="full-width">
+            <mat-label>Description</mat-label>
+            <textarea
+              matInput
+              formControlName="description"
+              rows="4"
+            ></textarea>
+            <mat-error
+              *ngIf="basicInfoForm.get('description')?.hasError('required')"
+              >Description is required</mat-error
+            >
+            <mat-error
+              *ngIf="basicInfoForm.get('description')?.hasError('minlength')"
+              >Description must be at least 20 characters</mat-error
+            >
+          </mat-form-field>
+
+          <!-- Price (renamed from area) -->
+          <mat-form-field appearance="outline">
+            <mat-label>Price</mat-label>
+            <input
+              matInput
+              type="number"
+              formControlName="price"
+              min="0"
+              placeholder="Enter price"
+            />
+            <span matSuffix class="suffex-text">€</span>
+          </mat-form-field>
+
+          <!-- Is Sublet -->
+          <mat-checkbox formControlName="isSublet" color="primary">
+            Subletting
+          </mat-checkbox>
+
+          <!-- Dates -->
+          <div class="form-row" formGroupName="subletDates">
+            <mat-form-field appearance="outline">
+              <mat-label>Start Date</mat-label>
+              <input
+                matInput
+                [matDatepicker]="startPicker"
+                formControlName="start"
+              />
+              <mat-datepicker-toggle
+                matSuffix
+                [for]="startPicker"
+              ></mat-datepicker-toggle>
+              <mat-datepicker #startPicker></mat-datepicker>
+            </mat-form-field>
+
+            <mat-form-field appearance="outline">
+              <mat-label>End Date</mat-label>
+              <input
+                matInput
+                [matDatepicker]="endPicker"
+                formControlName="end"
+              />
+              <mat-datepicker-toggle
+                matSuffix
+                [for]="endPicker"
+              ></mat-datepicker-toggle>
+              <mat-datepicker #endPicker></mat-datepicker>
+            </mat-form-field>
+          </div>
+
+          <!-- Location -->
+          <div formGroupName="location">
+            <mat-form-field appearance="outline" class="full-width">
+              <mat-label>City</mat-label>
+              <input matInput formControlName="city" />
+            </mat-form-field>
+
+            <mat-form-field appearance="outline" class="full-width">
+              <mat-label>Address (Optional)</mat-label>
+              <input matInput formControlName="address" />
+            </mat-form-field>
+          </div>
+
+          <!-- <-- Amenities -->
+
+          <mat-form-field appearance="fill" class="full-width">
+            <mat-label>Amenities</mat-label>
+            <mat-chip-grid
+              #reactiveChipGrid
+              aria-label="Enter reactive form keywords"
+              [formControl]="amenityControl"
+            >
+              @for (keyword of amenitiesList; track keyword) {
+              <mat-chip-row (removed)="removeAmenity(keyword)">
+                {{ keyword }}
+                <button
+                  matChipRemove
+                  aria-label="'remove reactive form' + keyword"
+                >
+                  <mat-icon>cancel</mat-icon>
+                </button>
+              </mat-chip-row>
+              }
+            </mat-chip-grid>
+            <input
+              placeholder="New Amenity..."
+              [matChipInputFor]="reactiveChipGrid"
+              [matChipInputAddOnBlur]="true"
+              (matChipInputTokenEnd)="addAmenity($event)"
+            />
+          </mat-form-field>
+        </div>
+      </mat-card-content>
+    </mat-card>
+
+    <!-- Media Section -->
+    <mat-card class="section-card">
+      <mat-card-header>
+        <mat-card-title>Media</mat-card-title>
+      </mat-card-header>
+      <mat-card-content>
+        <div class="form-section">
+          <div class="upload-section">
+            <h3>Images & Videos</h3>
+            <button
+              mat-raised-button
+              color="primary"
+              type="button"
+              (click)="mediaInput.click()"
+            >
+              <mat-icon>collections</mat-icon>
+              Add Media
+            </button>
+            <input
+              #mediaInput
+              type="file"
+              accept="image/*,video/*"
+              multiple
+              (change)="onMediaSelected($event)"
+              style="display: none"
+            />
+
+            <!-- Replace separate image/video previews with a single preview-grid -->
+            <div class="preview-grid" *ngIf="mediaPreviewUrls.length > 0">
+              <div
+                *ngFor="let url of mediaPreviewUrls; let i = index"
+                class="preview-item"
+              >
+                <ng-container *ngIf="selectedMedia[i].type.startsWith('image')">
+                  <img [src]="url" [alt]="'Media ' + (i + 1)" />
+                </ng-container>
+                <ng-container *ngIf="selectedMedia[i].type.startsWith('video')">
+                  <video controls>
+                    <source [src]="url" />
+                  </video>
+                </ng-container>
+                <button
+                  mat-mini-fab
+                  color="warn"
+                  class="remove-button"
+                  type="button"
+                  (click)="removeMedia(i)"
+                >
+                  <mat-icon>close</mat-icon>
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </mat-card-content>
+    </mat-card>
+
+    <!-- Submit and Reset Button  -->
+
+    <div class="form-actions">
+      <button
+        mat-raised-button
+        color="primary"
+        type="submit"
+        [disabled]="!basicInfoForm.valid"
+      >
+        Submit
+      </button>
+    </div>
+  </form>
+</div>

@@ -17,7 +17,7 @@ import { SearchComponent } from './components/search/search.component';
     HeaderComponent,
     FooterComponent,
     PropertyCardComponent,
-    SearchComponent
+    SearchComponent,
   ],
   exports: [
     CommonModule,
@@ -27,7 +27,7 @@ import { SearchComponent } from './components/search/search.component';
     HeaderComponent,
     FooterComponent,
     PropertyCardComponent,
-    SearchComponent
-  ]
+    SearchComponent,
+  ],
 })
-export class SharedModule { }
+export class SharedModule {}
