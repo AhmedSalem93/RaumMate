@@ -1,6 +1,7 @@
 import { Routes } from '@angular/router';
 
 export const routes: Routes = [
+  { path: '', redirectTo: '/property', pathMatch: 'full' },
   {
     path: 'auth',
     loadChildren: () =>
@@ -30,6 +31,5 @@ export const routes: Routes = [
         (m) => m.MessagingModule
       ),
   },
-  { path: '', redirectTo: '/property', pathMatch: 'full' },
   { path: '**', redirectTo: '/property' },
 ];
