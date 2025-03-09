@@ -9,8 +9,10 @@ require("../models/user.model");
 
 // get endpoint with multi-criteria search filtering
 router.get('/', async (req, res) => {
+
   try {
-    const {
+    console.log(req.query);
+    let {
       city,
       minPrice,
       maxPrice,
@@ -64,9 +66,14 @@ router.get('/', async (req, res) => {
     const sortConfig = {};
 
     // Valid sort fields
-    const validSortFields = ['price', 'createdAt'];
+    const validSortFields = ['price', 'date'];
+    if (!validSortFields.includes(sortBy)) {
+      throw new Error('Invalid sortBy field');
+    }
+
+    sortBy = sortBy || 'date';
     // Default sort is by createdAt (newest first)
-    const field = validSortFields.includes(sortBy) ? sortBy : 'createdAt';
+    const field = sortBy === 'price' ? 'price' : 'createdAt';
 
     // Sort order (1 for ascending, -1 for descending)
     // Default to descending for dates (newest first) and ascending for price (cheapest first)
@@ -93,6 +100,7 @@ router.get('/', async (req, res) => {
       .limit(Number(limit))
       .populate('owner');
 
+    // console.log("Search Results" + properties);
     res.status(200).json({
       properties,
       pagination: {
@@ -102,6 +110,7 @@ router.get('/', async (req, res) => {
       }
     });
   } catch (error) {
+    console.error("Error in search: " + error);
     res.status(500).json({ message: error.message });
   }
 });
@@ -141,43 +150,65 @@ router.post('/', upload.array('media'), async (req, res) => {
   }
 });
 
-
-// find property by id
-router.get('/:id', (req, res) => {
+// Move the amenities route BEFORE the :id route to fix the routing order
+router.get('/amenities', async (req, res) => {
   try {
-    const property = Property.findById(req.params.id).populate('owner');
-    res.status(200).json(property);
-  }
-  catch (error) {
+    const amenities = await Property.distinct('amenities');
+    console.log("Amenities: " + amenities);
+    res.status(200).json(amenities);
+  } catch (error) {
+    console.log("Error in getting amenities: " + error);
     res.status(500).json({ message: error.message });
   }
 });
 
-router.put('/:id', upload.array('media'), (req, res) => {
+// find property by id
+router.get('/:id', async (req, res) => {
   try {
-    const filePaths = req.files.map(file => `/static/${file.filename}`);
-    const property = Property.findById(req.params.id);
-    const oldMediaPaths = property.mediaPaths;
-
-    const updatedProperty = Property.findByIdAndUpdate(req.params.id, {
-      mediaPaths: filePaths,
-      ...req.body
-    });
-    updatedProperty.save();
-    // delete old media files
-    oldMediaPaths.forEach(path => {
-      fs.unlink(path, (error
-      ) => {
-        if (error) {
-          console.error(error);
-        }
-      }
-      );
+    const property = await Property.findById(req.params.id).populate('owner');
+    if (!property) {
+      return res.status(404).json({ message: 'Property not found' });
     }
-    );
     res.status(200).json(property);
   }
   catch (error) {
+    console.error("Error fetching property:", error.message);
+    res.status(500).json({ message: error.message });
+  }
+});
+
+router.put('/:id', upload.array('media'), async (req, res) => {
+  try {
+    const property = await Property.findById(req.params.id);
+    if (!property) {
+      return res.status(404).json({ message: 'Property not found' });
+    }
+
+    const oldMediaPaths = property.mediaPaths;
+    const filePaths = req.files.map(file => `/static/${file.filename}`);
+
+    const updatedProperty = await Property.findByIdAndUpdate(
+      req.params.id,
+      {
+        mediaPaths: filePaths,
+        ...req.body
+      },
+      { new: true }
+    );
+
+    // delete old media files
+    oldMediaPaths.forEach(path => {
+      fs.unlink(path.replace('/static/', './static/'), (error) => {
+        if (error) {
+          console.error("Error deleting file:", error);
+        }
+      });
+    });
+
+    res.status(200).json(updatedProperty);
+  }
+  catch (error) {
+    console.error("Error updating property:", error.message);
     res.status(500).json({ message: error.message });
   }
 });

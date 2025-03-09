@@ -1,0 +1,96 @@
+.search-container {
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  max-width: 1400px;
+  margin: 0 auto;
+}
+
+.search-form {
+  display: grid;
+  grid-template-columns: 300px 1fr;
+  gap: 25px;
+
+  @media (max-width: 768px) {
+    grid-template-columns: 1fr;
+  }
+}
+
+.top-search {
+  grid-column: 1 / -1;
+  display: flex;
+  gap: 20px;
+  align-items: center;
+  flex-wrap: wrap;
+  margin-bottom: 10px;
+
+  @media (max-width: 768px) {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .price-range {
+    display: flex;
+    gap: 15px;
+    flex: 1;
+
+    @media (max-width: 768px) {
+      width: 100%;
+    }
+  }
+
+  mat-form-field:first-child {
+    flex: 2;
+    min-width: 200px;
+  }
+}
+
+.search-sidebar {
+  padding: 25px;
+  background: #f5f5f5;
+  border-radius: 8px;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  align-self: flex-start;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+
+  h4 {
+    margin-bottom: 0;
+    margin-top: 10px;
+    font-weight: 500;
+  }
+
+  .amenities-list {
+    max-height: 200px;
+    overflow-y: auto;
+    border-radius: 4px;
+    background: white;
+  }
+
+  .sublet-dates {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+  }
+}
+
+.results-area {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+
+  h2 {
+    margin-bottom: 0;
+    color: #333;
+  }
+}
+
+mat-form-field {
+  width: 100%;
+}
+
+.sublet-option {
+  margin: 10px 0;
+}

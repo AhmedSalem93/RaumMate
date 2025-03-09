@@ -1,6 +1,7 @@
 const express = require('express');
 const cors = require('cors');
 const mongoose = require('mongoose');
+const morgan = require('morgan');
 const dotenv = require('dotenv');
 
 // Load environment variables
@@ -12,8 +13,8 @@ const app = express();
 // Middleware
 app.use(cors());
 app.use(express.json());
+app.use(morgan('dev'))
 app.use(express.urlencoded({ extended: true }));
-
 // Database connection
 mongoose.connect(process.env.MONGODB_URI)
   .then(() => console.log('Connected to MongoDB'))
