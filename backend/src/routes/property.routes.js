@@ -1,12 +1,13 @@
 const express = require('express');
 const router = express.Router();
+const { authMiddleware, requireRole } = require('../middleware/auth.middleware');
 
 // Placeholder routes
 router.get('/', (req, res) => {
   res.status(200).json({ message: 'Get all properties endpoint' });
 });
 
-router.post('/', (req, res) => {
+router.post('/', authMiddleware, requireRole('verified'), (req, res) => {
   res.status(201).json({ message: 'Create property endpoint' });
 });
 
