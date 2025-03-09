@@ -111,6 +111,39 @@ mat-card {
   height: 1.2rem;
 }
 
+/* Rating styles */
+.rating-container {
+  display: flex;
+  align-items: center;
+  margin-bottom: 0.25rem;
+}
+
+.stars {
+  display: flex;
+  align-items: center;
+}
+
+.stars mat-icon {
+  font-size: 1.2rem;
+  width: 1.2rem;
+  height: 1.2rem;
+  color: #bdbdbd; /* Default color for empty stars */
+}
+
+.stars mat-icon.full-star {
+  color: #ffc107; /* Gold color for full stars */
+}
+
+.stars mat-icon.half-star {
+  color: #ffc107; /* Gold color for half stars */
+}
+
+.rating-count {
+  font-size: 0.8rem;
+  color: #666;
+  margin-left: 0.25rem;
+}
+
 /* Owner section at bottom */
 .owner-section {
   margin-top: 0.75rem; /* Add some space above owner section */

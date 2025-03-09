@@ -44,7 +44,7 @@ const propertySchema = new mongoose.Schema({
   amenities: [String],
   mediaPaths: [String],
 
-  Reviews: {
+  reviews: {
     averageRating: {
       type: Number,
       default: 0

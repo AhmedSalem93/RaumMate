@@ -7,10 +7,14 @@ import { environment } from '../../../../environments/environment';
 import {
   CurrencyPipe,
   NgIf,
-  NgClass,
-  SlicePipe,
   DatePipe,
+  NgFor,
 } from '@angular/common';
+
+interface StarDisplay {
+  full: boolean;
+  half: boolean;
+}
 
 @Component({
   selector: 'app-property-card',
@@ -19,9 +23,9 @@ import {
     MatButtonModule,
     NgIf,
     CurrencyPipe,
-    SlicePipe,
     DatePipe,
     MatIconModule,
+    NgFor,
   ],
   templateUrl: './property-card.component.html',
   styleUrl: './property-card.component.scss',
@@ -98,5 +102,38 @@ export class PropertyCardComponent {
   toggleFavorite(): void {
     this.isFavorite = !this.isFavorite;
     this.favorite.emit({ id: this.property._id!, value: this.isFavorite });
+  }
+
+  hasReviews(): boolean {
+    return (
+      this.property.reviews &&
+      this.property.reviews.count > 0 &&
+      this.property.reviews.averageRating > 0
+    );
+  }
+
+  getStarArray(): StarDisplay[] {
+    if (!this.hasReviews()) {
+      return [];
+    }
+
+    const stars: StarDisplay[] = [];
+    const rating = this.property.reviews.averageRating;
+
+    for (let i = 1; i <= 5; i++) {
+      // For each position calculate if it should be full, half or empty star
+      if (i <= Math.floor(rating)) {
+        // Full star
+        stars.push({ full: true, half: false });
+      } else if (i - 0.5 <= rating) {
+        // Half star
+        stars.push({ full: false, half: true });
+      } else {
+        // Empty star
+        stars.push({ full: false, half: false });
+      }
+    }
+
+    return stars;
   }
 }

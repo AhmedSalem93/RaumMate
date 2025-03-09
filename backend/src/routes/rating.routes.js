@@ -47,8 +47,8 @@ router.post('/:propertyId', authMiddleware, async (req, res) => {
         const averageRating = ratingSum / allRatings.length;
 
         // Update property with new rating data - adapted for new structure
-        property.Reviews.averageRating = averageRating;
-        property.Reviews.count = allRatings.length;
+        property.reviews.averageRating = averageRating;
+        property.reviews.count = allRatings.length;
         await property.save();
 
         res.status(201).json(userRating);
@@ -75,8 +75,8 @@ router.get('/:propertyId', async (req, res) => {
         res.status(200).json({
             ratings,
             summary: {
-                averageRating: property.Reviews.averageRating,
-                count: property.Reviews.count
+                averageRating: property.reviews.averageRating,
+                count: property.reviews.count
             }
         });
     } catch (error) {
@@ -109,12 +109,12 @@ router.delete('/:ratingId', authMiddleware, async (req, res) => {
         const property = await Property.findById(propertyId);
 
         if (allRatings.length === 0) {
-            property.Reviews.averageRating = 0;
-            property.Reviews.count = 0;
+            property.reviews.averageRating = 0;
+            property.reviews.count = 0;
         } else {
             const ratingSum = allRatings.reduce((sum, item) => sum + item.rating, 0);
-            property.Reviews.averageRating = ratingSum / allRatings.length;
-            property.Reviews.count = allRatings.length;
+            property.reviews.averageRating = ratingSum / allRatings.length;
+            property.reviews.count = allRatings.length;
         }
 
         await property.save();
@@ -152,8 +152,8 @@ router.get('/:propertyId/stats', async (req, res) => {
         });
 
         res.status(200).json({
-            averageRating: property.Reviews.averageRating,
-            totalReviews: property.Reviews.count,
+            averageRating: property.reviews.averageRating,
+            totalReviews: property.reviews.count,
             distribution: ratingDistribution
         });
     } catch (error) {
