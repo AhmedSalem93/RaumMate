@@ -1,1 +1,113 @@
-<p>register works!</p>
+<div class="registration-form">
+  <h2>Register</h2>
+  <form (ngSubmit)="onSubmit(registrationForm)" #registrationForm="ngForm">
+    <!-- First Name -->
+    <label for="firstName">First Name:</label>
+    <input
+      type="text"
+      id="firstName"
+      name="firstName"
+      [(ngModel)]="formData.firstName"
+      required
+      minlength="2"
+      #firstName="ngModel"
+    />
+    @if (firstName.invalid && (firstName.dirty || firstName.touched)) {
+    <div class="error-message">
+      @if (firstName.errors?.['required']) {
+      <div>First Name is required.</div>
+      } @if (firstName.errors?.['minlength']) {
+      <div>First Name must be at least 2 characters long.</div>
+      }
+    </div>
+    }
+
+    <!-- Last Name -->
+    <label for="lastName">Last Name:</label>
+    <input
+      type="text"
+      id="lastName"
+      name="lastName"
+      [(ngModel)]="formData.lastName"
+      required
+      minlength="2"
+      #lastName="ngModel"
+    />
+    @if (lastName.invalid && (lastName.dirty || lastName.touched)) {
+    <div class="error-message">
+      @if (lastName.errors?.['required']) {
+      <div>Last Name is required.</div>
+      } @if (lastName.errors?.['minlength']) {
+      <div>Last Name must be at least 2 characters long.</div>
+      }
+    </div>
+    }
+
+    <!-- Email -->
+    <label for="email">Email:</label>
+    <input
+      type="email"
+      id="email"
+      name="email"
+      [(ngModel)]="formData.email"
+      required
+      email
+      #email="ngModel"
+    />
+    @if (email.invalid && (email.dirty || email.touched)) {
+    <div class="error-message">
+      @if (email.errors?.['required']) {
+      <div>Email is required.</div>
+      } @if (email.errors?.['email']) {
+      <div>Please enter a valid email address.</div>
+      }
+    </div>
+    }
+
+    <!-- Password -->
+    <label for="password">Password:</label>
+    <input
+      type="password"
+      id="password"
+      name="password"
+      [(ngModel)]="formData.password"
+      required
+      minlength="6"
+      #password="ngModel"
+    />
+    @if (password.invalid && (password.dirty || password.touched)) {
+    <div class="error-message">
+      @if (password.errors?.['required']) {
+      <div>Password is required.</div>
+      } @if (password.errors?.['minlength']) {
+      <div>Password must be at least 6 characters long.</div>
+      }
+    </div>
+    }
+
+    <!-- Confirm Password -->
+    <label for="confirmPassword">Confirm Password:</label>
+    <input
+      type="password"
+      id="confirmPassword"
+      name="confirmPassword"
+      [(ngModel)]="formData.confirmPassword"
+      required
+    />
+    @if (formData.password && formData.confirmPassword && formData.password !==
+    formData.confirmPassword) {
+    <div class="error-message">Passwords do not match.</div>
+    }
+
+    <!-- Submit Button -->
+    <button
+      type="submit"
+      [disabled]="
+        registrationForm.invalid ||
+        formData.password !== formData.confirmPassword
+      "
+    >
+      Register
+    </button>
+  </form>
+</div>
