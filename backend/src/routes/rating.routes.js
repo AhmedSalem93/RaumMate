@@ -2,7 +2,7 @@ const express = require('express');
 const router = express.Router();
 const Rating = require('../models/rating.model');
 const Property = require('../models/property.model');
-const authMiddleware = require('../middleware/auth.middleware');
+const { authMiddleware, requireRole } = require('../middleware/auth.middleware');
 
 // Add a rating to a property
 router.post('/:propertyId', authMiddleware, async (req, res) => {

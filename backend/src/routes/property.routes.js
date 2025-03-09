@@ -178,7 +178,7 @@ router.get('/amenities', async (req, res) => {
     console.log("Error in getting amenities: " + error);
     res.status(500).json({ message: error.message });
   }
-
+});
 
 // find property by id
 router.get('/:id', async (req, res) => {
