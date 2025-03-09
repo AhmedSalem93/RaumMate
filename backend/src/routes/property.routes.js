@@ -57,11 +57,26 @@ router.get('/', async (req, res) => {
 
     // Sublet dates filter
     if (subletStartDate || subletEndDate) {
-      query.subletDates = {};
-      if (subletStartDate) query.subletDates.start = { $lte: new Date(subletStartDate) }; // I need things that start before me 
-      if (subletEndDate) query.subletDates.end = { $gte: new Date(subletEndDate) }; // I need things that end after me 
+
+      if (subletStartDate) {
+        // We want properties that are available at the requested start date
+        // This means their start date must be on or before our requested date
+        // AND their end date must be after our requested date
+        query['subletDates.start'] = { $lte: new Date(subletStartDate) };
+        // Add this to ensure the property is still available at the requested date
+        if (!subletEndDate) {
+          query['subletDates.end'] = { $gte: new Date(subletStartDate) };
+        }
+      }
+
+      if (subletEndDate) {
+        // For end date, we want properties that are still available at that date
+        query['subletDates.end'] = { $gte: new Date(subletEndDate) };
+      }
     }
 
+    // Log the query for debugging
+    console.log("Query: " + JSON.stringify(query));
     // Create sort configuration
     const sortConfig = {};
 

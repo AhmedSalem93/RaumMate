@@ -157,4 +157,21 @@ export class SearchComponent implements OnInit {
     this.itemsPerPage = event.pageSize;
     this.search();
   }
+
+  resetFilters() {
+    this.searchForm.reset({
+      city: '',
+      minPrice: 0,
+      maxPrice: 5000,
+      isSublet: false,
+      amenities: [],
+      subletStartDate: '',
+      subletEndDate: '',
+      sortBy: 'date_desc',
+    });
+
+    // Manually trigger search since we're bypassing the valueChanges observable
+    this.currentPage = 1;
+    this.search();
+  }
 }

@@ -16,7 +16,7 @@
             placeholder="Min €"
             formControlName="minPrice"
           />
-          <span matPrefix>€&nbsp;</span>
+          <span matSuffix>€&nbsp;&nbsp;</span>
         </mat-form-field>
 
         <mat-form-field appearance="outline">
@@ -27,7 +27,7 @@
             placeholder="Max €"
             formControlName="maxPrice"
           />
-          <span matPrefix>€&nbsp;</span>
+          <span matSuffix>€&nbsp;&nbsp;</span>
         </mat-form-field>
       </div>
     </div>
@@ -89,6 +89,16 @@
           </mat-option>
         </mat-select>
       </mat-form-field>
+
+      <button
+        mat-raised-button
+        color="accent"
+        type="button"
+        class="reset-btn"
+        (click)="resetFilters()"
+      >
+        Reset Filters
+      </button>
     </div>
 
     <!-- Results Area -->
