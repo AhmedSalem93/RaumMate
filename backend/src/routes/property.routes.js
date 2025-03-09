@@ -49,15 +49,15 @@ router.get('/', async (req, res) => {
 
     // Amenities filter
     if (amenities) {
-      const amenitiesList = amenities.split(',');
-      query.amenities = { $all: amenitiesList };
+      // get any properties that have at least one of the amenities
+      query.amenities = { $in: amenities };
     }
 
     // Sublet dates filter
     if (subletStartDate || subletEndDate) {
       query.subletDates = {};
-      if (subletStartDate) query.subletDates.start = { $lte: new Date(subletStartDate) };
-      if (subletEndDate) query.subletDates.end = { $gte: new Date(subletEndDate) };
+      if (subletStartDate) query.subletDates.start = { $lte: new Date(subletStartDate) }; // I need things that start before me 
+      if (subletEndDate) query.subletDates.end = { $gte: new Date(subletEndDate) }; // I need things that end after me 
     }
 
     // Create sort configuration
