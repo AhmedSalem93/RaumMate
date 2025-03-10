@@ -29,45 +29,59 @@ export class PropertyService {
   private http = inject(HttpClient);
   constructor() {}
 
-  createListing(formData: FormData): Observable<any> {
-    formData.append('owner', '67cad68e71e43adb9e8b8c2e');
-    let httpParams = new HttpHeaders().set('Accept', '*/*');
+  private getHeaders(): HttpHeaders {
+    const token = localStorage.getItem('token');
+    let headers = new HttpHeaders().set('Accept', '*/*');
 
+    if (token) {
+      headers = headers.set('Authorization', `Bearer ${token}`);
+    }
+
+    return headers;
+  }
+
+  createListing(formData: FormData): Observable<any> {
+    formData.append('owner', '67cad68e71e43adb9e8b8c2e'); //TODO, Where to get the owner id?
     return this.http.post(environment.apiUrl + '/properties/', formData, {
-      headers: httpParams,
+      headers: this.getHeaders(),
     });
   }
 
   getListings(): Observable<PaginationReturnType> {
-    // Adjust endpoint URL as needed
-    let httpParams = new HttpHeaders().set('Accept', '*/*');
-
     return this.http.get<PaginationReturnType>(
       environment.apiUrl + '/properties',
       {
-        headers: httpParams,
+        headers: this.getHeaders(),
       }
     );
   }
 
   searchListings(query: string): Observable<any[]> {
     // Adjust endpoint URL as needed
-    return this.http.get<any[]>(`/api/listings?query=${query}`);
+    return this.http.get<any[]>(`/api/listings?query=${query}`, {
+      headers: this.getHeaders(),
+    });
   }
 
   getListingById(id: string): Observable<any> {
     // Adjust endpoint URL as needed
-    return this.http.get<any>(`/api/listings/${id}`);
+    return this.http.get<any>(`/api/listings/${id}`, {
+      headers: this.getHeaders(),
+    });
   }
 
   updateListing(id: string, listing: Property): Observable<any> {
     // Adjust endpoint URL as needed
-    return this.http.put(`/api/listings/${id}`, listing);
+    return this.http.put(`/api/listings/${id}`, listing, {
+      headers: this.getHeaders(),
+    });
   }
 
   deleteListing(id: string): Observable<any> {
     // Adjust endpoint URL as needed
-    return this.http.delete(`/api/listings/${id}`);
+    return this.http.delete(`/api/listings/${id}`, {
+      headers: this.getHeaders(),
+    });
   }
 
   searchProperties(params: SearchParams): Observable<PaginationReturnType> {
@@ -116,7 +130,7 @@ export class PropertyService {
     return this.http.get<PaginationReturnType>(
       `${environment.apiUrl}/properties?${queryParams.toString()}`,
       {
-        headers: new HttpHeaders().set('Accept', '*/*'),
+        headers: this.getHeaders(),
       }
     );
   }
@@ -125,7 +139,7 @@ export class PropertyService {
     return this.http.get<string[]>(
       `${environment.apiUrl}/properties/amenities`,
       {
-        headers: new HttpHeaders().set('Accept', '*/*'),
+        headers: this.getHeaders(),
       }
     );
   }

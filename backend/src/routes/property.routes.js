@@ -3,14 +3,13 @@ const router = express.Router();
 
 const Property = require('../models/property.model');
 const upload = require('../middleware/upload.middleware');
-const { authMiddleware, requireRole } = require('../middleware/auth.middleware');
+const { authMiddleware, requireRole, addUserToRequest } = require('../middleware/auth.middleware');
 const fs = require('fs');
 
 require("../models/user.model");
 
 // get endpoint with multi-criteria search filtering
-router.get('/', async (req, res) => {
-
+router.get('/', addUserToRequest, async (req, res) => {
   try {
     console.log(req.query);
     let {
@@ -116,6 +115,17 @@ router.get('/', async (req, res) => {
       .limit(Number(limit))
       .populate('owner');
 
+
+
+    // if the user is a guest, we only show the city as the location and not the full address
+    if (req.user.role === 'guest') {
+      properties.forEach(property => {
+        property.location.address = undefined;
+        property.location.coordinates = undefined;
+      });
+    }
+
+
     // console.log("Search Results" + properties);
     res.status(200).json({
       properties,
@@ -142,12 +152,12 @@ router.get('/', async (req, res) => {
 //   }
 // });
 
-router.post('/', authMiddleware, requireRole('verified'), upload.array('media'), async (req, res) => {
+router.post('/', authMiddleware, addUserToRequest, requireRole('verified'), upload.array('media'), async (req, res) => {
   try {
     const filePaths = req.files.map(file => `/static/${file.filename}`);
     const property = new Property({
       mediaPaths: filePaths,
-      // userId: req.userId,
+      owner: req.userId,
       ...req.body
     });
     console.log("UserID: " + req.userId);
@@ -162,7 +172,6 @@ router.post('/', authMiddleware, requireRole('verified'), upload.array('media'),
         }
       })
     });
-
     res.status(400).json({ message: error.message });
   }
 });
@@ -181,7 +190,7 @@ router.get('/amenities', async (req, res) => {
 });
 
 // find property by id
-router.get('/:id', async (req, res) => {
+router.get('/:id', addUserToRequest, async (req, res) => {
   try {
     const property = await Property.findById(req.params.id).populate('owner');
     if (!property) {
@@ -195,7 +204,7 @@ router.get('/:id', async (req, res) => {
   }
 });
 
-router.put('/:id', upload.array('media'), async (req, res) => {
+router.put('/:id', addUserToRequest, upload.array('media'), async (req, res) => {
   try {
     const property = await Property.findById(req.params.id);
     if (!property) {

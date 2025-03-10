@@ -1,16 +1,29 @@
 // src/app/home/home.component.ts
-import { Component } from '@angular/core';
-import { Router } from '@angular/router';
+import { Component, OnInit } from '@angular/core';
+import { Router, RouterModule } from '@angular/router';
+import { CommonModule } from '@angular/common';
 
 @Component({
   selector: 'app-home',
-  template: `
-    <h2>Home Component</h2>
-    <button (click)="navigateToProperty()">Navigate to Property</button>
-  `,
+  templateUrl: './home.component.html',
+  styleUrl: './home.component.scss',
+  standalone: true,
+  imports: [CommonModule, RouterModule],
 })
-export class HomeComponent {
+export class HomeComponent implements OnInit {
+  hasToken = false;
+
   constructor(private router: Router) {}
+
+  ngOnInit() {
+    // Check if token exists in local storage
+    this.checkToken();
+  }
+
+  checkToken() {
+    const token = localStorage.getItem('auth_token');
+    this.hasToken = !!token;
+  }
 
   navigateToProperty() {
     this.router.navigate(['/property']);

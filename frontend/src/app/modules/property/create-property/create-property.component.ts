@@ -181,9 +181,13 @@ export class CreatePropertyComponent {
         },
         (error) => {
           console.error('Error creating property listing:', error);
-          this.snackBar.open('Error creating property listing', 'Close', {
-            duration: 3000,
-          });
+          this.snackBar.open(
+            'Error creating property listing' + error.message,
+            'Close',
+            {
+              duration: 3000,
+            }
+          );
         }
       );
     } else {

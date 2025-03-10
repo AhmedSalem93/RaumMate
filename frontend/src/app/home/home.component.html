@@ -1,1 +1,32 @@
-<p>home works!</p>
+<div class="container">
+  <div class="welcome">
+    <h1>Welcome to Our Landing Page</h1>
+
+    <div class="token-status">
+      <p *ngIf="hasToken">✅ You are logged in</p>
+      <p *ngIf="!hasToken">
+        ⚠️ Please add the token to local storage to access all features
+      </p>
+    </div>
+
+    <div class="navigation-options">
+      <div class="option">
+        <h2>Property Management</h2>
+        <p>Want to list your property?</p>
+        <a routerLink="/property/create" class="btn">Create Property</a>
+      </div>
+
+      <div class="option">
+        <h2>Find Properties</h2>
+        <p>Looking for a place?</p>
+        <a routerLink="/property/search" class="btn">Search Properties</a>
+      </div>
+
+      <div *ngIf="!hasToken" class="option auth">
+        <h2>Account Access</h2>
+        <a routerLink="/auth/login" class="btn">Login</a>
+        <a routerLink="/auth/register" class="btn">Register</a>
+      </div>
+    </div>
+  </div>
+</div>
