@@ -1,13 +1,41 @@
-.spacer {
-  flex: 1 1 auto;
-}
+/* Navbar */
+  .navbar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background: #0044cc;
+    padding: 15px 20px;
+    color: white;
+  }
 
-.mat-toolbar {
-  background-color: #fff;
-  border-bottom: 1px solid #ccc;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-}
+  .logo {
+    font-size: 24px;
+    font-weight: bold;
+    text-decoration: none;
+    color: white;
+  }
 
-.notification-button {
-  margin-right: 8px;
-}
+  .nav-links .link {
+    margin-left: 15px;
+    color: white;
+    text-decoration: none;
+    cursor: pointer;
+  }
+
+  .btn {
+    margin-left: 15px;
+    padding: 8px 15px;
+    border-radius: 5px;
+    text-decoration: none;
+    display: inline-block;
+  }
+
+  .login-btn {
+    background: white;
+    color: #0044cc;
+  }
+
+  .register-btn {
+    background: #ffcc00;
+    color: #0044cc;
+  }

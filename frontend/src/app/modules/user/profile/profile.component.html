@@ -1,1 +1,64 @@
-<p>profile works!</p>
+<div class="profile-dashboard">
+  
+    <!-- Sidebar -->
+    <aside class="sidebar">
+      <div class="profile-pic">
+        <img [src]="user.profilePicture" alt="Profile Picture">
+        <h3>{{ user.firstName }} {{ user.lastName }}</h3>
+        <p class="role">{{ user.role | uppercase }}</p>
+      </div>
+      <nav>
+        <a routerLink="/profile" class="active">Profile</a>
+        <a routerLink="/settings">Settings</a>
+        <a routerLink="/listings">My Listings</a>
+        <a routerLink="/messages">Messages</a>
+      </nav>
+    </aside>
+  
+    <!-- Main Content -->
+    <section class="profile-content">
+      
+      <!-- Personal Details -->
+      <div class="profile-section">
+        <h2>Personal Details</h2>
+        <p><strong>Name:</strong> {{ user.firstName }} {{ user.lastName }}</p>
+        <p><strong>Email:</strong> {{ user.email }}</p>
+        <p><strong>Phone:</strong> {{ user.phone }}</p>
+        <p><strong>Location:</strong> {{ user.location }}</p>
+        <p><strong>Joined On:</strong> {{ user.createdAt }}</p>
+      </div>
+  
+      <!-- Bio -->
+      <div class="profile-section">
+        <h2>Bio</h2>
+        <p>{{ user.bio }}</p>
+      </div>
+  
+      <!-- Preferences -->
+      <div class="profile-section">
+        <h2>Preferences</h2>
+        <ul>
+          <li *ngFor="let key of getPreferencesKeys()">
+            <strong>{{ formatKey(key) }}:</strong> {{ user.preferences[key] }}
+          </li>
+        </ul>
+      </div>
+  
+      <!-- Interests -->
+      <div class="profile-section">
+        <h2>Interests</h2>
+        <div class="tags">
+          <span *ngFor="let interest of user.preferences.Interests">{{ interest }}</span>
+        </div>
+      </div>
+  
+      <!-- Account Settings -->
+      <div class="profile-section">
+        <h2>Account Settings</h2>
+        <button class="settings-btn">Change Password</button>
+      </div>
+  
+    </section>
+  
+  </div>
+  

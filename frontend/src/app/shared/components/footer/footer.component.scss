@@ -1,9 +1,13 @@
-.mat-toolbar {
-  background-color: #fff;
-  border-top: 1px solid #ccc;
-  box-shadow: 0 -2px 4px rgba(0, 0, 0, 0.1);
-  bottom: 0;
-  width: 100%;
-  min-height: 40px;
-  font-size: 0.85rem;
-}
+  /* Footer */
+  .footer {
+    background: #222;
+    color: white;
+    text-align: center;
+    padding: 20px;
+  }
+
+  .footer-links a {
+    margin: 0 10px;
+    color: white;
+    text-decoration: none;
+  }

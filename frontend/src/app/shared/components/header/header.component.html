@@ -1,14 +1,11 @@
-<mat-toolbar color="primary">
-  <img src="/RaumMate_small.jpg" alt="RaumMate" style="height: 40px" />
-  <button mat-button [routerLink]="['/']">Home</button>
-  <span class="spacer"></span>
-  <button
-    mat-icon-button
-    class="notification-button"
-    (click)="showNotifications()"
-  >
-    <mat-icon>notifications</mat-icon>
-  </button>
-  <button mat-button [routerLink]="['/user']">Profile</button>
-  <button mat-button [routerLink]="['/messaging']">Chats</button>
-</mat-toolbar>
+<nav class="navbar">
+    <a class="logo" routerLink="/">RaumMate</a>
+    <div class="nav-links">
+      <a class="link" routerLink="/">Home</a>
+      <a class="link" routerLink="/property">Search Room</a>
+      <a class="link" routerLink="/about">About Us</a>
+      <a class="link" routerLink="/contact">Contact</a>
+      <a routerLink="/auth/login" class="btn login-btn">Login</a>
+      <a routerLink="/auth/register" class="btn register-btn">Register</a>
+    </div>
+  </nav>

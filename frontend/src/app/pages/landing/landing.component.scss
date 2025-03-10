@@ -1,0 +1,104 @@
+/* Global Styles */
+body {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+  }
+  
+  
+  
+  /* Hero Section */
+  .hero {
+    text-align: center;
+    padding: 80px 20px;
+    background: #f4f4f4;
+  }
+  
+  .hero h1 {
+    font-size: 36px;
+    color: #0044cc;
+  }
+  
+  .hero p {
+    font-size: 18px;
+    color: gray;
+  }
+  
+  .cta-btn {
+    background: #0044cc;
+    color: white;
+    padding: 12px 20px;
+    font-size: 18px;
+  }
+  
+  /* Cities Section */
+  .cities {
+    text-align: center;
+    padding: 40px;
+  }
+  
+  .city-list {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+  
+  .city-box {
+    background: #ddd;
+    padding: 20px;
+    margin: 10px;
+    border-radius: 8px;
+    width: 200px;
+  }
+  
+  /* Listings Section */
+  .listings {
+    padding: 40px;
+    background: #f9f9f9;
+  }
+  
+  .listing-grid {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+  
+  .listing-box {
+    background: white;
+    padding: 20px;
+    margin: 10px;
+    border-radius: 8px;
+    width: 250px;
+    text-align: center;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  }
+  
+  .listing-box img {
+    width: 100%;
+    border-radius: 8px;
+  }
+  
+  .view-details {
+    display: inline-block;
+    margin-top: 10px;
+    color: #0044cc;
+    text-decoration: none;
+  }
+  
+  /* Property Owner Section */
+  .owner-section {
+    text-align: center;
+    background: #0044cc;
+    color: white;
+    padding: 50px;
+  }
+  
+  .list-btn {
+    background: #ffcc00;
+    color: #0044cc;
+    padding: 12px 20px;
+    font-size: 18px;
+  }
+  
+
+  
