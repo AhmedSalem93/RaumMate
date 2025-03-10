@@ -81,15 +81,6 @@
         </mat-form-field>
       </div>
 
-      <mat-form-field appearance="outline">
-        <mat-label>Sort By</mat-label>
-        <mat-select formControlName="sortBy">
-          <mat-option *ngFor="let option of sortOptions" [value]="option.value">
-            {{ option.label }}
-          </mat-option>
-        </mat-select>
-      </mat-form-field>
-
       <button
         mat-raised-button
         color="accent"
@@ -103,7 +94,20 @@
 
     <!-- Results Area -->
     <div class="results-area">
-      <h2 *ngIf="properties.length > 0">Found {{ totalItems }} properties</h2>
+      <div class="results-header" *ngIf="properties.length > 0">
+        <h2>Found {{ totalItems }} properties</h2>
+        <mat-form-field appearance="outline" style="width: 200px">
+          <mat-label>Sort By</mat-label>
+          <mat-select formControlName="sortBy">
+            <mat-option
+              *ngFor="let option of sortOptions"
+              [value]="option.value"
+            >
+              {{ option.label }}
+            </mat-option>
+          </mat-select>
+        </mat-form-field>
+      </div>
       <p *ngIf="properties.length === 0">
         No properties found. Try adjusting your search criteria.
       </p>
