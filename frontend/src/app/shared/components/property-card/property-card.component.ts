@@ -1,15 +1,10 @@
 import { Component, Input, Output, EventEmitter } from '@angular/core';
-import { Property } from '../../../modules/property/property.model';
 import { MatCardModule } from '@angular/material/card';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { environment } from '../../../../environments/environment';
-import {
-  CurrencyPipe,
-  NgIf,
-  DatePipe,
-  NgFor,
-} from '@angular/common';
+import { CurrencyPipe, NgIf, DatePipe, NgFor } from '@angular/common';
+import { Property } from '../../models/property.model';
 
 interface StarDisplay {
   full: boolean;

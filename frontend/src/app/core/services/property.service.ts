@@ -1,8 +1,8 @@
 import { inject, Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Observable } from 'rxjs';
-import { Property } from '../../modules/property/property.model';
 import { environment } from '../../../environments/environment';
+import { Property } from '../../shared/models/property.model';
 
 type PaginationReturnType = {
   pagination: { total: number; limit: number; page: number };

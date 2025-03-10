@@ -1,7 +1,7 @@
 import { Component, inject, Input, OnInit } from '@angular/core';
 import { PropertyService } from '../../../core/services/property.service';
-import { Property } from '../property.model';
 import { SharedModule } from '../../../shared/shared.module';
+import { Property } from '../../../shared/models/property.model';
 
 @Component({
   selector: 'app-property-list',

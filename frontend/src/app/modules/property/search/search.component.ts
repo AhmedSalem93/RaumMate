@@ -6,7 +6,6 @@ import {
   Validators,
 } from '@angular/forms';
 import { PropertyService } from '../../../core/services/property.service';
-import { Property } from '../property.model';
 import { SharedModule } from '../../../shared/shared.module';
 import { PropertyListComponent } from '../property-list/property-list.component';
 import { debounceTime, distinctUntilChanged } from 'rxjs';
@@ -18,6 +17,7 @@ import { MatPaginatorModule, PageEvent } from '@angular/material/paginator';
 import { MatInputModule } from '@angular/material/input';
 import { MatCheckboxModule } from '@angular/material/checkbox';
 import { CommonModule } from '@angular/common';
+import { Property } from '../../../shared/models/property.model';
 
 @Component({
   selector: 'app-search',
