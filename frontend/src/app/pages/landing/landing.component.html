@@ -1,40 +1,39 @@
-  
-  <!-- Hero Section -->
-  <section class="hero">
-    <h1>Find Your Perfect Roommate & Shared Apartment</h1>
-    <p>Easily search for affordable accommodations in Germany’s major cities.</p>
-    <a routerLink="/search" class="btn cta-btn">Start Searching</a>
-  </section>
-  
-  <!-- Featured Cities -->
-  <section class="cities">
-    <h2>Available in These Cities</h2>
-    <div class="city-list">
-      <div *ngFor="let city of cities" class="city-box">
-        <h3>{{ city.name }}</h3>
-        <p>{{ city.listings }} Listings</p>
-      </div>
-    </div>
-  </section>
-  
-  <!-- Latest Listings -->
-  <section class="listings">
-    <h2>Latest Listings</h2>
-    <div class="listing-grid">
-      <div *ngFor="let listing of listings" class="listing-box">
-        <img [src]="listing.image" alt="Property Image">
-        <h3>{{ listing.title }}</h3>
-        <p>{{ listing.location }} - €{{ listing.price }}/month</p>
-        <a routerLink="/property/{{ listing.id }}" class="view-details">View Details</a>
-      </div>
-    </div>
-  </section>
-  
-  <!-- Property Owner Section -->
-  <section class="owner-section">
-    <h2>Looking for a roommate?</h2>
-    <p>Find your future flatmate now. List your property on RaumMate.</p>
-    <a routerLink="/list-property" class="btn list-btn">List Your Property</a>
-  </section>
+<!-- Hero Section -->
+<section class="hero">
+  <h1>Find Your Perfect Roommate & Shared Apartment</h1>
+  <p>Easily search for affordable accommodations in Germany’s major cities.</p>
+  <a routerLink="/property/search" class="btn cta-btn">Start Searching</a>
+</section>
 
-  
+<!-- Featured Cities -->
+<section class="cities">
+  <h2>Available in These Cities</h2>
+  <div class="city-list">
+    <div *ngFor="let city of cities" class="city-box">
+      <h3>{{ city.name }}</h3>
+      <p>{{ city.listings }} Listings</p>
+    </div>
+  </div>
+</section>
+
+<!-- Latest Listings -->
+<section class="listings">
+  <h2>Latest Listings</h2>
+  <div class="listing-grid">
+    <div *ngFor="let listing of listings" class="listing-box">
+      <img [src]="listing.image" alt="Property Image" />
+      <h3>{{ listing.title }}</h3>
+      <p>{{ listing.location }} - €{{ listing.price }}/month</p>
+      <a routerLink="/property/{{ listing.id }}" class="view-details"
+        >View Details</a
+      >
+    </div>
+  </div>
+</section>
+
+<!-- Property Owner Section -->
+<section class="owner-section">
+  <h2>Looking for a roommate?</h2>
+  <p>Find your future flatmate now. List your property on RaumMate.</p>
+  <a routerLink="/list-property" class="btn list-btn">List Your Property</a>
+</section>

@@ -1,8 +1,8 @@
 import { Routes } from '@angular/router';
-import { HomeComponent } from './home/home.component';
+import { LandingComponent } from './pages/landing/landing.component';
 
 export const routes: Routes = [
-  { path: '', component: HomeComponent, pathMatch: 'full' },
+  { path: '', component: LandingComponent, pathMatch: 'full' },
   {
     path: 'auth',
     loadChildren: () =>
@@ -32,5 +32,5 @@ export const routes: Routes = [
         (m) => m.MessagingModule
       ),
   },
-  { path: '**', redirectTo: '/property' },
+  { path: '**', redirectTo: '' },
 ];
