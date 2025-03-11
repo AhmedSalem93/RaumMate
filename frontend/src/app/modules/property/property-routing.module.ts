@@ -9,7 +9,10 @@ const routes: Routes = [
   { path: '', component: PropertyListComponent, pathMatch: 'full' },
   { path: 'create', component: CreatePropertyComponent },
   { path: 'search', component: SearchComponent },
-  { path: ':id', component: PropertyDetailComponent },
+  {
+    path: ':id',
+    component: PropertyDetailComponent,
+  },
 ];
 
 @NgModule({

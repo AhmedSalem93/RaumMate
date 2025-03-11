@@ -1,8 +1,10 @@
+import { User } from './user.model';
+
 export interface Property {
   _id?: string; // if you get the property after creation, it will have an _id
   title: string;
   description: string;
-  owner: string | Object; // This is the ObjectId string (ref to User) or the User object
+  owner: string | User; // This is the ObjectId string (ref to User) or the User object
   location: {
     city: string;
     address?: string;

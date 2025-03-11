@@ -5,6 +5,8 @@ import { MatIconModule } from '@angular/material/icon';
 import { environment } from '../../../../environments/environment';
 import { CurrencyPipe, NgIf, DatePipe, NgFor } from '@angular/common';
 import { Property } from '../../models/property.model';
+import { User } from '../../models/user.model';
+import { RouterLink } from '@angular/router';
 
 interface StarDisplay {
   full: boolean;
@@ -21,6 +23,7 @@ interface StarDisplay {
     DatePipe,
     MatIconModule,
     NgFor,
+    RouterLink,
   ],
   templateUrl: './property-card.component.html',
   styleUrl: './property-card.component.scss',
@@ -71,10 +74,11 @@ export class PropertyCardComponent {
   }
 
   getOwnerName(): string {
-    if (typeof this.property.owner === 'string') {
+    if (!this.property.owner || typeof this.property.owner === 'string') {
       return '';
     }
-    return (this.property.owner as any).name || '';
+    console.log('this.property.owner', this.property.owner);
+    return (this.property.owner as User).firstName || '';
   }
 
   getOnlineStatus(): string {

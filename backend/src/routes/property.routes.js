@@ -196,6 +196,12 @@ router.get('/:id', addUserToRequest, async (req, res) => {
     if (!property) {
       return res.status(404).json({ message: 'Property not found' });
     }
+
+    // if the user is a guest, we only show the city as the location and not the full address
+    if (req.user.role === 'guest') {
+      property.location.address = undefined;
+      property.location.coordinates = undefined;
+    }
     res.status(200).json(property);
   }
   catch (error) {

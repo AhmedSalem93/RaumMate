@@ -1,1 +1,180 @@
-<p>property-detail works!</p>
+<div class="property-detail-container">
+  <!-- Loading state -->
+  @if (isLoading) {
+  <div class="loading-spinner">
+    <mat-spinner></mat-spinner>
+    <p>Loading property details...</p>
+  </div>
+  }
+
+  <!-- Error state -->
+  @if (error) {
+  <div class="error-message">
+    <mat-icon>error</mat-icon>
+    <p>{{ error }}</p>
+    <button mat-button color="primary" (click)="fetchPropertyDetails()">
+      Try Again
+    </button>
+  </div>
+  }
+
+  <!-- Property details content -->
+  @if (property && !isLoading && !error) {
+  <div class="property-detail-layout">
+    <!-- Left sidebar with owner info and actions -->
+    <div class="sidebar">
+      <!-- Owner info -->
+      <div class="owner-section">
+        <div class="owner-avatar">
+          @if (owner?.profilePicture) {
+          <img [src]="owner!.profilePicture" alt="Owner" class="avatar-img" />
+          } @else {
+          <div class="avatar-placeholder">
+            <span>{{ getOwnerInitials() }}</span>
+          </div>
+          }
+        </div>
+        <div class="owner-info">
+          <h3>
+            {{ owner?.firstName || "Unknown" }} {{ owner?.lastName || "Owner" }}
+          </h3>
+          <p class="membership">Member since {{ getOwnerMemberSince() }}</p>
+          <p class="role">{{ owner?.role || "User" | titlecase }}</p>
+        </div>
+      </div>
+
+      <!-- Action buttons -->
+      <div class="action-buttons">
+        <button
+          mat-stroked-button
+          class="favorite-button"
+          (click)="toggleFavorite()"
+        >
+          <mat-icon color="warn">{{
+            isFavorite ? "favorite" : "favorite_border"
+          }}</mat-icon>
+          {{ isFavorite ? "Favorited" : "Favorite" }}
+        </button>
+
+        <button
+          mat-raised-button
+          color="primary"
+          class="message-button"
+          (click)="sendMessage()"
+        >
+          <mat-icon>message</mat-icon>
+          Send Message
+        </button>
+      </div>
+    </div>
+
+    <!-- Main content area -->
+    <div class="main-content">
+      <h1 class="property-title">{{ property.title }}</h1>
+
+      <!-- Image gallery -->
+      <div class="image-gallery">
+        <button class="gallery-nav prev" (click)="prevImage()">
+          <mat-icon>chevron_left</mat-icon>
+        </button>
+
+        <div class="featured-image">
+          <img [src]="getCurrentImage()" alt="{{ property.title }}" />
+        </div>
+
+        <button class="gallery-nav next" (click)="nextImage()">
+          <mat-icon>chevron_right</mat-icon>
+        </button>
+
+        @if (property.mediaPaths && property.mediaPaths.length > 1) {
+        <div class="image-counter">
+          {{ currentImageIndex + 1 }} / {{ property.mediaPaths.length }}
+        </div>
+        }
+      </div>
+
+      <!-- Price section -->
+      <div class="price-section">
+        <div class="price-tag">{{ property.price }}€</div>
+      </div>
+
+      <!-- Location and availability -->
+      <div class="location-availability">
+        <div class="location">
+          <mat-icon>location_on</mat-icon>
+          <span>{{
+            property.location.address ||
+              property.location.city ||
+              "Location not specified"
+          }}</span>
+        </div>
+
+        <div class="availability">
+          <mat-icon>event</mat-icon>
+          @if (property.isSublet && property.subletDates) {
+          <span
+            >Available from {{ property.subletDates.start | date }} to
+            {{ property.subletDates.end | date }}</span
+          >
+          } @else if (property.isAvailable) {
+          <span>Available now</span>
+          } @else {
+          <span>Not currently available</span>
+          }
+        </div>
+      </div>
+
+      <!-- Description section -->
+      <div class="description-section">
+        <h2>Description</h2>
+        <p>{{ property.description }}</p>
+      </div>
+
+      <!-- Amenities section -->
+      <div class="amenities-section">
+        <h2>Amenities</h2>
+        <div class="amenities-list">
+          @for (amenity of property.amenities; track amenity) {
+          <div class="amenity-badge">{{ amenity }}</div>
+          }
+        </div>
+      </div>
+
+      <!-- Reviews section -->
+      <div class="reviews-section">
+        <h2>Reviews</h2>
+        <div class="rating-summary">
+          <div class="average-rating">
+            <span class="rating-number"
+              >{{ property.reviews.averageRating || 0 }}/5</span
+            >
+            <div class="stars">
+              @for (star of [1, 2, 3, 4, 5]; track star) {
+              <mat-icon color="accent">
+                {{
+                  star <= (property.reviews.averageRating || 0)
+                    ? "star"
+                    : "star_border"
+                }}
+              </mat-icon>
+              }
+            </div>
+          </div>
+          <div class="review-count">
+            <span>{{ property.reviews.count || 0 }} reviews</span>
+          </div>
+        </div>
+
+        <!-- Display individual reviews -->
+        <div class="reviews-list">
+          @for (rating of dummyRatings; track rating) {
+          <app-rating-component [userRating]="rating"></app-rating-component>
+          } @if (dummyRatings.length === 0) {
+          <p>No reviews yet for this property.</p>
+          }
+        </div>
+      </div>
+    </div>
+  </div>
+  }
+</div>
