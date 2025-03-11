@@ -74,19 +74,28 @@
 
       <!-- Image gallery -->
       <div class="image-gallery">
+        @if (property.mediaPaths && property.mediaPaths.length > 1) {
         <button class="gallery-nav prev" (click)="prevImage()">
           <mat-icon>chevron_left</mat-icon>
         </button>
+        }
 
         <div class="featured-image">
-          <img [src]="getCurrentImage()" alt="{{ property.title }}" />
-        </div>
+          @if (isCurrentMediaImage()) {
+          <img
+            [src]="getCurrentImage()"
+            alt="{{ property.title }}"
+            class="media-content"
+          />
+          } @else {
+          <video [src]="getMediaUrl()" controls class="media-content"></video>
 
+          }
+        </div>
+        @if (property.mediaPaths && property.mediaPaths.length > 1) {
         <button class="gallery-nav next" (click)="nextImage()">
           <mat-icon>chevron_right</mat-icon>
         </button>
-
-        @if (property.mediaPaths && property.mediaPaths.length > 1) {
         <div class="image-counter">
           {{ currentImageIndex + 1 }} / {{ property.mediaPaths.length }}
         </div>

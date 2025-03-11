@@ -10,6 +10,7 @@ import { Rating } from '../../../shared/models/rating.model';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { ActivatedRoute } from '@angular/router';
 import { environment } from '../../../../environments/environment';
+import { DomSanitizer, SafeUrl } from '@angular/platform-browser';
 
 @Component({
   selector: 'app-property-detail',
@@ -35,7 +36,10 @@ export class PropertyDetailComponent implements OnInit {
   isFavorite = false;
   dummyRatings: Rating[] = []; // Will be replaced with actual ratings
 
-  constructor(private propertyService: PropertyService) {}
+  constructor(
+    private propertyService: PropertyService,
+    private sanitizer: DomSanitizer
+  ) {}
 
   ngOnInit(): void {
     this.route.params.subscribe((params) => {
@@ -111,6 +115,28 @@ export class PropertyDetailComponent implements OnInit {
       }`;
     }
     return 'assets/images/placeholder-property.jpg'; // Fallback image
+  }
+
+  getMediaUrl(): SafeUrl {
+    if (this.property?.mediaPaths && this.property.mediaPaths.length > 0) {
+      const url = `${environment.apiUrl}${
+        this.property.mediaPaths[this.currentImageIndex]
+      }`;
+      return this.sanitizer.bypassSecurityTrustUrl(url);
+    }
+    return this.sanitizer.bypassSecurityTrustUrl(
+      'assets/images/placeholder-property.jpg'
+    );
+  }
+  isCurrentMediaImage(): boolean {
+    if (this.property?.mediaPaths && this.property.mediaPaths.length > 0) {
+      const path =
+        this.property.mediaPaths[this.currentImageIndex].toLowerCase();
+      return /\.(jpg|jpeg|png|webp|avif|gif|bmp|tiff|tif|svg|heif|heic)$/i.test(
+        path
+      );
+    }
+    return false;
   }
 
   getOwnerInitials(): string {

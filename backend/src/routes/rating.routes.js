@@ -3,6 +3,7 @@ const router = express.Router();
 const Rating = require('../models/rating.model');
 const Property = require('../models/property.model');
 const { authMiddleware, requireRole } = require('../middleware/auth.middleware');
+const mongoose = require('mongoose');
 
 // Add a rating to a property
 router.post('/:propertyId', authMiddleware, async (req, res) => {
@@ -57,10 +58,13 @@ router.post('/:propertyId', authMiddleware, async (req, res) => {
     }
 });
 
-// Get all ratings for a property
+// Get all ratings for a property with pagination
 router.get('/:propertyId', async (req, res) => {
     try {
         const { propertyId } = req.params;
+        const page = parseInt(req.query.page) || 1;
+        const limit = parseInt(req.query.limit) || 10;
+        const skip = (page - 1) * limit;
 
         // Check if property exists
         const property = await Property.findById(propertyId);
@@ -68,15 +72,64 @@ router.get('/:propertyId', async (req, res) => {
             return res.status(404).json({ message: 'Property not found' });
         }
 
+        const totalRatings = await Rating.countDocuments({ property: propertyId });
+        const totalPages = Math.ceil(totalRatings / limit);
+
         const ratings = await Rating.find({ property: propertyId })
             .populate('user', 'firstName lastName profilePicture')
-            .sort({ createdAt: -1 });
+            .sort({ createdAt: -1 })
+            .skip(skip)
+            .limit(limit);
 
         res.status(200).json({
             ratings,
             summary: {
                 averageRating: property.reviews.averageRating,
                 count: property.reviews.count
+            },
+            pagination: {
+                currentPage: page,
+                totalPages,
+                totalRatings,
+                hasNextPage: page < totalPages,
+                hasPreviousPage: page > 1
+            }
+        });
+    } catch (error) {
+        res.status(500).json({ message: error.message });
+    }
+});
+
+// Get all ratings by a user
+router.get('/user/:userId', authMiddleware, async (req, res) => {
+    try {
+        const { userId } = req.params;
+        const page = parseInt(req.query.page) || 1;
+        const limit = parseInt(req.query.limit) || 10;
+        const skip = (page - 1) * limit;
+
+        // Verify the user exists or is the same user requesting (if not admin)
+        if (req.userId !== userId && req.userRole !== 'admin') {
+            return res.status(403).json({ message: 'Unauthorized to access these ratings' });
+        }
+
+        const totalRatings = await Rating.countDocuments({ user: userId });
+        const totalPages = Math.ceil(totalRatings / limit);
+
+        const ratings = await Rating.find({ user: userId })
+            .populate('property', 'title mediaPaths location')
+            .sort({ createdAt: -1 })
+            .skip(skip)
+            .limit(limit);
+
+        res.status(200).json({
+            ratings,
+            pagination: {
+                currentPage: page,
+                totalPages,
+                totalRatings,
+                hasNextPage: page < totalPages,
+                hasPreviousPage: page > 1
             }
         });
     } catch (error) {
