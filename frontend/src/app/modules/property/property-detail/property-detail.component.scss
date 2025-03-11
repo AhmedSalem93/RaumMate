@@ -25,6 +25,10 @@
 }
 
 // Sidebar styles
+.sticky-top {
+  z-index: 1;
+}
+
 .sidebar {
   position: sticky;
   top: 20px;
@@ -154,7 +158,7 @@
     justify-content: center;
     border: none;
     cursor: pointer;
-    z-index: 2;
+    z-index: 1;
 
     &.prev {
       left: 10px;

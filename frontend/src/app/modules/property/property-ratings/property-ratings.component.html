@@ -1,0 +1,100 @@
+<!-- Rating Statistics -->
+<div class="card shadow-sm mb-4" *ngIf="ratingStats">
+  <div class="card-body">
+    <h3 class="h5 mb-3">Rating Distribution</h3>
+    <div class="d-flex flex-column gap-2">
+      @for (star of [5,4,3,2,1]; track star) {
+        <div class="d-flex align-items-center gap-2">
+          <div class="d-flex align-items-center" style="width: 60px;">
+            {{star}} <mat-icon class="fs-6 ms-1">star</mat-icon>
+          </div>
+          <div class="flex-grow-1">
+            <div class="progress" style="height: 8px;">
+              <div class="progress-bar bg-primary" role="progressbar" [style.width.%]="getRatingPercentage(star)"></div>
+            </div>
+          </div>
+          <div class="text-muted small" style="width: 45px; text-align: right;">
+            {{getRatingCount(star)}}
+          </div>
+        </div>
+      }
+    </div>
+    <div class="text-muted small text-end mt-2">
+      Based on {{ratingStats.totalReviews}} reviews
+    </div>
+  </div>
+</div>
+
+<!-- Rating Form -->
+<div class="card shadow-sm mb-4" *ngIf="isAuthenticated">
+  <div class="card-body">
+    <form [formGroup]="ratingForm" (ngSubmit)="submitRating()">
+      <h3 class="h5 mb-3">Write a Review</h3>
+      <div class="d-flex align-items-center gap-2 mb-3">
+        <span class="fw-medium">Rating:</span>
+        <div class="d-flex">
+          @for (star of [1,2,3,4,5]; track star) {
+            <mat-icon 
+              class="cursor-pointer fs-5"
+              (click)="setRating(star)"
+              [class.text-warning]="star <= ratingValue"
+            >
+              {{star <= ratingValue ? 'star' : 'star_border'}}
+            </mat-icon>
+          }
+        </div>
+      </div>
+
+      <mat-form-field appearance="outline" class="w-100">
+        <mat-label>Your review</mat-label>
+        <textarea 
+          matInput 
+          formControlName="comment"
+          rows="4"
+          placeholder="Share your experience..."
+        ></textarea>
+      </mat-form-field>
+
+      <div class="d-flex justify-content-between align-items-center mt-3">
+        <div class="text-muted small" *ngIf="ratingForm.valid">
+          Ready to submit your review
+        </div>
+        <button 
+          mat-raised-button 
+          color="primary" 
+          type="submit"
+          [disabled]="ratingForm.invalid || submittingRating"
+        >
+          <mat-spinner diameter="20" *ngIf="submittingRating" class="me-2"></mat-spinner>
+          <span *ngIf="!submittingRating">Submit Review</span>
+        </button>
+      </div>
+
+      <div class="alert alert-success mt-3 mb-0" *ngIf="ratingSuccess">
+        Thank you for your review!
+      </div>
+    </form>
+  </div>
+</div>
+
+<!-- Login Prompt -->
+<div class="card shadow-sm mb-4" *ngIf="!isAuthenticated">
+  <div class="card-body text-center">
+    <p class="mb-0">Please <a class="text-primary text-decoration-none" (click)="navigateToLogin()">login</a> to leave a review.</p>
+  </div>
+</div>
+
+<!-- Reviews List -->
+<div class="d-flex flex-column gap-4" *ngIf="!isLoadingRatings && ratings.length > 0">
+  @for (rating of ratings; track rating) {
+    <app-rating-component [userRating]="rating"></app-rating-component>
+  }
+</div>
+
+<div class="d-flex justify-content-center py-5" *ngIf="isLoadingRatings">
+  <mat-spinner diameter="40"></mat-spinner>
+</div>
+
+<div class="text-center text-muted py-5" *ngIf="!isLoadingRatings && ratings.length === 0">
+  No reviews yet. Be the first to review!
+</div> 
