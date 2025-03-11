@@ -94,33 +94,28 @@
           <h1 class="h3 mb-4">{{ property.title }}</h1>
 
           <!-- Image gallery -->
-          <div
-            class="position-relative mb-4 rounded-3 overflow-hidden"
-            style="height: 400px"
-          >
+          <div class="image-gallery">
             @if (property.mediaPaths && property.mediaPaths.length > 1) {
             <button
               mat-icon-button
-              class="position-absolute top-50 start-0 translate-middle-y ms-2 bg-white rounded-circle"
+              class="gallery-nav prev"
               (click)="prevImage()"
             >
               <mat-icon>chevron_left</mat-icon>
             </button>
             }
 
-            <div class="h-100 position-relative">
+            <div class="media-container">
               @if (isCurrentMediaImage()) {
               <img
                 [src]="getCurrentImage()"
                 alt="{{ property.title }}"
-                class="w-100 h-100 object-fit-cover cursor-pointer"
                 (click)="openImagePreview(getCurrentImage())"
               />
               } @else {
               <video
                 [src]="getMediaUrl()"
                 controls
-                class="w-100 h-100 object-fit-cover"
               ></video>
               }
             </div>
@@ -128,14 +123,12 @@
             @if (property.mediaPaths && property.mediaPaths.length > 1) {
             <button
               mat-icon-button
-              class="position-absolute top-50 end-0 translate-middle-y me-2 bg-white rounded-circle"
+              class="gallery-nav next"
               (click)="nextImage()"
             >
               <mat-icon>chevron_right</mat-icon>
             </button>
-            <div
-              class="position-absolute bottom-0 end-0 m-2 bg-dark bg-opacity-75 text-white px-2 py-1 rounded-pill small"
-            >
+            <div class="image-counter">
               {{ currentImageIndex + 1 }} / {{ property.mediaPaths.length }}
             </div>
             }

@@ -126,16 +126,14 @@ export class PropertyDetailComponent implements OnInit {
     return 'assets/images/placeholder-property.jpg'; // Fallback image
   }
 
-  getMediaUrl(): SafeUrl {
+  getMediaUrl(): string {
     if (this.property?.mediaPaths && this.property.mediaPaths.length > 0) {
       const url = `${environment.apiUrl}${
         this.property.mediaPaths[this.currentImageIndex]
       }`;
-      return this.sanitizer.bypassSecurityTrustUrl(url);
+      return url;
     }
-    return this.sanitizer.bypassSecurityTrustUrl(
-      'assets/images/placeholder-property.jpg'
-    );
+    return 'assets/images/placeholder-property.jpg';
   }
 
   isCurrentMediaImage(): boolean {
@@ -174,8 +172,8 @@ export class PropertyDetailComponent implements OnInit {
       hasBackdrop: false,
       data: {
         imageUrl,
-        title: this.property?.title
-      }
+        title: this.property?.title,
+      },
     });
   }
 }

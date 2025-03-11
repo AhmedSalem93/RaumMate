@@ -1,9 +1,7 @@
 import { Component, Input } from '@angular/core';
 import { Rating } from '../../../shared/models/rating.model';
 import { NgFor, DatePipe } from '@angular/common';
-import { User } from '../../../shared/models/user.model';
 import { MatIconModule } from '@angular/material/icon';
-import { InputModalityDetector } from '@angular/cdk/a11y';
 
 @Component({
   selector: 'app-rating-component',
@@ -12,7 +10,7 @@ import { InputModalityDetector } from '@angular/cdk/a11y';
   templateUrl: './rating-component.component.html',
   styleUrl: './rating-component.component.scss',
 })
-export class RatingComponentComponent {
+export class RatingCardComponentComponent {
   @Input({
     required: true,
   })

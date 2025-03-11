@@ -1,46 +1,49 @@
 <div class="preview-overlay" (click)="closeDialog()">
   <div class="preview-container" (click)="$event.stopPropagation()">
     <div class="preview-header">
-      <h2 class="preview-title">{{ data.title || 'Image Preview' }}</h2>
+      <h2 class="preview-title">{{ data.title || "Image Preview" }}</h2>
       <div class="preview-actions">
-        <button 
-          mat-icon-button 
-          (click)="downloadImage()" 
+        <button
+          mat-icon-button
+          (click)="downloadImage()"
           class="action-button"
           matTooltip="Download image"
+          [disabled]="isDownloading"
         >
-          <mat-icon>download</mat-icon>
+          <mat-icon>{{
+            isDownloading ? "hourglass_empty" : "download"
+          }}</mat-icon>
         </button>
-        <button 
-          mat-icon-button 
-          (click)="zoomIn()" 
+        <button
+          mat-icon-button
+          (click)="zoomIn()"
           class="action-button"
           matTooltip="Zoom in"
           [disabled]="scale >= 3"
         >
           <mat-icon>zoom_in</mat-icon>
         </button>
-        <button 
-          mat-icon-button 
-          (click)="zoomOut()" 
+        <button
+          mat-icon-button
+          (click)="zoomOut()"
           class="action-button"
           matTooltip="Zoom out"
           [disabled]="scale <= 0.5"
         >
           <mat-icon>zoom_out</mat-icon>
         </button>
-        <button 
-          mat-icon-button 
-          (click)="resetZoom()" 
+        <button
+          mat-icon-button
+          (click)="resetZoom()"
           class="action-button"
           matTooltip="Reset zoom"
           [disabled]="scale === 1"
         >
           <mat-icon>refresh</mat-icon>
         </button>
-        <button 
-          mat-icon-button 
-          (click)="closeDialog()" 
+        <button
+          mat-icon-button
+          (click)="closeDialog()"
           class="action-button"
           matTooltip="Close"
         >
@@ -48,22 +51,22 @@
         </button>
       </div>
     </div>
-    
-    <div 
-      class="preview-content" 
+
+    <div
+      class="preview-content"
       [class.zoomed]="scale > 1"
       (mousedown)="startPan($event)"
       (mousemove)="pan($event)"
       (mouseup)="endPan()"
       (mouseleave)="endPan()"
     >
-      <img 
-        [src]="data.imageUrl" 
-        [alt]="data.title || 'Preview'" 
+      <img
+        [src]="data.imageUrl"
+        [alt]="data.title || 'Preview'"
         class="preview-image"
         [style.transform]="getImageTransform()"
         draggable="false"
-      >
+      />
     </div>
   </div>
 </div>
