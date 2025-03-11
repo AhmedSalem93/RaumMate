@@ -2,7 +2,7 @@ const express = require('express');
 const router = express.Router();
 const Rating = require('../models/rating.model');
 const Property = require('../models/property.model');
-const { authMiddleware, requireRole } = require('../middleware/auth.middleware');
+const { authMiddleware, requireRole, addUserToRequest } = require('../middleware/auth.middleware');
 const mongoose = require('mongoose');
 
 // Add a rating to a property

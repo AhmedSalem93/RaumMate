@@ -174,12 +174,119 @@
           </div>
         </div>
 
+        <!-- Rating statistics -->
+        <div
+          class="rating-stats"
+          *ngIf="ratingStats && property.reviews.count > 0"
+        >
+          <div class="stats-header">Rating Distribution</div>
+          <div class="rating-distribution">
+            @for (i of [5, 4, 3, 2, 1]; track i) {
+            <div class="rating-bar">
+              <span class="star-label">
+                <mat-icon color="accent" [style.fontSize.px]="18"
+                  >star</mat-icon
+                >
+                {{ i }}
+              </span>
+              <div class="bar-container">
+                <div
+                  class="bar-fill"
+                  [style.width.%]="getRatingPercentage(i)"
+                ></div>
+              </div>
+              <span class="count">{{ getRatingCount(i) }}</span>
+            </div>
+            }
+          </div>
+          <div class="stats-footer">
+            Based on {{ property.reviews.count }} reviews
+          </div>
+        </div>
+
         <!-- Display individual reviews -->
         <div class="reviews-list">
           @for (rating of dummyRatings; track rating) {
           <app-rating-component [userRating]="rating"></app-rating-component>
           } @if (dummyRatings.length === 0) {
           <p>No reviews yet for this property.</p>
+          }
+        </div>
+
+        <!-- Rating submission form -->
+        <div class="submit-rating-card">
+          <div class="card-header">
+            <mat-icon color="accent">rate_review</mat-icon>
+            <span>Write a Review</span>
+          </div>
+
+          @if (isAuthenticated) {
+          <form
+            [formGroup]="ratingForm"
+            (ngSubmit)="submitRating()"
+            class="rating-form"
+          >
+            <div class="star-rating">
+              <span class="rating-label">Rating:</span>
+              <div class="stars-input">
+                @for (star of [1, 2, 3, 4, 5]; track star) {
+                <mat-icon
+                  [color]="star <= ratingValue ? 'accent' : ''"
+                  (click)="setRating(star)"
+                >
+                  {{ star <= ratingValue ? "star" : "star_border" }}
+                </mat-icon>
+                }
+              </div>
+              @if (ratingForm.get('rating')?.hasError('required') &&
+              ratingForm.get('rating')?.touched) {
+              <mat-error class="error-message"
+                >Please select a rating</mat-error
+              >
+              }
+            </div>
+
+            <mat-form-field appearance="outline" class="comment-field">
+              <mat-label>Your review (optional)</mat-label>
+              <textarea
+                matInput
+                formControlName="comment"
+                placeholder="Share your thoughts about this property..."
+                rows="4"
+              >
+              </textarea>
+              <mat-hint align="end"
+                >{{
+                  ratingForm.get("comment")?.value?.length || 0
+                }}/500</mat-hint
+              >
+            </mat-form-field>
+
+            <div class="form-actions">
+              <span class="rating-status" *ngIf="submittingRating"
+                >Submitting...</span
+              >
+              <span class="rating-status" *ngIf="ratingSuccess"
+                >Your review was submitted successfully!</span
+              >
+              <button
+                mat-raised-button
+                type="submit"
+                class="submit-button"
+                [disabled]="ratingForm.invalid || submittingRating"
+              >
+                Submit Review
+              </button>
+            </div>
+          </form>
+          } @else {
+          <div class="login-prompt">
+            <p>
+              Please
+              <span class="login-link" (click)="navigateToLogin()">login</span>
+              to submit a review
+            </p>
+          </div>
           }
         </div>
       </div>
