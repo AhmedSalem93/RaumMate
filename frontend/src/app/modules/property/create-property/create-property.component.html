@@ -1,16 +1,16 @@
-<div class="form-container">
-  <h1 class="page-title">Create Property Listing</h1>
+<div class="container py-4">
+  <h1 class="page-title text-center mb-4 fs-1">Create Property Listing</h1>
 
-  <form (ngSubmit)="onSubmit($event)">
+  <form (ngSubmit)="onSubmit($event)" class="mx-auto" style="max-width: 800px">
     <!-- Basic Information Card -->
-    <mat-card class="section-card">
+    <mat-card class="mb-4">
       <mat-card-header>
         <mat-card-title>Property Details</mat-card-title>
       </mat-card-header>
-      <mat-card-content>
+      <mat-card-content class="p-4">
         <div class="form-section" [formGroup]="basicInfoForm">
           <!-- Title -->
-          <mat-form-field appearance="outline" class="full-width">
+          <mat-form-field appearance="outline" class="w-100 mb-3">
             <mat-label>Title</mat-label>
             <input
               matInput
@@ -26,7 +26,7 @@
           </mat-form-field>
 
           <!-- Description -->
-          <mat-form-field appearance="outline" class="full-width">
+          <mat-form-field appearance="outline" class="w-100 mb-3">
             <mat-label>Description</mat-label>
             <textarea
               matInput
@@ -43,71 +43,123 @@
             >
           </mat-form-field>
 
-          <!-- Price (renamed from area) -->
-          <mat-form-field appearance="outline">
-            <mat-label>Price</mat-label>
-            <input
-              matInput
-              type="number"
-              formControlName="price"
-              min="0"
-              placeholder="Enter price"
-            />
-            <span matSuffix class="suffex-text">€</span>
-          </mat-form-field>
-
-          <!-- Is Sublet -->
-          <mat-checkbox formControlName="isSublet" color="primary">
-            Subletting
-          </mat-checkbox>
+          <!-- Price -->
+          <div class="row mb-3">
+            <div class="col-md-6">
+              <mat-form-field appearance="outline" class="w-100">
+                <mat-label>Price</mat-label>
+                <input
+                  matInput
+                  type="number"
+                  formControlName="price"
+                  min="0"
+                  placeholder="Enter price"
+                />
+                <span matSuffix class="suffex-text">€</span>
+              </mat-form-field>
+            </div>
+            <div class="col-md-6 d-flex align-items-center">
+              <mat-checkbox formControlName="isSublet" color="primary">
+                Subletting
+              </mat-checkbox>
+            </div>
+          </div>
 
           <!-- Dates -->
-          <div class="form-row" formGroupName="subletDates">
-            <mat-form-field appearance="outline">
-              <mat-label>Start Date</mat-label>
-              <input
-                matInput
-                [matDatepicker]="startPicker"
-                formControlName="start"
-              />
-              <mat-datepicker-toggle
-                matSuffix
-                [for]="startPicker"
-              ></mat-datepicker-toggle>
-              <mat-datepicker #startPicker></mat-datepicker>
-            </mat-form-field>
-
-            <mat-form-field appearance="outline">
-              <mat-label>End Date</mat-label>
-              <input
-                matInput
-                [matDatepicker]="endPicker"
-                formControlName="end"
-              />
-              <mat-datepicker-toggle
-                matSuffix
-                [for]="endPicker"
-              ></mat-datepicker-toggle>
-              <mat-datepicker #endPicker></mat-datepicker>
-            </mat-form-field>
+          <div class="row mb-3" formGroupName="subletDates">
+            <div class="col-md-6">
+              <mat-form-field appearance="outline" class="w-100">
+                <mat-label>Start Date</mat-label>
+                <input
+                  matInput
+                  [matDatepicker]="startPicker"
+                  formControlName="start"
+                />
+                <mat-datepicker-toggle
+                  matSuffix
+                  [for]="startPicker"
+                ></mat-datepicker-toggle>
+                <mat-datepicker #startPicker></mat-datepicker>
+              </mat-form-field>
+            </div>
+            <div class="col-md-6">
+              <mat-form-field appearance="outline" class="w-100">
+                <mat-label>End Date</mat-label>
+                <input
+                  matInput
+                  [matDatepicker]="endPicker"
+                  formControlName="end"
+                />
+                <mat-datepicker-toggle
+                  matSuffix
+                  [for]="endPicker"
+                ></mat-datepicker-toggle>
+                <mat-datepicker #endPicker></mat-datepicker>
+              </mat-form-field>
+            </div>
           </div>
 
           <!-- Location -->
           <div formGroupName="location">
-            <mat-form-field appearance="outline" class="full-width">
+            <mat-form-field appearance="outline" class="w-100 mb-3">
               <mat-label>City</mat-label>
               <input matInput formControlName="city" />
+              <mat-error
+                *ngIf="basicInfoForm.get('location.city')?.hasError('required')"
+                >The City is required</mat-error
+              >
             </mat-form-field>
-
-            <mat-form-field appearance="outline" class="full-width">
+            <mat-form-field appearance="outline" class="w-100 mb-3">
               <mat-label>Address (Optional)</mat-label>
               <input matInput formControlName="address" />
             </mat-form-field>
+
+            <!-- Google Maps Integration -->
+            <div formGroupName="coordinates" class="mb-4">
+              <h3 class="mb-3">Select Location on Map</h3>
+              <div class="map-container" style="height: 300px; width: 100%">
+                <google-map
+                  height="300px"
+                  width="100%"
+                  [options]="mapsOptions"
+                  (mapClick)="onMapClick($event)"
+                >
+                  <map-marker
+                    [position]="markerPosition"
+                    [options]="markerOptions"
+                    (mapDragend)="onMarkerDragEnd($event)"
+                  ></map-marker>
+                </google-map>
+              </div>
+              <div class="row mt-2">
+                <div class="col-md-6">
+                  <mat-form-field appearance="outline" class="w-100">
+                    <mat-label>Latitude</mat-label>
+                    <input
+                      matInput
+                      type="number"
+                      step="0.000001"
+                      formControlName="lat"
+                    />
+                  </mat-form-field>
+                </div>
+                <div class="col-md-6">
+                  <mat-form-field appearance="outline" class="w-100">
+                    <mat-label>Longitude</mat-label>
+                    <input
+                      matInput
+                      type="number"
+                      step="0.000001"
+                      formControlName="lng"
+                    />
+                  </mat-form-field>
+                </div>
+              </div>
+            </div>
           </div>
 
-          <!-- <-- Amenities -->
-
-          <mat-form-field appearance="fill" class="full-width">
+          <!-- Amenities -->
+          <mat-form-field appearance="fill" class="w-100 mb-3">
             <mat-label>Amenities</mat-label>
             <mat-chip-grid
               #reactiveChipGrid
@@ -138,70 +190,68 @@
     </mat-card>
 
     <!-- Media Section -->
-    <mat-card class="section-card">
+    <mat-card class="mb-4">
       <mat-card-header>
         <mat-card-title>Media</mat-card-title>
       </mat-card-header>
-      <mat-card-content>
-        <div class="form-section">
-          <div class="upload-section">
-            <h3>Images & Videos</h3>
-            <button
-              mat-raised-button
-              color="primary"
-              type="button"
-              (click)="mediaInput.click()"
-            >
-              <mat-icon>collections</mat-icon>
-              Add Media
-            </button>
-            <input
-              #mediaInput
-              type="file"
-              accept="image/*,video/*"
-              multiple
-              (change)="onMediaSelected($event)"
-              style="display: none"
-            />
+      <mat-card-content class="p-4">
+        <div class="upload-section p-4 rounded">
+          <h3 class="text-primary mb-3">Images & Videos</h3>
+          <button
+            mat-raised-button
+            color="primary"
+            type="button"
+            class="mb-3"
+            (click)="mediaInput.click()"
+          >
+            <mat-icon>collections</mat-icon>
+            Add Media
+          </button>
+          <input
+            #mediaInput
+            type="file"
+            accept="image/*,video/*"
+            multiple
+            (change)="onMediaSelected($event)"
+            class="d-none"
+          />
 
-            <!-- Replace separate image/video previews with a single preview-grid -->
-            <div class="preview-grid" *ngIf="mediaPreviewUrls.length > 0">
-              <div
-                *ngFor="let url of mediaPreviewUrls; let i = index"
-                class="preview-item"
+          <div class="preview-grid" *ngIf="mediaPreviewUrls.length > 0">
+            <div
+              *ngFor="let url of mediaPreviewUrls; let i = index"
+              class="preview-item"
+            >
+              <ng-container *ngIf="selectedMedia[i].type.startsWith('image')">
+                <img [src]="url" [alt]="'Media ' + (i + 1)" class="img-fluid" />
+              </ng-container>
+              <ng-container *ngIf="selectedMedia[i].type.startsWith('video')">
+                <video controls class="w-100">
+                  <source [src]="url" />
+                </video>
+              </ng-container>
+              <button
+                mat-mini-fab
+                color="warn"
+                class="remove-button"
+                type="button"
+                (click)="removeMedia(i)"
               >
-                <ng-container *ngIf="selectedMedia[i].type.startsWith('image')">
-                  <img [src]="url" [alt]="'Media ' + (i + 1)" />
-                </ng-container>
-                <ng-container *ngIf="selectedMedia[i].type.startsWith('video')">
-                  <video controls>
-                    <source [src]="url" />
-                  </video>
-                </ng-container>
-                <button
-                  mat-mini-fab
-                  color="warn"
-                  class="remove-button"
-                  type="button"
-                  (click)="removeMedia(i)"
-                >
-                  <mat-icon>close</mat-icon>
-                </button>
-              </div>
+                <mat-icon>close</mat-icon>
+              </button>
             </div>
           </div>
         </div>
       </mat-card-content>
     </mat-card>
 
-    <!-- Submit and Reset Button  -->
-
-    <div class="form-actions">
+    <!-- Submit Button -->
+    <div class="text-center mt-4">
       <button
         mat-raised-button
         color="primary"
         type="submit"
         [disabled]="!basicInfoForm.valid"
+        class="px-4 py-2"
       >
         Submit
       </button>
