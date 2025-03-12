@@ -113,10 +113,7 @@
                 (click)="openImagePreview(getCurrentImage())"
               />
               } @else {
-              <video
-                [src]="getMediaUrl()"
-                controls
-              ></video>
+              <video [src]="getMediaUrl()" controls></video>
               }
             </div>
 
@@ -154,12 +151,12 @@
             <div class="col-md-6">
               <div class="d-flex align-items-center gap-2 text-muted">
                 <mat-icon>event</mat-icon>
-                @if (property.isSublet && property.subletDates) {
-                <span
-                  >Available from {{ property.subletDates.start | date }} to
-                  {{ property.subletDates.end | date }}</span
-                >
-                } @else if (property.isAvailable) {
+                @if ( property.subletDates?.start || property.subletDates?.end )
+                { @if (property.subletDates && property.subletDates.start ) {
+                <span> {{ property.subletDates.start | date }} </span>
+                } @if (property.subletDates && property.subletDates.end) {
+                <span> to {{ property.subletDates.end | date }}</span>
+                } } @else if (property.isAvailable) {
                 <span>Available now</span>
                 } @else {
                 <span>Not currently available</span>
@@ -183,6 +180,22 @@
               }
             </div>
           </div>
+
+          <!-- Map section -->
+          @if (property.location.coordinates?.lat &&
+          property.location.coordinates?.lng) {
+          <div class="mb-4">
+            <h2 class="h5 mb-3">Location</h2>
+            <div class="map-container">
+              <google-map height="300px" width="100%" [options]="mapsOptions">
+                <map-marker
+                  [position]="markerPosition"
+                  [title]="property.title"
+                ></map-marker>
+              </google-map>
+            </div>
+          </div>
+          }
 
           <!-- Reviews section -->
           <div>

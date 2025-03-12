@@ -1,4 +1,4 @@
-import { Component, inject, Input, OnInit } from '@angular/core';
+import { Component, inject, Input, OnInit, ViewChild } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
@@ -10,11 +10,11 @@ import { User } from '../../../shared/models/user.model';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { ActivatedRoute, Router } from '@angular/router';
 import { environment } from '../../../../environments/environment';
-import { DomSanitizer, SafeUrl } from '@angular/platform-browser';
 import { AuthService } from '../../../core/services/auth.service';
 import { PropertyRatingsComponent } from '../property-ratings/property-ratings.component';
 import { MatDialog } from '@angular/material/dialog';
 import { ImagePreviewComponent } from '../../../shared/components/image-preview/image-preview.component';
+import { GoogleMapsModule, MapAdvancedMarker } from '@angular/google-maps';
 
 @Component({
   selector: 'app-property-detail',
@@ -27,15 +27,16 @@ import { ImagePreviewComponent } from '../../../shared/components/image-preview/
     MatFormFieldModule,
     MatProgressSpinnerModule,
     PropertyRatingsComponent,
+    GoogleMapsModule,
   ],
   templateUrl: './property-detail.component.html',
   styleUrl: './property-detail.component.scss',
 })
 export class PropertyDetailComponent implements OnInit {
   private readonly route = inject(ActivatedRoute);
-  private readonly router = inject(Router);
   private readonly authService = inject(AuthService);
   private readonly dialog = inject(MatDialog);
+  propertyService = inject(PropertyService);
 
   id = '';
   property: Property | null = null;
@@ -45,11 +46,16 @@ export class PropertyDetailComponent implements OnInit {
   error: string | null = null;
   isFavorite = false;
   isAuthenticated = false;
+  mapsOptions: google.maps.MapOptions = {
+    center: { lat: 40, lng: -20 },
+    zoom: 14,
+    mapTypeControl: false,
+    streetViewControl: false,
+    fullscreenControl: true,
+    mapId: 'b1b1b1b1b1b1b1b1',
+  };
 
-  constructor(
-    private propertyService: PropertyService,
-    private sanitizer: DomSanitizer
-  ) {}
+  markerPosition: google.maps.LatLngLiteral = { lat: 40, lng: -20 };
 
   ngOnInit(): void {
     this.isAuthenticated = this.authService.isAuthenticated();
@@ -71,6 +77,23 @@ export class PropertyDetailComponent implements OnInit {
         if (typeof data.owner === 'object') {
           this.owner = data.owner as User;
         }
+
+        // Configure the Google Map with property location
+        if (
+          data.location?.coordinates?.lat &&
+          data.location?.coordinates?.lng
+        ) {
+          const position = {
+            lat: data.location.coordinates.lat,
+            lng: data.location.coordinates.lng,
+          };
+          this.markerPosition = position;
+          this.mapsOptions = {
+            ...this.mapsOptions,
+            center: position,
+          };
+        }
+
         this.isLoading = false;
       },
       error: (err) => {
