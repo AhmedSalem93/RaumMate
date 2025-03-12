@@ -58,7 +58,7 @@ export class CreatePropertyComponent implements OnInit {
     mapTypeControl: false,
     streetViewControl: false,
     fullscreenControl: true,
-    mapId: 'b1b1b1b1b1b1b1b1',
+    mapId: 'b1b1b1b1b1b1b1bqq1',
   };
 
   markerPosition: google.maps.LatLngLiteral = {
@@ -66,9 +66,7 @@ export class CreatePropertyComponent implements OnInit {
     lng: 13.404954,
   };
 
-  markerOptions: google.maps.MarkerOptions = {
-    draggable: true,
-  };
+
 
   private subletDatesValidator(formGroup: FormGroup) {
     const isSublet = formGroup.get('isSublet')?.value;
@@ -248,13 +246,11 @@ export class CreatePropertyComponent implements OnInit {
       // Add coordinates to the form data
       formData.append(
         'location.coordinates.lat',
-        this.basicInfoForm.get('location.coordinates.lat')?.value?.toString() ||
-          ''
+        this.basicInfoForm.get('location.coordinates.lat')?.value?.toString() || ''
       );
       formData.append(
         'location.coordinates.lng',
-        this.basicInfoForm.get('location.coordinates.lng')?.value?.toString() ||
-          ''
+        this.basicInfoForm.get('location.coordinates.lng')?.value?.toString() || ''
       );
 
       this.amenitiesList.forEach((amenity) =>

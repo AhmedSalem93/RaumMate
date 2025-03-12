@@ -124,11 +124,11 @@
                   [options]="mapsOptions"
                   (mapClick)="onMapClick($event)"
                 >
-                  <map-marker
+                
+                  <map-advanced-marker
                     [position]="markerPosition"
-                    [options]="markerOptions"
                     (mapDragend)="onMarkerDragEnd($event)"
-                  ></map-marker>
+                  ></map-advanced-marker>
                 </google-map>
               </div>
               <div class="row mt-2">
