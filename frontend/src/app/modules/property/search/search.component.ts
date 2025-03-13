@@ -50,6 +50,7 @@ export class SearchComponent implements OnInit {
     { value: 'price_desc', label: 'Price (High to Low)' },
     { value: 'date_desc', label: 'Newest First' },
     { value: 'date_asc', label: 'Oldest First' },
+    { value: 'rating_desc', label: 'Rating (High to Low)' },
   ];
 
   fb = inject(FormBuilder);
