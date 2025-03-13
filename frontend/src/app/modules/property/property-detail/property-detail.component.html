@@ -221,11 +221,19 @@
                 {{ property.reviews.count || 0 }} reviews
               </div>
             </div>
-
+            @if (this.isAuthenticated) {
             <app-property-ratings
               [propertyId]="id"
               [reviewsCount]="property.reviews.count"
             ></app-property-ratings>
+            } @else {
+            <div class="alert alert-info">
+              <p class="mb-0">
+                <a [routerLink]="['/auth', 'login']">Log in</a> to leave a
+                review or to see people's reviews
+              </p>
+            </div>
+            }
           </div>
         </div>
       </div>

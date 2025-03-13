@@ -5,7 +5,10 @@ import { Injectable } from '@angular/core';
 })
 export class AuthService {
   isAuthenticated(): boolean {
-    return localStorage.getItem('token') !== null;
+    return (
+      localStorage.getItem('token') !== null &&
+      localStorage.getItem('token') !== ''
+    );
   }
 
   constructor() {}

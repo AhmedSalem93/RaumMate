@@ -120,8 +120,9 @@ router.get('/', addUserToRequest, async (req, res) => {
     // if the user is a guest, we only show the city as the location and not the full address
     if (req.user.role === 'guest') {
       properties.forEach(property => {
-        property.location.address = undefined;
-        property.location.coordinates = undefined;
+        property.location = {
+          city: property.location.city
+        }
       });
     }
 
@@ -199,8 +200,9 @@ router.get('/:id', addUserToRequest, async (req, res) => {
 
     // if the user is a guest, we only show the city as the location and not the full address
     if (req.user.role === 'guest') {
-      property.location.address = undefined;
-      property.location.coordinates = undefined;
+      property.location = {
+        city: property.location.city
+      }
     }
     res.status(200).json(property);
   }

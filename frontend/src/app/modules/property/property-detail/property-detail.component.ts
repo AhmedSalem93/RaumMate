@@ -1,3 +1,4 @@
+import { UserService } from './../../../core/services/user.service';
 import { Component, inject, Input, OnInit, ViewChild } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { MatButtonModule } from '@angular/material/button';
@@ -8,7 +9,7 @@ import { PropertyService } from '../../../core/services/property.service';
 import { Property } from '../../../shared/models/property.model';
 import { User } from '../../../shared/models/user.model';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
-import { ActivatedRoute, Router } from '@angular/router';
+import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { environment } from '../../../../environments/environment';
 import { AuthService } from '../../../core/services/auth.service';
 import { PropertyRatingsComponent } from '../property-ratings/property-ratings.component';
@@ -28,6 +29,7 @@ import { GoogleMapsModule, MapAdvancedMarker } from '@angular/google-maps';
     MatProgressSpinnerModule,
     PropertyRatingsComponent,
     GoogleMapsModule,
+    RouterLink,
   ],
   templateUrl: './property-detail.component.html',
   styleUrl: './property-detail.component.scss',
@@ -36,7 +38,7 @@ export class PropertyDetailComponent implements OnInit {
   private readonly route = inject(ActivatedRoute);
   private readonly authService = inject(AuthService);
   private readonly dialog = inject(MatDialog);
-  propertyService = inject(PropertyService);
+  private propertyService = inject(PropertyService);
 
   id = '';
   property: Property | null = null;
@@ -59,6 +61,7 @@ export class PropertyDetailComponent implements OnInit {
 
   ngOnInit(): void {
     this.isAuthenticated = this.authService.isAuthenticated();
+    // TODO - make isAuthenticated reactive to changes
 
     this.route.params.subscribe((params) => {
       this.id = params['id'];

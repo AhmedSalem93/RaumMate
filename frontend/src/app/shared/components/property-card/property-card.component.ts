@@ -33,8 +33,7 @@ export class PropertyCardComponent {
   @Output() favorite = new EventEmitter<{ id: string; value: boolean }>();
 
   isFavorite = false;
-  isOnline = false;
-  ownerAvatar = 'https://avatar.iran.liara.run/public/48';
+  ownerAvatarFallback = 'https://avatar.iran.liara.run/public/48';
 
   constructor() {}
 
@@ -81,9 +80,17 @@ export class PropertyCardComponent {
     return (this.property.owner as User).firstName || '';
   }
 
+  get ownerAvatarUrl(): string {
+    if (!this.property.owner || typeof this.property.owner === 'string') {
+      return this.ownerAvatarFallback;
+    }
+    return (
+      (this.property.owner as User).profilePicture || this.ownerAvatarFallback
+    );
+  }
   getOnlineStatus(): string {
-    // Implement actual online status logic here
-    return this.isOnline ? 'Online now' : 'Online: 9 hours ago';
+    // TODO: Implement actual online status logic here
+    return 'Last Login: 9 hours ago';
   }
 
   getFormattedCreatedAt(): string {
