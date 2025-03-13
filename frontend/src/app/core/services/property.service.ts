@@ -69,9 +69,8 @@ export class PropertyService {
     });
   }
 
-  updateListing(id: string, listing: Property): Observable<any> {
-    // Adjust endpoint URL as needed
-    return this.http.put(`/api/listings/${id}`, listing, {
+  updateListing(id: string, formData: FormData): Observable<any> {
+    return this.http.put(`${environment.apiUrl}/properties/${id}`, formData, {
       headers: this.getHeaders(),
     });
   }

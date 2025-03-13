@@ -1,4 +1,5 @@
 import { Component, OnInit, inject } from '@angular/core';
+import { ActivatedRoute } from '@angular/router';
 import {
   FormBuilder,
   Validators,
@@ -22,6 +23,13 @@ import { CommonModule } from '@angular/common';
 import { MatChipInputEvent, MatChipsModule } from '@angular/material/chips';
 import { PropertyService } from '../../../core/services/property.service';
 import { GoogleMapsModule } from '@angular/google-maps';
+import { environment } from '../../../../environments/environment';
+
+interface MediaItem {
+  url: string;
+  file?: File;
+  type: 'image' | 'video' | 'other';
+}
 
 @Component({
   selector: 'app-create-property',
@@ -50,6 +58,9 @@ export class CreatePropertyComponent implements OnInit {
   fb = inject(FormBuilder);
   snackBar = inject(MatSnackBar);
   propertyService = inject(PropertyService);
+  route = inject(ActivatedRoute);
+  editMode = false;
+  propertyId: string | null = null;
 
   // Google Maps configuration
   mapsOptions: google.maps.MapOptions = {
@@ -65,8 +76,6 @@ export class CreatePropertyComponent implements OnInit {
     lat: 52.520008,
     lng: 13.404954,
   };
-
-
 
   private subletDatesValidator(formGroup: FormGroup) {
     const isSublet = formGroup.get('isSublet')?.value;
@@ -101,12 +110,24 @@ export class CreatePropertyComponent implements OnInit {
 
   amenityControl = new FormControl('');
   amenitiesList: string[] = [];
-
-  selectedMedia: File[] = [];
-  mediaPreviewUrls: string[] = [];
+  mediaItems: MediaItem[] = [];
 
   ngOnInit(): void {
-    // Check for browser's geolocation
+    // Check if we're in edit mode
+    this.route.params.subscribe((params) => {
+      if (params['id']) {
+        this.editMode = true;
+        this.propertyId = params['id'];
+        this.loadPropertyData();
+      } else {
+        // Only use geolocation when creating a new property
+        this.initializeGeolocation();
+      }
+    });
+  }
+
+  // Move geolocation initialization to a separate method
+  private initializeGeolocation(): void {
     if (navigator.geolocation) {
       navigator.geolocation.getCurrentPosition(
         (position) => {
@@ -114,21 +135,107 @@ export class CreatePropertyComponent implements OnInit {
             lat: position.coords.latitude,
             lng: position.coords.longitude,
           };
-          this.markerPosition = pos;
-          this.mapsOptions = {
-            ...this.mapsOptions,
-            center: pos,
-          };
-          this.basicInfoForm.get('location.coordinates')?.patchValue({
-            lat: pos.lat,
-            lng: pos.lng,
-          });
+          this.updateMarkerPosition(pos);
         },
         () => {
           // Handle geolocation error - use default values
           console.log('Geolocation service failed.');
         }
       );
+    }
+  }
+
+  // Create a helper method to update the marker position and form values
+  private updateMarkerPosition(pos: google.maps.LatLngLiteral): void {
+    this.markerPosition = pos;
+    this.mapsOptions = {
+      ...this.mapsOptions,
+      center: pos,
+    };
+    this.basicInfoForm.get('location.coordinates')?.patchValue({
+      lat: pos.lat,
+      lng: pos.lng,
+    });
+  }
+
+  private loadPropertyData(): void {
+    if (this.propertyId) {
+      this.propertyService.getListingById(this.propertyId).subscribe(
+        (property) => {
+          this.basicInfoForm.patchValue({
+            title: property.title,
+            description: property.description,
+            price: property.price,
+            isSublet: property.isSublet,
+            subletDates: {
+              start: property.subletDates?.start,
+              end: property.subletDates?.end,
+            },
+            location: {
+              city: property.location.city,
+              address: property.location.address,
+              coordinates: {
+                lat: property.location?.coordinates?.lat,
+                lng: property.location?.coordinates?.lng,
+              },
+            },
+          });
+
+          // Set marker position if coordinates exist
+          if (property.location?.coordinates) {
+            const pos = {
+              lat: property.location.coordinates.lat ?? 52.520008,
+              lng: property.location.coordinates.lng ?? 13.404954,
+            };
+            this.updateMarkerPosition(pos);
+          }
+
+          // Set amenities
+          this.amenitiesList = property.amenities || [];
+
+          // Handle existing media
+          if (property.mediaPaths && property.mediaPaths.length > 0) {
+            // Convert existing media paths to MediaItem objects
+
+            property.mediaPaths.forEach((path) => {
+              const url = environment.apiUrl + path;
+              const type = this.getMediaType(url);
+              fetch(url)
+                .then((res) => res.blob())
+                .then((blob) => {
+                  const file = new File(
+                    [blob],
+                    path.split('/').pop() || 'media',
+                    { type: blob.type }
+                  );
+                  this.mediaItems.push({ url, file, type });
+                });
+            });
+          }
+        },
+        (error) => {
+          this.snackBar.open('Error loading property data', 'Close', {
+            duration: 3000,
+          });
+        }
+      );
+    }
+  }
+
+  // Determine media type from URL or file extension
+  private getMediaType(url: string): 'image' | 'video' | 'other' {
+    if (
+      url.match(/\.(jpg|jpeg|png|gif|webp)$/i) ||
+      url.startsWith('data:image/')
+    ) {
+      return 'image';
+    } else if (
+      url.match(/\.(mp4|webm|ogg|mov)$/i) ||
+      url.startsWith('data:video/')
+    ) {
+      return 'video';
+    } else {
+      return 'other';
     }
   }
 
@@ -139,11 +246,7 @@ export class CreatePropertyComponent implements OnInit {
         lat: event.latLng.lat(),
         lng: event.latLng.lng(),
       };
-      this.markerPosition = pos;
-      this.basicInfoForm.get('location.coordinates')?.patchValue({
-        lat: pos.lat,
-        lng: pos.lng,
-      });
+      this.updateMarkerPosition(pos);
     }
   }
 
@@ -154,11 +257,7 @@ export class CreatePropertyComponent implements OnInit {
         lat: event.latLng.lat(),
         lng: event.latLng.lng(),
       };
-      this.markerPosition = pos;
-      this.basicInfoForm.get('location.coordinates')?.patchValue({
-        lat: pos.lat,
-        lng: pos.lng,
-      });
+      this.updateMarkerPosition(pos);
     }
   }
 
@@ -174,10 +273,19 @@ export class CreatePropertyComponent implements OnInit {
           });
           continue;
         }
-        this.selectedMedia.push(file);
+
+        // Create a local URL for preview
         const reader = new FileReader();
-        reader.onload = (e) =>
-          this.mediaPreviewUrls.push(e.target?.result?.toString() || '');
+        reader.onload = (e) => {
+          const url = e.target?.result?.toString() || '';
+          const type = file.type.startsWith('image/')
+            ? 'image'
+            : file.type.startsWith('video/')
+            ? 'video'
+            : 'other';
+
+          this.mediaItems.push({ url, file, type });
+        };
         reader.readAsDataURL(file);
       }
     }
@@ -185,8 +293,7 @@ export class CreatePropertyComponent implements OnInit {
   }
 
   removeMedia(index: number): void {
-    this.selectedMedia.splice(index, 1);
-    this.mediaPreviewUrls.splice(index, 1);
+    this.mediaItems.splice(index, 1);
   }
 
   addAmenity(event: MatChipInputEvent): void {
@@ -208,8 +315,7 @@ export class CreatePropertyComponent implements OnInit {
   }
 
   onSubmit(event?: Event): void {
-    console.log('Form submitted');
-    event?.preventDefault(); // stops any default page reload
+    event?.preventDefault();
     if (this.basicInfoForm.valid) {
       const formData = new FormData();
       formData.append('title', this.basicInfoForm.get('title')?.value || '');
@@ -246,39 +352,58 @@ export class CreatePropertyComponent implements OnInit {
       // Add coordinates to the form data
       formData.append(
         'location.coordinates.lat',
-        this.basicInfoForm.get('location.coordinates.lat')?.value?.toString() || ''
+        this.basicInfoForm.get('location.coordinates.lat')?.value?.toString() ||
+          ''
       );
       formData.append(
         'location.coordinates.lng',
-        this.basicInfoForm.get('location.coordinates.lng')?.value?.toString() || ''
+        this.basicInfoForm.get('location.coordinates.lng')?.value?.toString() ||
+          ''
       );
 
+      // Add all media files
+      this.mediaItems.forEach((item) => {
+        if (item.file) {
+          formData.append('media', item.file);
+        }
+      });
+
+      // Add amenities
       this.amenitiesList.forEach((amenity) =>
         formData.append('amenities', amenity)
       );
-      this.selectedMedia.forEach((media) => formData.append('media', media));
 
-      console.log('Form submitted:', formData);
+      const request$ =
+        this.editMode && this.propertyId
+          ? this.propertyService.updateListing(this.propertyId, formData)
+          : this.propertyService.createListing(formData);
 
-      this.propertyService.createListing(formData).subscribe(
+      request$.subscribe(
         (response) => {
           this.snackBar.open(
-            'Property listing created successfully!',
+            `Property listing ${
+              this.editMode ? 'updated' : 'created'
+            } successfully!`,
             'Close',
-            {
-              duration: 3000,
-            }
+            { duration: 3000 }
           );
-          this.resetForm();
+          if (!this.editMode) {
+            this.resetForm();
+          }
         },
         (error) => {
-          console.error('Error creating property listing:', error);
+          console.error(
+            `Error ${
+              this.editMode ? 'updating' : 'creating'
+            } property listing:`,
+            error
+          );
           this.snackBar.open(
-            'Error creating property listing' + error.message,
+            `Error ${
+              this.editMode ? 'updating' : 'creating'
+            } property listing: ${error.message}`,
             'Close',
-            {
-              duration: 3000,
-            }
+            { duration: 3000 }
           );
         }
       );
@@ -292,8 +417,7 @@ export class CreatePropertyComponent implements OnInit {
 
   resetForm() {
     this.basicInfoForm.reset();
-    this.selectedMedia = [];
-    this.mediaPreviewUrls = [];
+    this.mediaItems = [];
     this.amenitiesList = [];
     // Reset map to default position
     this.markerPosition = { lat: 52.520008, lng: 13.404954 };

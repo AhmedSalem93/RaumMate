@@ -8,6 +8,7 @@ import { SearchComponent } from './search/search.component';
 const routes: Routes = [
   { path: '', component: PropertyListComponent, pathMatch: 'full' },
   { path: 'create', component: CreatePropertyComponent },
+  { path: 'edit/:id', component: CreatePropertyComponent },
   { path: 'search', component: SearchComponent },
   {
     path: ':id',

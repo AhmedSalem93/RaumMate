@@ -160,7 +160,7 @@ router.get('/', addUserToRequest, async (req, res) => {
 //   }
 // });
 
-router.post('/', authMiddleware, addUserToRequest, requireRole('verified'), upload.array('media'), async (req, res) => {
+router.post('/', authMiddleware, addUserToRequest, requireRole('propertyOwner'), upload.array('media'), async (req, res) => {
   try {
     const filePaths = req.files.map(file => `/static/${file.filename}`);
     const property = new Property({
@@ -219,7 +219,7 @@ router.get('/:id', addUserToRequest, async (req, res) => {
   }
 });
 
-router.put('/:id', addUserToRequest, upload.array('media'), async (req, res) => {
+router.put('/:id', authMiddleware, addUserToRequest, upload.array('media'), async (req, res) => {
   try {
     const property = await Property.findById(req.params.id);
     if (!property) {
@@ -235,8 +235,14 @@ router.put('/:id', addUserToRequest, upload.array('media'), async (req, res) => 
         mediaPaths: filePaths,
         ...req.body
       },
-      { new: true }
+      { new: true } // return the updated property
     );
+
+    if (!updatedProperty) {
+      return res.status(404).json({
+        message: 'Property not found, Couldn\'t update'
+      });
+    }
 
     // delete old media files
     oldMediaPaths.forEach(path => {
