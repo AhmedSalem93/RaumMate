@@ -4,13 +4,20 @@ const User = require('../models/user.model');
 dotenv.config();
 
 const authMiddleware = (req, res, next) => {
+  const authHeader = req.headers.authorization; // Get Authorization header
+
+  if (!authHeader || !authHeader.startsWith('Bearer ')) {
+    return res.status(401).json({ message: 'Unauthorized: No token provided' });
+  }
+
+  const token = authHeader.split(' ')[1]; // Extract the token (remove "Bearer ")
+  
   try {
-    const token = req.header('Authorization').replace('Bearer ', '');
-    const decoded = jwt.verify(token, process.env.JWT_SECRET);
-    req.userId = decoded.userId;
-    next();
-  } catch (error) {
-    res.status(401).json({ message: 'Authentication failed' });
+    const decoded = jwt.verify(token, process.env.JWT_SECRET); // Verify token
+    req.user = decoded; // Attach user data to request object
+    next(); // Proceed to the next middleware/route
+  } catch (err) {
+    return res.status(403).json({ message: 'Invalid token' });
   }
 };
 

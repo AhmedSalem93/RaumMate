@@ -1,6 +1,6 @@
 <div class="registration-form">
   <h2>Register</h2>
-  <form (ngSubmit)="onSubmit(registrationForm)" #registrationForm="ngForm">
+  <form (ngSubmit)="register(registrationForm)" #registrationForm="ngForm">
     <!-- First Name -->
     <label for="firstName">First Name:</label>
     <input
@@ -98,6 +98,9 @@
     formData.confirmPassword) {
     <div class="error-message">Passwords do not match.</div>
     }
+
+    <!-- Error message -->
+     <p *ngIf="errorMessage" class="Message" style="color: red;">{{errorMessage}}</p>
 
     <!-- Submit Button -->
     <button
