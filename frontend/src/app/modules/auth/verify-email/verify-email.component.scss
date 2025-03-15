@@ -1,0 +1,18 @@
+.container {
+    max-width: 600px;
+    height: 500px;
+    margin: 0 auto;
+    padding: 20px;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    text-align: center;
+}
+.success-icon {
+    font-size: 50px;
+    color: green;
+}
+.message {
+    font-size: 20px;
+    margin-top: 20px;
+}
