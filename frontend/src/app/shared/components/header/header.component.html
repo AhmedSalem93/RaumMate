@@ -5,7 +5,13 @@
       <a class="link" routerLink="/property/search">Search Room</a>
       <a class="link" routerLink="/about">About Us</a>
       <a class="link" routerLink="/contact">Contact</a>
-      <a routerLink="/auth/login" class="btn login-btn">Login</a>
-      <a routerLink="/auth/register" class="btn register-btn">Register</a>
+      <ng-container *ngIf="!isLoggedIn()">
+        <a routerLink="/auth/login" class="btn login-btn">Login</a>
+        <a routerLink="/auth/register" class="btn register-btn">Register</a>
+      </ng-container>
+      <ng-container *ngIf="isLoggedIn()">
+        <a (click)="logout()" class="btn login-btn">LogOut</a>
+        <a routerLink="/user/profile" class="btn register-btn">Profile</a>
+      </ng-container>
     </div>
   </nav>

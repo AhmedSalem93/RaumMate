@@ -7,6 +7,16 @@ const { body, validationResult } = require('express-validator');
 const nodemailer = require('nodemailer');
 const crypto = require('crypto');
 
+
+// Configure Nodemailer
+const transporter = nodemailer.createTransport({
+  service: 'gmail',
+  auth: {
+    user: process.env.EMAIL_USER, // Your Gmail Email
+    pass: process.env.EMAIL_PASS  // Your Gmail Password or App Password
+  }
+});
+
 // Login Route
 router.post('/login', [
   body('email').isEmail().normalizeEmail(),
@@ -30,13 +40,17 @@ router.post('/login', [
       return res.status(400).json({ message: 'Invalid credentials' });
     }
 
+    if (!user.isVerified) {
+      return res.status(400).json({ message: 'Email not verified' });
+    }
+
     const payload = {
       userId: user._id
     };
 
     jwt.sign(payload, process.env.JWT_SECRET, { expiresIn: '1h' }, (err, token) => {
       if (err) throw err;
-      res.status(200).json({ token });
+      res.status(200).json({ token, userId: user._id });
     });
   } catch (error) {
     console.error(error);
@@ -65,29 +79,57 @@ router.post('/register', [
       return res.status(400).json({ message: 'User already exists' });
     }
 
+    const verificationToken = crypto.randomBytes(20).toString('hex');
+
     user = new userModel({
       email,
       password,
       firstName,
       lastName,
-      role: role || 'registered'
+      role: role || 'registered',
+      verificationToken
     });
 
     await user.save();
 
-    // generate JWT token
-    const token = jwt.sign(
-      { userId: user._id, role: user.role }, 
-      process.env.JWT_SECRET, 
-      { expiresIn: '1h' }
+    const verificationUrl = `http://localhost:4200/auth/verify-email/${verificationToken}`;
+    await transporter.sendMail({
+      to: email,
+      subject: 'Verify Your Email',
+      html: `<p>Click <a href="${verificationUrl}">here</a> to verify your email.</p>`
+    },
+      (error, info) => {
+        if (error) {
+          return console.log(error);
+        }
+        console.log('Message sent: %s', info.messageId);
+      }
     );
 
-    res.status(201).json({ message: 'User registered' });
+    res.status(201).json({ message: 'Verification Email Sent' });
   } catch (error) {
     console.error(error);
     res.status(500).json({ message: 'Server error' });
   }
 });
+
+// verify email route
+router.get('/verify-email/:token', async (req, res) => {
+  try {
+    const user = await userModel.findOne({ verificationToken: req.params.token });
+    if (!user) return res.status(400).json({ message: 'Invalid or expired token' });
+
+    user.isVerified = true;
+    user.verificationToken = undefined;
+    user.role = 'verified';
+    await user.save();
+
+    res.json({ message: 'Email verified successfully. You can now log in.' });
+  } catch (error) {
+    res.status(500).json({ message: 'Server error' });
+  }
+});
+
 
 // logout route
 router.post('/logout', (req, res) => {
@@ -95,14 +137,6 @@ router.post('/logout', (req, res) => {
 });
 
 // password reset route
-const transporter = nodemailer.createTransport({
-  service: 'gmail',
-  auth: {
-    user: process.env.EMAIL,
-    pass: process.env.EMAIL_PASSWORD
-  }
-});
-
 router.post('/password-reset', async (req, res) => {
   const { email } = req.body;
 

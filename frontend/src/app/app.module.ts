@@ -5,6 +5,9 @@ import { HttpClientModule } from '@angular/common/http';
 import { AppComponent } from './app.component';
 import { CoreModule } from './core/core.module';
 import { SharedModule } from './shared/shared.module';
+import { HTTP_INTERCEPTORS } from '@angular/common/http';
+import { TokenInterceptorService } from './services/token-interceptor.service';
+import { Router } from '@angular/router';
 
 @NgModule({
   declarations: [],
@@ -15,6 +18,6 @@ import { SharedModule } from './shared/shared.module';
     CoreModule,
     SharedModule,
   ],
-  providers: [],
+  providers: [{ provide: HTTP_INTERCEPTORS, useClass: TokenInterceptorService, multi: true }]
 })
 export class AppModule {}
