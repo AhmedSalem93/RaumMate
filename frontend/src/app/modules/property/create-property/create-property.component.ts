@@ -21,6 +21,8 @@ import { MatSlideToggleModule } from '@angular/material/slide-toggle';
 import { CommonModule } from '@angular/common';
 import { MatChipInputEvent, MatChipsModule } from '@angular/material/chips';
 import { PropertyService } from '../../../core/services/property.service';
+import { GoogleMapsModule } from '@angular/google-maps';
+
 @Component({
   selector: 'app-create-property',
   templateUrl: './create-property.component.html',
@@ -41,12 +43,30 @@ import { PropertyService } from '../../../core/services/property.service';
     MatCheckboxModule,
     MatSlideToggleModule,
     MatChipsModule,
+    GoogleMapsModule,
   ],
 })
-export class CreatePropertyComponent {
+export class CreatePropertyComponent implements OnInit {
   fb = inject(FormBuilder);
   snackBar = inject(MatSnackBar);
   propertyService = inject(PropertyService);
+
+  // Google Maps configuration
+  mapsOptions: google.maps.MapOptions = {
+    center: { lat: 52.520008, lng: 13.404954 }, // Default to Berlin
+    zoom: 12,
+    mapTypeControl: false,
+    streetViewControl: false,
+    fullscreenControl: true,
+    mapId: 'b1b1b1b1b1b1b1bqq1',
+  };
+
+  markerPosition: google.maps.LatLngLiteral = {
+    lat: 52.520008,
+    lng: 13.404954,
+  };
+
+
 
   private subletDatesValidator(formGroup: FormGroup) {
     const isSublet = formGroup.get('isSublet')?.value;
@@ -72,6 +92,10 @@ export class CreatePropertyComponent {
     location: this.fb.group({
       city: ['', Validators.required],
       address: [''],
+      coordinates: this.fb.group({
+        lat: [52.520008],
+        lng: [13.404954],
+      }),
     }),
   });
 
@@ -80,6 +104,63 @@ export class CreatePropertyComponent {
 
   selectedMedia: File[] = [];
   mediaPreviewUrls: string[] = [];
+
+  ngOnInit(): void {
+    // Check for browser's geolocation
+    if (navigator.geolocation) {
+      navigator.geolocation.getCurrentPosition(
+        (position) => {
+          const pos = {
+            lat: position.coords.latitude,
+            lng: position.coords.longitude,
+          };
+          this.markerPosition = pos;
+          this.mapsOptions = {
+            ...this.mapsOptions,
+            center: pos,
+          };
+          this.basicInfoForm.get('location.coordinates')?.patchValue({
+            lat: pos.lat,
+            lng: pos.lng,
+          });
+        },
+        () => {
+          // Handle geolocation error - use default values
+          console.log('Geolocation service failed.');
+        }
+      );
+    }
+  }
+
+  // Handle marker position update when marker is dragged
+  onMarkerDragEnd(event: google.maps.MapMouseEvent): void {
+    if (event.latLng) {
+      const pos = {
+        lat: event.latLng.lat(),
+        lng: event.latLng.lng(),
+      };
+      this.markerPosition = pos;
+      this.basicInfoForm.get('location.coordinates')?.patchValue({
+        lat: pos.lat,
+        lng: pos.lng,
+      });
+    }
+  }
+
+  // Set marker position when user clicks on map
+  onMapClick(event: google.maps.MapMouseEvent): void {
+    if (event.latLng) {
+      const pos = {
+        lat: event.latLng.lat(),
+        lng: event.latLng.lng(),
+      };
+      this.markerPosition = pos;
+      this.basicInfoForm.get('location.coordinates')?.patchValue({
+        lat: pos.lat,
+        lng: pos.lng,
+      });
+    }
+  }
 
   onMediaSelected(event: Event): void {
     const target = event.target as HTMLInputElement;
@@ -161,6 +242,17 @@ export class CreatePropertyComponent {
         'location.address',
         this.basicInfoForm.get('location.address')?.value || ''
       );
+
+      // Add coordinates to the form data
+      formData.append(
+        'location.coordinates.lat',
+        this.basicInfoForm.get('location.coordinates.lat')?.value?.toString() || ''
+      );
+      formData.append(
+        'location.coordinates.lng',
+        this.basicInfoForm.get('location.coordinates.lng')?.value?.toString() || ''
+      );
+
       this.amenitiesList.forEach((amenity) =>
         formData.append('amenities', amenity)
       );
@@ -203,5 +295,11 @@ export class CreatePropertyComponent {
     this.selectedMedia = [];
     this.mediaPreviewUrls = [];
     this.amenitiesList = [];
+    // Reset map to default position
+    this.markerPosition = { lat: 52.520008, lng: 13.404954 };
+    this.mapsOptions = {
+      ...this.mapsOptions,
+      center: this.markerPosition,
+    };
   }
 }

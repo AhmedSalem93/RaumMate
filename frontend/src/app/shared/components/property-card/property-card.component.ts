@@ -1,15 +1,12 @@
 import { Component, Input, Output, EventEmitter } from '@angular/core';
-import { Property } from '../../../modules/property/property.model';
 import { MatCardModule } from '@angular/material/card';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { environment } from '../../../../environments/environment';
-import {
-  CurrencyPipe,
-  NgIf,
-  DatePipe,
-  NgFor,
-} from '@angular/common';
+import { CurrencyPipe, NgIf, DatePipe, NgFor } from '@angular/common';
+import { Property } from '../../models/property.model';
+import { User } from '../../models/user.model';
+import { RouterLink } from '@angular/router';
 
 interface StarDisplay {
   full: boolean;
@@ -26,6 +23,7 @@ interface StarDisplay {
     DatePipe,
     MatIconModule,
     NgFor,
+    RouterLink,
   ],
   templateUrl: './property-card.component.html',
   styleUrl: './property-card.component.scss',
@@ -35,8 +33,7 @@ export class PropertyCardComponent {
   @Output() favorite = new EventEmitter<{ id: string; value: boolean }>();
 
   isFavorite = false;
-  isOnline = false;
-  ownerAvatar = 'https://avatar.iran.liara.run/public/48';
+  ownerAvatarFallback = 'https://avatar.iran.liara.run/public/48';
 
   constructor() {}
 
@@ -76,15 +73,24 @@ export class PropertyCardComponent {
   }
 
   getOwnerName(): string {
-    if (typeof this.property.owner === 'string') {
+    if (!this.property.owner || typeof this.property.owner === 'string') {
       return '';
     }
-    return (this.property.owner as any).name || '';
+    console.log('this.property.owner', this.property.owner);
+    return (this.property.owner as User).firstName || '';
   }
 
+  get ownerAvatarUrl(): string {
+    if (!this.property.owner || typeof this.property.owner === 'string') {
+      return this.ownerAvatarFallback;
+    }
+    return (
+      (this.property.owner as User).profilePicture || this.ownerAvatarFallback
+    );
+  }
   getOnlineStatus(): string {
-    // Implement actual online status logic here
-    return this.isOnline ? 'Online now' : 'Online: 9 hours ago';
+    // TODO: Implement actual online status logic here
+    return 'Last Login: 9 hours ago';
   }
 
   getFormattedCreatedAt(): string {

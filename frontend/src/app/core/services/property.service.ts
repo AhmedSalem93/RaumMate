@@ -1,8 +1,8 @@
 import { inject, Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Observable } from 'rxjs';
-import { Property } from '../../modules/property/property.model';
 import { environment } from '../../../environments/environment';
+import { Property } from '../../shared/models/property.model';
 
 type PaginationReturnType = {
   pagination: { total: number; limit: number; page: number };
@@ -41,7 +41,6 @@ export class PropertyService {
   }
 
   createListing(formData: FormData): Observable<any> {
-    formData.append('owner', '67cad68e71e43adb9e8b8c2e'); //TODO, Where to get the owner id?
     return this.http.post(environment.apiUrl + '/properties/', formData, {
       headers: this.getHeaders(),
     });
@@ -63,9 +62,9 @@ export class PropertyService {
     });
   }
 
-  getListingById(id: string): Observable<any> {
-    // Adjust endpoint URL as needed
-    return this.http.get<any>(`/api/listings/${id}`, {
+  getListingById(id: string): Observable<Property> {
+    // Updated endpoint URL to use environment variable and correct path
+    return this.http.get<Property>(`${environment.apiUrl}/properties/${id}`, {
       headers: this.getHeaders(),
     });
   }

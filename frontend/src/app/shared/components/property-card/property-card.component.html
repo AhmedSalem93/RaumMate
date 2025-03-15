@@ -1,5 +1,5 @@
 <mat-card>
-  <div class="card-container">
+  <div class="card-container" routerLink="/property/{{ property._id }}">
     <!-- Left Section -->
     <div class="image-section">
       <img
@@ -57,10 +57,10 @@
 
       <div class="owner-section">
         <div class="owner-info">
-          <img [src]="ownerAvatar" alt="Owner avatar" class="owner-avatar" />
+          <img [src]="ownerAvatarUrl" alt="Owner avatar" class="owner-avatar" />
           <div class="owner-details">
             <span class="owner-name">{{ getOwnerName() }}</span>
-            <span class="online-status" [class.online]="isOnline">
+            <span class="online-status" [class.online]="getOnlineStatus">
               <span class="status-dot"></span>
               {{ getOnlineStatus() }}
             </span>

@@ -2,7 +2,8 @@ const express = require('express');
 const router = express.Router();
 const Rating = require('../models/rating.model');
 const Property = require('../models/property.model');
-const { authMiddleware, requireRole } = require('../middleware/auth.middleware');
+const { authMiddleware, requireRole, addUserToRequest } = require('../middleware/auth.middleware');
+const mongoose = require('mongoose');
 
 // Add a rating to a property
 router.post('/:propertyId', authMiddleware, async (req, res) => {
@@ -57,10 +58,11 @@ router.post('/:propertyId', authMiddleware, async (req, res) => {
     }
 });
 
-// Get all ratings for a property
-router.get('/:propertyId', async (req, res) => {
+// Get the authenticated user's ratings for a specific property
+router.get('/myratings/:propertyId', authMiddleware, async (req, res) => {
     try {
         const { propertyId } = req.params;
+        const userId = req.userId;
 
         // Check if property exists
         const property = await Property.findById(propertyId);
@@ -68,15 +70,146 @@ router.get('/:propertyId', async (req, res) => {
             return res.status(404).json({ message: 'Property not found' });
         }
 
-        const ratings = await Rating.find({ property: propertyId })
+        // Find the user's rating for this property
+        const rating = await Rating.findOne({
+            property: propertyId,
+            user: userId
+        }).populate('user', 'firstName lastName profilePicture');
+        if (!rating) {
+            return res.status(200).json({
+                hasRated: false,
+                message: 'You have not rated this property yet'
+            });
+        }
+        console.log(rating);
+
+        res.status(200).json({
+            hasRated: true,
+            rating
+        });
+    } catch (error) {
+        res.status(500).json({ message: error.message });
+    }
+});
+
+// Get all ratings by a user
+router.get('/user/:userId', authMiddleware, async (req, res) => {
+    // TODO: Only verified users can access this route
+    try {
+        const { userId } = req.params;
+        const page = parseInt(req.query.page) || 1;
+        const limit = parseInt(req.query.limit) || 10;
+        const skip = (page - 1) * limit;
+
+        // Verify the user exists or is the same user requesting (if not admin)
+        if (req.userId !== userId && req.userRole !== 'admin') {
+            return res.status(403).json({ message: 'Unauthorized to access these ratings' });
+        }
+
+        const totalRatings = await Rating.countDocuments({ user: userId });
+        const totalPages = Math.ceil(totalRatings / limit);
+
+        const ratings = await Rating.find({ user: userId })
+            .populate('property', 'title mediaPaths location')
+            .sort({ createdAt: -1 })
+            .skip(skip)
+            .limit(limit);
+
+        res.status(200).json({
+            ratings,
+            pagination: {
+                currentPage: page,
+                totalPages,
+                totalRatings,
+                hasNextPage: page < totalPages,
+                hasPreviousPage: page > 1
+            }
+        });
+    } catch (error) {
+        res.status(500).json({ message: error.message });
+    }
+});
+
+router.get('/stats/:propertyId', async (req, res) => {
+    try {
+        const { propertyId } = req.params;
+
+        const property = await Property.findById(propertyId);
+        if (!property) {
+            return res.status(404).json({ message: 'Property not found' });
+        }
+
+        // Count ratings by star level (1-5)
+        const ratingCounts = await Rating.aggregate([
+            { $match: { property: new mongoose.Types.ObjectId(propertyId) } },
+            { $group: { _id: '$rating', count: { $sum: 1 } } },
+            { $sort: { _id: 1 } }
+        ]);
+
+        // Create a map of rating level to count
+        const ratingDistribution = {
+            1: 0, 2: 0, 3: 0, 4: 0, 5: 0
+        };
+
+        ratingCounts.forEach(item => {
+            ratingDistribution[item._id] = item.count;
+        });
+
+        res.status(200).json({
+            averageRating: property.reviews.averageRating,
+            totalReviews: property.reviews.count,
+            distribution: ratingDistribution
+        });
+    } catch (error) {
+        console.log(error);
+        res.status(500).json({ message: error.message });
+    }
+});
+// Routes with path segments after parameters must also come before plain parameter routes
+
+
+// Get all ratings for a property with pagination
+router.get('/:propertyId', authMiddleware, async (req, res) => {
+    try {
+        const { propertyId } = req.params;
+        const page = parseInt(req.query.page) || 1;
+        const limit = parseInt(req.query.limit) || 10;
+        const skip = (page - 1) * limit;
+        const userId = req.userId; // Get the authenticated user's ID
+
+        // Check if property exists
+        const property = await Property.findById(propertyId);
+        if (!property) {
+            return res.status(404).json({ message: 'Property not found' });
+        }
+
+        // Create query to exclude the current user's rating
+        const query = { property: propertyId };
+        if (userId) {
+            query.user = { $ne: userId }; // Exclude ratings by the current user
+        }
+
+        const totalRatings = await Rating.countDocuments(query);
+        const totalPages = Math.ceil(totalRatings / limit);
+
+        const ratings = await Rating.find(query)
             .populate('user', 'firstName lastName profilePicture')
-            .sort({ createdAt: -1 });
+            .sort({ createdAt: -1 })
+            .skip(skip)
+            .limit(limit);
 
         res.status(200).json({
             ratings,
             summary: {
                 averageRating: property.reviews.averageRating,
                 count: property.reviews.count
+            },
+            pagination: {
+                currentPage: page,
+                totalPages,
+                totalRatings,
+                hasNextPage: page < totalPages,
+                hasPreviousPage: page > 1
             }
         });
     } catch (error) {
@@ -120,42 +253,6 @@ router.delete('/:ratingId', authMiddleware, async (req, res) => {
         await property.save();
 
         res.status(200).json({ message: 'Rating deleted successfully' });
-    } catch (error) {
-        res.status(500).json({ message: error.message });
-    }
-});
-
-// Get rating stats by property
-router.get('/:propertyId/stats', async (req, res) => {
-    try {
-        const { propertyId } = req.params;
-
-        const property = await Property.findById(propertyId);
-        if (!property) {
-            return res.status(404).json({ message: 'Property not found' });
-        }
-
-        // Count ratings by star level (1-5)
-        const ratingCounts = await Rating.aggregate([
-            { $match: { property: mongoose.Types.ObjectId(propertyId) } },
-            { $group: { _id: '$rating', count: { $sum: 1 } } },
-            { $sort: { _id: 1 } }
-        ]);
-
-        // Create a map of rating level to count
-        const ratingDistribution = {
-            1: 0, 2: 0, 3: 0, 4: 0, 5: 0
-        };
-
-        ratingCounts.forEach(item => {
-            ratingDistribution[item._id] = item.count;
-        });
-
-        res.status(200).json({
-            averageRating: property.reviews.averageRating,
-            totalReviews: property.reviews.count,
-            distribution: ratingDistribution
-        });
     } catch (error) {
         res.status(500).json({ message: error.message });
     }

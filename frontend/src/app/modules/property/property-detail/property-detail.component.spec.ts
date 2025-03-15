@@ -1,6 +1,8 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
 import { PropertyDetailComponent } from './property-detail.component';
+import { provideHttpClient } from '@angular/common/http';
+import { provideRouter } from '@angular/router';
 
 describe('PropertyDetailComponent', () => {
   let component: PropertyDetailComponent;
@@ -8,9 +10,9 @@ describe('PropertyDetailComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [PropertyDetailComponent]
-    })
-    .compileComponents();
+      imports: [PropertyDetailComponent],
+      providers: [provideHttpClient(), provideRouter([])],
+    }).compileComponents();
 
     fixture = TestBed.createComponent(PropertyDetailComponent);
     component = fixture.componentInstance;

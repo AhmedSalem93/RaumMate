@@ -81,22 +81,29 @@ router.get('/', addUserToRequest, async (req, res) => {
     const sortConfig = {};
 
     // Valid sort fields
-    const validSortFields = ['price', 'date'];
+    const validSortFields = ['price', 'date', 'rating'];
     if (!validSortFields.includes(sortBy)) {
       throw new Error('Invalid sortBy field');
     }
 
     sortBy = sortBy || 'date';
     // Default sort is by createdAt (newest first)
-    const field = sortBy === 'price' ? 'price' : 'createdAt';
+    let field;
+    if (sortBy === 'price') {
+      field = 'price';
+    } else if (sortBy === 'rating') {
+      field = 'reviews.averageRating';
+    } else {
+      field = 'createdAt';
+    }
 
     // Sort order (1 for ascending, -1 for descending)
-    // Default to descending for dates (newest first) and ascending for price (cheapest first)
+    // Default to descending for dates and ratings (highest first) and ascending for price (cheapest first)
     let order = 1; // default ascending
     if (sortOrder === 'desc') {
       order = -1;
-    } else if (!sortOrder && field === 'createdAt') {
-      // If no order specified and sorting by date, use descending (newest first)
+    } else if (!sortOrder && (field === 'createdAt' || field === 'reviews.averageRating')) {
+      // If no order specified and sorting by date or rating, use descending
       order = -1;
     }
 
@@ -120,8 +127,9 @@ router.get('/', addUserToRequest, async (req, res) => {
     // if the user is a guest, we only show the city as the location and not the full address
     if (req.user.role === 'guest') {
       properties.forEach(property => {
-        property.location.address = undefined;
-        property.location.coordinates = undefined;
+        property.location = {
+          city: property.location.city
+        }
       });
     }
 
@@ -195,6 +203,13 @@ router.get('/:id', addUserToRequest, async (req, res) => {
     const property = await Property.findById(req.params.id).populate('owner');
     if (!property) {
       return res.status(404).json({ message: 'Property not found' });
+    }
+
+    // if the user is a guest, we only show the city as the location and not the full address
+    if (req.user.role === 'guest') {
+      property.location = {
+        city: property.location.city
+      }
     }
     res.status(200).json(property);
   }

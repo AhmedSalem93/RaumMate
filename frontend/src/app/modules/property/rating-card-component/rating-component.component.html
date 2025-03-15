@@ -1,0 +1,52 @@
+<div class="card shadow mb-4">
+  <div class="card-body">
+    <div class="d-flex align-items-center mb-3">
+      @if (isValidUser(userRating.user)) {
+      <div class="user-avatar me-3">
+        @if (getUserAvatar(userRating.user)) {
+        <img
+          [src]="getUserAvatar(userRating.user)"
+          onerror="this.onerror=null;this.src='https://placehold.co/400x400'"
+          alt="User avatar"
+          class="avatar-img"
+        />
+        } @else {
+        <div class="avatar-placeholder">
+          <span>{{ getUserInitials(userRating.user) }}</span>
+        </div>
+        }
+      </div>
+      <div>
+        <h5 class="card-title mb-0">
+          {{ getUserFirstName(userRating.user) }}
+          {{ getUserLastName(userRating.user) }}
+        </h5>
+        <small class="text-muted">{{
+          getFormattedDate(userRating.createdAt) | date : "mediumDate"
+        }}</small>
+      </div>
+      } @else {
+      <div class="user-avatar me-3">
+        <div class="avatar-placeholder">
+          <span>U</span>
+        </div>
+      </div>
+      <div>
+        <h5 class="card-title mb-0">Anonymous User</h5>
+      </div>
+      }
+    </div>
+
+    <div class="rating-stars mb-2">
+      <ng-container *ngFor="let star of [1, 2, 3, 4, 5]">
+        <mat-icon color="warn">{{
+          star <= (userRating.rating || 0) ? "star" : "star_border"
+        }}</mat-icon>
+      </ng-container>
+    </div>
+
+    <p class="card-text comment-text">
+      {{ userRating.comment || "No comment provided." }}
+    </p>
+  </div>
+</div>

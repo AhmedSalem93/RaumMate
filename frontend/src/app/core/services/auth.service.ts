@@ -9,9 +9,15 @@ import { BehaviorSubject } from 'rxjs';
 
 
 @Injectable({
-  providedIn: 'root'
+  providedIn: 'root',
 })
 export class AuthService {
+  isAuthenticated(): boolean {
+    return (
+      localStorage.getItem('token') !== null &&
+      localStorage.getItem('token') !== ''
+    );
+  }
 
   private apiUrl = 'http://localhost:3000/api/auth';
   private userSubject = new BehaviorSubject<any>(null);
