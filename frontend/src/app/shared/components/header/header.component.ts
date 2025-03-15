@@ -7,7 +7,7 @@ import { CommonModule } from '@angular/common';
   selector: 'app-header',
   imports: [ RouterLink, CommonModule],
   templateUrl: './header.component.html',
-  styleUrl: './header.component.scss'
+  styleUrl: './header.component.scss',
 })
 export class HeaderComponent {
   constructor(private authService: AuthService, private router: Router) { }
@@ -23,4 +23,8 @@ export class HeaderComponent {
     return localStorage.getItem('token') !== null;
   }
 
+  showNotifications(): void {
+    // Logic to show notifications will go here
+    console.log('Notifications clicked');
+  }
 }

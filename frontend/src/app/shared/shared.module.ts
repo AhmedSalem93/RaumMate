@@ -5,7 +5,6 @@ import { RouterModule } from '@angular/router';
 import { HeaderComponent } from './components/header/header.component';
 import { FooterComponent } from './components/footer/footer.component';
 import { PropertyCardComponent } from './components/property-card/property-card.component';
-import { SearchComponent } from './components/search/search.component';
 
 @NgModule({
   declarations: [],
@@ -17,7 +16,6 @@ import { SearchComponent } from './components/search/search.component';
     HeaderComponent,
     FooterComponent,
     PropertyCardComponent,
-    SearchComponent
   ],
   exports: [
     CommonModule,
@@ -27,7 +25,6 @@ import { SearchComponent } from './components/search/search.component';
     HeaderComponent,
     FooterComponent,
     PropertyCardComponent,
-    SearchComponent
-  ]
+  ],
 })
-export class SharedModule { }
+export class SharedModule {}
