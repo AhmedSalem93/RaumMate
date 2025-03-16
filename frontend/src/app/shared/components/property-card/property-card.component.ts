@@ -32,7 +32,6 @@ export class PropertyCardComponent {
   @Input({ required: true }) property!: Property;
   @Output() favorite = new EventEmitter<{ id: string; value: boolean }>();
 
-  isFavorite = false;
   ownerAvatarFallback = 'https://avatar.iran.liara.run/public/48';
 
   constructor() {}
@@ -103,11 +102,6 @@ export class PropertyCardComponent {
     if (diffDays === 1) return 'yesterday';
     if (diffDays < 7) return `${diffDays} days ago`;
     return date.toLocaleDateString();
-  }
-
-  toggleFavorite(): void {
-    this.isFavorite = !this.isFavorite;
-    this.favorite.emit({ id: this.property._id!, value: this.isFavorite });
   }
 
   hasReviews(): boolean {

@@ -46,7 +46,6 @@ export class PropertyDetailComponent implements OnInit {
   currentImageIndex = 0;
   isLoading = true;
   error: string | null = null;
-  isFavorite = false;
   isAuthenticated = false;
   mapsOptions: google.maps.MapOptions = {
     center: { lat: 40, lng: -20 },
@@ -107,11 +106,6 @@ export class PropertyDetailComponent implements OnInit {
         this.isLoading = false;
       },
     });
-  }
-
-  toggleFavorite(): void {
-    this.isFavorite = !this.isFavorite;
-    // TODO: Implement actual favorite functionality
   }
 
   sendMessage(): void {

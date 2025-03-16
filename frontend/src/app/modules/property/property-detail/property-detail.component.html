@@ -64,17 +64,6 @@
         <!-- Action buttons -->
         <div class="d-grid gap-2">
           <button
-            mat-stroked-button
-            color="warn"
-            class="d-flex align-items-center justify-content-center gap-2"
-            (click)="toggleFavorite()"
-          >
-            <mat-icon>{{
-              isFavorite ? "favorite" : "favorite_border"
-            }}</mat-icon>
-            {{ isFavorite ? "Favorited" : "Favorite" }}
-          </button>
-          <button
             mat-raised-button
             color="primary"
             class="d-flex align-items-center justify-content-center gap-2"
@@ -82,6 +71,16 @@
           >
             <mat-icon>message</mat-icon>
             Send Message
+          </button>
+          <!-- New Edit Property button -->
+          <button
+            mat-raised-button
+            color="accent"
+            class="d-flex align-items-center justify-content-center gap-2"
+            [routerLink]="['/property/edit', id]"
+          >
+            <mat-icon>edit</mat-icon>
+            Edit Property
           </button>
         </div>
       </div>
