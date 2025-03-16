@@ -1,7 +1,17 @@
 <div class="profile-dashboard">
   
     <!-- Sidebar -->
-    <app-slidebar [user]="user" [reviews]="reviews"></app-slidebar>
+    <aside class="sidebar">
+      <div class="profile-pic">
+        <img *ngIf="user.profilePicture; else defaultPic" [src]="user.profilePicture" alt="Profile Picture">
+        <ng-template #defaultPic>
+          <img [src]="defaultProfilePicture" alt="Default Profile Picture">
+        </ng-template>
+        <h3>{{ user.firstName }} {{ user.lastName }}</h3>
+        <div *ngIf="reviews.length === 0">No reviews yet</div>
+        <p class="role">{{ user.role | uppercase }}</p>
+      </div>
+    </aside>
   
     <!-- Main Content -->
     <section class="profile-content">
@@ -13,13 +23,9 @@
           <div class="left">
             <p><strong>Name:</strong> {{ user.firstName }} {{ user.lastName }}</p>
             <p><strong>Date of Birth:</strong> {{ user.dateofBirth | date }}</p>
-            <p><strong>Address:</strong> {{ user.address }}</p>
-            <p><strong>Postal Code:</strong> {{ user.postalCode }}</p>
             <p><strong>Joined On:</strong> {{ user.createdAt | date }}</p>
           </div>
           <div class="right">
-            <p><strong>Email:</strong> {{ user.email }}</p>
-            <p><strong>Phone:</strong> {{ user.phone }}</p>
             <p><strong>City:</strong> {{ user.city }}</p>
             <p><strong>Country:</strong> {{ user.country }}</p>
           </div>
@@ -63,12 +69,6 @@
           <p>"{{ review.comment }}"</p>
           <small>{{ review.createdAt | date }}</small>
         </div>
-      </div>
-  
-      <!-- Account Settings -->
-      <div class="profile-section">
-        <h2>Account Settings</h2>
-        <button class="settings-btn">Change Password</button>
       </div>
   
     </section>
