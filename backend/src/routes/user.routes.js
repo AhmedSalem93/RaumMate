@@ -9,6 +9,8 @@ const crypto = require("crypto");
 const { console } = require("inspector");
 const User = require("../models/user.model");
 const { authMiddleware } = require("../middleware/auth.middleware");
+const multer = require('multer');
+const path = require('path');
 
 //get user profile
 router.get("/profile", authMiddleware, async (req, res) => {
@@ -62,6 +64,39 @@ router.post("/complete-profile", authMiddleware, async (req, res) => {
   }
 }
 );
+
+// Set up storage for uploaded files
+const storage = multer.diskStorage({
+  destination: (req, file, cb) => {
+    cb(null, 'uploads/'); // Save files to the 'uploads' directory
+  },
+  filename: (req, file, cb) => {
+    const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1e9);
+    cb(null, uniqueSuffix + path.extname(file.originalname)); // Generate a unique filename
+  }
+});
+
+const upload = multer({ storage });
+
+// upload profile picture
+router.post("/upload-profile-picture", upload.single('profilePicture'), authMiddleware, async (req, res) => {
+  if (!req.file) {
+    return res.status(400).json({ message: 'No file uploaded' });
+  }
+
+  const filePath = req.file.path; // Path to the uploaded file
+  const imageUrl = `http://localhost:3000/${filePath}`; // URL to access the file
+  try {
+    const user = await User.findById(req.user.userId);
+    user.profilePicture = imageUrl;
+    await user.save();
+  } catch (error) {
+    console.error(error);
+    return res.status(500).json({ message: error.message });
+  }
+
+  res.json({ imageUrl });
+});
 
 
 

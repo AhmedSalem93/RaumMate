@@ -13,6 +13,7 @@ import { ReviewService } from '../../../services/review.service';
 export class ProfileComponent implements OnInit {
    user: any = null;
    reviews: any[] = [];
+   defaultProfilePicture: string = 'https://avatars.githubusercontent.com/u/47269252?v=1';
 
   constructor(private userService: UserService, private router: Router, private reviewService: ReviewService) { }
 
@@ -20,32 +21,14 @@ export class ProfileComponent implements OnInit {
     if (!localStorage.getItem('token')) {
       this.router.navigate(['/auth/login']);
     }
+    this.userService.getProfile().subscribe(user => {
+      if (!user.profileCompleted) {
+        this.router.navigate(['user/complete-profile']);
+      }
+    });
     this.userService.getProfile().subscribe(user => this.user = user);
     this.reviewService.getUserReviews(this.user.userId).subscribe(reviews => { this.reviews = reviews;});
   }
-  
-  // user = {
-  //   firstName: "Hunain",
-  //   lastName: "Murtaza",
-  //   email: "hunain@example.com",
-  //   role: "verified",
-  //   isVerified: true,
-  //   profilePicture: "https://avatars.githubusercontent.com/u/47269252?v=1",
-  //   phone: "+49 1573 9358892",
-  //   location: "Hildesheim, Germany",
-  //   bio: "Software Engineer & Tech Enthusiast. Passionate about AI, Web Development, and Open Source.",
-  //   createdAt: "January 5, 2024",
-  //   preferences: {
-  //     Smoking: "No",
-  //     Pets: "Yes",
-  //     Budget: "€500-€700",
-  //     RoommateGender: "Male",
-  //     Cleanliness: "High",
-  //     NoiseTolerance: "Low",
-  //     WorkFromHome: "Yes",
-  //     Interests: ["Gaming", "Reading", "Programming", "Gym"]
-  //   }
-  // };
 
   getPreferencesKeys(): (keyof typeof this.user.preferences)[] {
     if (this.user && this.user.preferences) {

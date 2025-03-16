@@ -66,6 +66,25 @@ export class CompleteProfileComponent implements OnInit {
     this.userService.getProfile().subscribe(user => this.user = user);
   }
 
+  onFileSelected(event: any): void {
+    const file: File = event.target.files[0];
+    if (file) {
+      const formData = new FormData();
+      formData.append('profilePicture', file);
+  
+      // Upload the file to the server
+      this.userService.uploadProfilePicture(formData).subscribe({
+        next: (response: any) => {
+          // Set the profile picture to the uploaded image URL
+          this.profile.profilePicture = response.imageUrl;
+        },
+        error: (err) => {
+          this.errorMessage = 'Failed to upload profile picture';
+          console.error(err);
+        }
+      });
+    }
+  }
   getInterests(): (keyof typeof this.profile.interests)[] {
     return Object.keys(this.profile.interests) as (keyof typeof this.profile.interests)[];
   }

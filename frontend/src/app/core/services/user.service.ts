@@ -64,6 +64,14 @@ export class UserService {
       );
   }
 
+  // Upload profile picture
+  uploadProfilePicture(formData: FormData): Observable<any> {
+    const headers = new HttpHeaders({
+      Authorization: `Bearer ${localStorage.getItem('token')}`
+    });
+    return this.http.post(`${this.apiUrl}/upload-profile-picture`, formData, { headers });
+  }
+
   //get user preferences
   getPreferences(): Observable<any> {
     return this.http.get(`${this.apiUrl}/preferences`)

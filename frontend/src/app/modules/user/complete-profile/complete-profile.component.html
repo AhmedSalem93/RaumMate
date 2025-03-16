@@ -1,18 +1,23 @@
 <p *ngIf="errorMessage" class="Message" style="color: red;"> Error: {{errorMessage}}</p>
 <div class="complete-profile-container">
     <!-- Left Section: Profile Preview -->
-    <div class="profile-preview">
-      <h2>Profile Preview</h2>
-      <div class="profile-image">
-        <img *ngIf="profile && profile.profilePicture; else defaultPic" [src]="profile.profilePicture"  alt="Profile Picture">
-        <ng-template #defaultPic>
-          <img src="https://avatars.githubusercontent.com/u/47269252?v=1" alt="Default Profile Picture" >
-        </ng-template>
-        <label for="profilePicture">Profile Picture URL</label>
-        <input type="text" id="profilePicture" [(ngModel)]="profile.profilePicture" name="profilePicture" >
-      </div>
-      <p><strong>Name:</strong> {{ user.firstName }} {{ user.lastName }}</p>
-      <p><strong>Email:</strong> {{ user.email }}</p>
+    
+
+    <div class="profile-image">
+      <!-- Image Preview -->
+      <img *ngIf="profile.profilePicture; else defaultPic" [src]="profile.profilePicture" alt="Profile Picture">
+      <ng-template #defaultPic>
+        <img [src]="defaultProfilePicture" alt="Default Profile Picture">
+      </ng-template>
+    
+      <!-- File Input for Image Upload -->
+      <label for="profilePictureUpload">Upload Profile Picture</label>
+      <input
+        type="file"
+        id="profilePictureUpload"
+        (change)="onFileSelected($event)"
+        accept="image/*"
+      >
     </div>
   
     <!-- Right Section: Profile Form -->
