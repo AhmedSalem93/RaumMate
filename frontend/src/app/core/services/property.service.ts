@@ -1,6 +1,6 @@
 import { inject, Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
-import { Observable } from 'rxjs';
+import { BehaviorSubject, Observable, tap } from 'rxjs';
 import { environment } from '../../../environments/environment';
 import { Property } from '../../shared/models/property.model';
 
@@ -26,6 +26,11 @@ export interface SearchParams {
   providedIn: 'root',
 })
 export class PropertyService {
+
+  private apiUrl = 'http://localhost:3000/api/properties';
+  private userSubject = new BehaviorSubject<any>(null);
+  user = this.userSubject.asObservable();
+
   private http = inject(HttpClient);
   constructor() {}
 
@@ -54,6 +59,31 @@ export class PropertyService {
       }
     );
   }
+
+  //get my properties
+  // getMyProperties(user: string): Observable<Property[]> {
+  //   return this.http.get<Property[]>(`${environment.apiUrl}/properties/mylisting/${user}`, {
+  //     headers: this.getHeaders()
+  //   })
+  //   .pipe(
+  //     tap((response: any) => {
+  //       this.userSubject.next(response.properties);
+  //       console.log('response: ' + response.properties)
+  //     })
+  //   );
+  // }
+
+  getMyProperties(id: string): Observable<any> {
+    return this.http.get(`${this.apiUrl}/mylisting/${id}`)
+      .pipe(
+        tap((response: any) => {
+          this.userSubject.next(response.properties);
+          console.log('response: ' + response.length)
+        })
+      );
+  }
+
+  
 
   searchListings(query: string): Observable<any[]> {
     // Adjust endpoint URL as needed

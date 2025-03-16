@@ -255,4 +255,16 @@ router.put('/:id', addUserToRequest, upload.array('media'), async (req, res) => 
   }
 });
 
+router.get('/mylisting/:user', async (req, res) => {
+  try {
+    const property = await Property.find({ owner: req.params.user });
+    if (!property) {
+      return res.status(404).json({ message: 'Property not found' });
+    }
+    res.status(200).json(property);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+});
+
 module.exports = router;

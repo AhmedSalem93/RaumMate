@@ -27,7 +27,6 @@ export class UserService {
           this.userSubject.next(response.user);
         })
       );
-      
   }
 
   //update user profile
@@ -72,37 +71,21 @@ export class UserService {
     return this.http.post(`${this.apiUrl}/upload-profile-picture`, formData, { headers });
   }
 
-  //get user preferences
-  getPreferences(): Observable<any> {
-    return this.http.get(`${this.apiUrl}/preferences`)
+  // Delete profile picture
+  deleteProfilePicture(): Observable<any> {
+    const headers = new HttpHeaders({
+      Authorization: `Bearer ${localStorage.getItem('token')}`
+    });
+    return this.http.delete(`${this.apiUrl}/delete-profile-picture`, { headers });
+  }
+
+  //view user profile
+  getViewProfile(email: string): Observable<any> {
+    return this.http.get(`${this.apiUrl}/view-profile/${email}`)
       .pipe(
         tap((response: any) => {
           this.userSubject.next(response.user);
         })
       );
   }
-
-  //update user preferences
-  updatePreferences(form: any): Observable<any> {   
-    return this.http.put(`${this.apiUrl}/preferences`, form)
-      .pipe(
-        tap((response: any) => {
-          this.userSubject.next(response.user);
-        })
-      );
-  }
-
-  //delete user preferences
-  deletePreferences(): Observable<any> {
-    return this.http.delete(`${this.apiUrl}/preferences`)
-      .pipe(
-        tap(() => {
-          this.userSubject.next(null);
-        })
-      );
-  }
-
-
-
-
 }

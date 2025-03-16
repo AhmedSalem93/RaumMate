@@ -98,6 +98,18 @@ router.post("/upload-profile-picture", upload.single('profilePicture'), authMidd
   res.json({ imageUrl });
 });
 
+//get view profile
+router.get("/view-profile/:email", async (req, res) => {
+  try {
+    const user = await userModel.findOne({ email: req.params.email });
+    res.json(user);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: error.message });
+  }
+}
+);
+
 
 
 module.exports = router;

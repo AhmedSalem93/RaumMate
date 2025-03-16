@@ -48,10 +48,10 @@
               </div>
               }
             </div>
-            <h3 class="h5 mb-1">
+            <a class="h5 mb-1" [routerLink]="['/user/view-profile', owner?.email]">
               {{ owner?.firstName || "Unknown" }}
               {{ owner?.lastName || "Owner" }}
-            </h3>
+            </a>
             <p class="text-muted small mb-1">
               Member since {{ getOwnerMemberSince() }}
             </p>
