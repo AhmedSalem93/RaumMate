@@ -78,7 +78,8 @@
             mat-raised-button
             color="primary"
             class="d-flex align-items-center justify-content-center gap-2"
-            (click)="sendMessage()"
+            [routerLink]="['/messages']"
+            [queryParams]="{ receiverId: owner?.id, senderId: 2 }"
           >
             <mat-icon>message</mat-icon>
             Send Message
