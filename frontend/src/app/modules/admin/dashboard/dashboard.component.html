@@ -1,1 +1,81 @@
-<p>dashboard works!</p>
+<div class="dashboard-container">
+  <h1>Admin Dashboard</h1>
+
+  <!-- User Management -->
+  <div class="user-management">
+    <h2>User Management</h2>
+    <table>
+      <thead>
+        <tr>
+          <th>Name</th>
+          <th>Email</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let user of users">
+          <td>{{ user.name }}</td>
+          <td>{{ user.email }}</td>
+          <td>
+            <button (click)="updateUser(user)">Edit</button>
+            <button (click)="deleteUser(user)">Delete</button>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- Property Verification -->
+  <div class="property-verification">
+    <h2>Property Verification</h2>
+    <table>
+      <thead>
+        <tr>
+          <th>Name</th>
+          <th>Owner</th>
+          <th>Status</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let property of properties">
+          <td>{{ property.name }}</td>
+          <td>{{ property.owner }}</td>
+          <td>{{ property.status }}</td>
+          <td>
+            <button (click)="verifyProperty(property)">Verify</button>
+            <button (click)="rejectProperty(property)">Reject</button>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- Review Moderation -->
+  <div class="review-moderation">
+    <h2>Review Moderation</h2>
+    <table>
+      <thead>
+        <tr>
+          <th>Property</th>
+          <th>Reviewer</th>
+          <th>Rating</th>
+          <th>Status</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let review of reviews">
+          <td>{{ review.property }}</td>
+          <td>{{ review.reviewer }}</td>
+          <td>{{ review.rating }}</td>
+          <td>{{ review.status }}</td>
+          <td>
+            <button (click)="approveReview(review)">Approve</button>
+            <button (click)="rejectReview(review)">Reject</button>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div>
