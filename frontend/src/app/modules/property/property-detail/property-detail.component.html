@@ -63,6 +63,8 @@
 
         <!-- Action buttons -->
         <div class="d-grid gap-2">
+          <!-- Only show Send Message and Book Property if NOT the owner -->
+          @if (isAuthenticated && !isOwner) {
           <button
             mat-raised-button
             color="primary"
@@ -74,18 +76,20 @@
           </button>
 
           <!-- Book Property button -->
+          @if (property.isAvailable) {
           <button
             mat-raised-button
             color="accent"
             class="d-flex align-items-center justify-content-center gap-2"
             (click)="openBookingDialog()"
-            *ngIf="isAuthenticated && property.isAvailable"
           >
             <mat-icon>event_available</mat-icon>
             Book Property
           </button>
+          } }
 
-          <!-- Edit Property button -->
+          <!-- Edit Property button only for owners -->
+          @if (isAuthenticated && isOwner) {
           <button
             mat-raised-button
             color="accent"
@@ -95,6 +99,18 @@
             <mat-icon>edit</mat-icon>
             Edit Property
           </button>
+
+          <!-- Make Unavailable button for owners -->
+          <button
+            mat-raised-button
+            color="warn"
+            class="d-flex align-items-center justify-content-center gap-2 mt-2"
+            (click)="toggleAvailability()"
+          >
+            <mat-icon>block</mat-icon>
+            {{ property.isAvailable ? "Make Unavailable" : "Make Available" }}
+          </button>
+          }
         </div>
       </div>
     </div>

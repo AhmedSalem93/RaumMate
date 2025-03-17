@@ -40,7 +40,7 @@ export class PropertyDetailComponent implements OnInit {
   private readonly authService = inject(AuthService);
   private readonly dialog = inject(MatDialog);
   private propertyService = inject(PropertyService);
-
+  private userService = inject(UserService);
   id = '';
   property: Property | null = null;
   owner: User | null = null;
@@ -48,6 +48,8 @@ export class PropertyDetailComponent implements OnInit {
   isLoading = true;
   error: string | null = null;
   isAuthenticated = false;
+  CurrentuserId = '';
+
   mapsOptions: google.maps.MapOptions = {
     center: { lat: 40, lng: -20 },
     zoom: 14,
@@ -62,11 +64,19 @@ export class PropertyDetailComponent implements OnInit {
   ngOnInit(): void {
     this.isAuthenticated = this.authService.isLoggedIn();
     // TODO - make isAuthenticated reactive to changes
-
     this.route.params.subscribe((params) => {
       this.id = params['id'];
       this.fetchPropertyDetails();
     });
+
+    // get my user id from profile
+    this.userService.getProfile().subscribe((user) => {
+      this.CurrentuserId = user._id!;
+    });
+  }
+
+  get isOwner(): boolean {
+    return this.owner?._id === this.CurrentuserId;
   }
 
   fetchPropertyDetails(): void {
@@ -80,6 +90,7 @@ export class PropertyDetailComponent implements OnInit {
         if (typeof data.owner === 'object') {
           this.owner = data.owner as User;
         }
+        console.log('Owner data:', this.owner);
 
         // Configure the Google Map with property location
         if (
@@ -209,6 +220,24 @@ export class PropertyDetailComponent implements OnInit {
         // Booking was successful, maybe refresh property data or show a confirmation
         console.log('Booking request submitted');
       }
+    });
+  }
+
+  toggleAvailability(): void {
+    if (!this.property) return;
+    this.propertyService.toggleAvailability(this.id).subscribe({
+      next: (res) => {
+        // Update the local property object to reflect the change
+        if (this.property) {
+          this.property.isAvailable = res;
+        }
+      },
+      error: (err) => {
+        console.error('Error updating property availability:', err);
+        this.error = `Failed to update property availability: ${
+          err.message || 'Unknown error'
+        }`;
+      },
     });
   }
 }

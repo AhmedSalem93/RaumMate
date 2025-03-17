@@ -9,7 +9,7 @@ const fs = require('fs');
 
 require("../models/user.model");
 
-// get endpoint with multi-criteria search filtering
+// get endpoint with multi-criteria search filtering and returning only available properties
 router.get('/', addUserToRequest, async (req, res) => {
   try {
     console.log(req.query);
@@ -265,6 +265,47 @@ router.put('/:id', authMiddleware, addUserToRequest, upload.array('media'), asyn
   catch (error) {
     console.error("Error updating property:", error.message);
     res.status(500).json({ message: error.message });
+  }
+});
+
+
+// Toggle property availability
+router.patch('/:id/availability', authMiddleware, addUserToRequest, async (req, res) => {
+  try {
+    const propertyId = req.params.id;
+    const userId = req.user.userId;
+    console.log("UserID: " + userId);
+    console.log("PropertyID: " + propertyId);
+
+    // Find the property
+    const property = await Property.findById(propertyId);
+
+    if (!property) {
+      return res.status(404).json({ message: 'Property not found' });
+    }
+
+    console.log("Property Owner: " + property.owner);
+    console.log("Property Owner: " + property.owner.toString());
+
+    // Check if the user is the owner of the property - use String() for safer comparison
+    if (String(property.owner) !== String(userId)) {
+      console.log("Authorization failed: Owner ID doesn't match User ID");
+      console.log(`Owner ID type: ${typeof property.owner}, value: ${property.owner}`);
+      console.log(`User ID type: ${typeof userId}, value: ${userId}`);
+      return res.status(403).json({ message: 'You are not authorized to update this property' });
+    }
+
+    // Toggle the availability
+    property.isAvailable = !property.isAvailable;
+    await property.save();
+
+    res.json(property.isAvailable);
+  } catch (error) {
+    console.error('Error toggling property availability:', error);
+    res.status(500).json({
+      message: 'Error updating property availability',
+      error: error.message
+    });
   }
 });
 

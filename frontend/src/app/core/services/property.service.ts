@@ -75,13 +75,6 @@ export class PropertyService {
     });
   }
 
-  deleteListing(id: string): Observable<any> {
-    // Adjust endpoint URL as needed
-    return this.http.delete(`/api/listings/${id}`, {
-      headers: this.getHeaders(),
-    });
-  }
-
   searchProperties(params: SearchParams): Observable<PaginationReturnType> {
     // Only include parameters that have actual values
     const queryParams = new URLSearchParams();
@@ -136,6 +129,16 @@ export class PropertyService {
   getAmenities(): Observable<string[]> {
     return this.http.get<string[]>(
       `${environment.apiUrl}/properties/amenities`,
+      {
+        headers: this.getHeaders(),
+      }
+    );
+  }
+  // show or not
+  toggleAvailability(id: string): Observable<boolean> {
+    return this.http.patch<boolean>(
+      `${environment.apiUrl}/properties/${id}/availability`,
+      {}, // Empty body, but needed as second parameter
       {
         headers: this.getHeaders(),
       }
