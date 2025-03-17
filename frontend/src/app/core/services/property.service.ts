@@ -26,7 +26,6 @@ export interface SearchParams {
   providedIn: 'root',
 })
 export class PropertyService {
-
   private apiUrl = 'http://localhost:3000/api/properties';
   private userSubject = new BehaviorSubject<any>(null);
   user = this.userSubject.asObservable();
@@ -62,16 +61,13 @@ export class PropertyService {
 
   // get properties of a specifi user
   getMyProperties(id: string): Observable<any> {
-    return this.http.get(`${this.apiUrl}/mylisting/${id}`)
-      .pipe(
-        tap((response: any) => {
-          this.userSubject.next(response.properties);
-          console.log('response: ' + response.length)
-        })
-      );
+    return this.http.get(`${this.apiUrl}/mylisting/${id}`).pipe(
+      tap((response: any) => {
+        this.userSubject.next(response.properties);
+        console.log('response: ' + response.length);
+      })
+    );
   }
-
-  
 
   searchListings(query: string): Observable<any[]> {
     // Adjust endpoint URL as needed

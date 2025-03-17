@@ -147,6 +147,7 @@ export class SearchComponent implements OnInit {
     this.propertyService.searchProperties(params).subscribe({
       next: (response) => {
         this.properties = response.properties;
+        console.log('Search results:', this.properties);
         this.totalItems = response.pagination.total;
       },
       error: (error) => console.error('Search error:', error),

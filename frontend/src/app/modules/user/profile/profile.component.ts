@@ -7,60 +7,45 @@ import { SlidebarComponent } from '../../../shared/components/slidebar/slidebar.
 
 @Component({
   selector: 'app-profile',
-  imports: [CommonModule],
+  imports: [CommonModule, SlidebarComponent],
   templateUrl: './profile.component.html',
-  styleUrls: ['./profile.component.scss'],
+  styleUrls: ['./profile.component.scss']
 })
 export class ProfileComponent implements OnInit {
-  user: any = null;
-  reviews: any[] = [];
-  defaultProfilePicture: string =
-    'https://avatars.githubusercontent.com/u/47269252?v=1';
+   user: any = null;
+   reviews: any[] = [];
+   defaultProfilePicture: string = 'https://avatars.githubusercontent.com/u/47269252?v=1';
 
-  constructor(
-    private userService: UserService,
-    private router: Router,
-    private reviewService: ReviewService
-  ) {}
+  constructor(private userService: UserService, private router: Router, private reviewService: ReviewService) { }
 
   ngOnInit(): void {
     if (!localStorage.getItem('token')) {
       this.router.navigate(['/auth/login']);
     }
-
-    this.userService.getProfile().subscribe((user) => {
-      this.user = user;
+    this.userService.getProfile().subscribe(user => {
       if (!user.profileCompleted) {
         this.router.navigate(['user/complete-profile']);
       }
-      console.log('User ', this.user);
-      this.reviewService.getUserReviews(this.user._id).subscribe((reviews) => {
-        this.reviews = reviews;
-      });
     });
+    this.userService.getProfile().subscribe(user => this.user = user);
+    this.reviewService.getUserReviews(this.user.userId).subscribe(reviews => { this.reviews = reviews;});
   }
 
   getPreferencesKeys(): (keyof typeof this.user.preferences)[] {
     if (this.user && this.user.preferences) {
-      return Object.keys(
-        this.user.preferences
-      ) as (keyof typeof this.user.preferences)[];
+      return Object.keys(this.user.preferences) as (keyof typeof this.user.preferences)[];
     }
     return [];
   }
 
   getInterestsKeys(): (keyof typeof this.user.interests)[] {
     if (this.user && this.user.interests) {
-      return Object.keys(
-        this.user.interests
-      ) as (keyof typeof this.user.interests)[];
+      return Object.keys(this.user.interests) as (keyof typeof this.user.interests)[];
     }
     return [];
   }
 
   formatKey(key: string): string {
-    return key
-      .replace(/([A-Z])/g, ' $1')
-      .replace(/^./, (str) => str.toUpperCase());
+    return key.replace(/([A-Z])/g, ' $1').replace(/^./, str => str.toUpperCase());
   }
 }
