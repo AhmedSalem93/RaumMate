@@ -11,6 +11,7 @@ const User = require("../models/user.model");
 const { authMiddleware } = require("../middleware/auth.middleware");
 const multer = require('multer');
 const path = require('path');
+const propertyModel = require("../models/property.model");
 
 //get user profile
 router.get("/profile", authMiddleware, async (req, res) => {
@@ -25,20 +26,23 @@ router.get("/profile", authMiddleware, async (req, res) => {
 );
 
 //update user profile
-router.put("/profile", async (req, res) => {
+router.put("/update-profile", async (req, res) => {
+  const { email, city, country, postalCode, address, bio, preferences, interests } = req.body;
   try {
-    const user = await userModel.findById(req.user._id);
-    user.firstName = req.body.firstName || user.firstName;
-    user.lastName = req.body.lastName || user.lastName;
-    user.email = req.body.email || user.email;
-    if (req.body.password) {
-      user.password = req.body.password;
-    }
+    const user = await userModel.findOne({ email });
+    user.city = city;
+    user.country = country;
+    user.postalCode = postalCode;
+    user.address = address;
+    user.bio = bio;
+    user.preferences = preferences;
+    user.interests = interests;
+
     const updatedUser = await user.save();
     res.json(updatedUser);
   } catch (error) {
     console.error(error);
-    res.status(500).json({ message: "Server error" });
+    res.status(500).json({ message: error.message });
   }
 });
 
@@ -103,6 +107,21 @@ router.get("/view-profile/:email", async (req, res) => {
   try {
     const user = await userModel.findOne({ email: req.params.email });
     res.json(user);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: error.message });
+  }
+}
+);
+
+//delete user profile and all the property listing in which user is owner
+router.delete("/delete-profile", authMiddleware, async (req, res) => {
+  try {
+    const email = req.body.email;
+    const user = await userModel.findOne({ email});
+    await propertyModel.deleteMany({ owner: user._id });
+    await user.deleteOne();
+    res.json({ message: "User deleted" });
   } catch (error) {
     console.error(error);
     res.status(500).json({ message: error.message });

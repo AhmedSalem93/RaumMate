@@ -60,19 +60,7 @@ export class PropertyService {
     );
   }
 
-  //get my properties
-  // getMyProperties(user: string): Observable<Property[]> {
-  //   return this.http.get<Property[]>(`${environment.apiUrl}/properties/mylisting/${user}`, {
-  //     headers: this.getHeaders()
-  //   })
-  //   .pipe(
-  //     tap((response: any) => {
-  //       this.userSubject.next(response.properties);
-  //       console.log('response: ' + response.properties)
-  //     })
-  //   );
-  // }
-
+  // get properties of a specifi user
   getMyProperties(id: string): Observable<any> {
     return this.http.get(`${this.apiUrl}/mylisting/${id}`)
       .pipe(

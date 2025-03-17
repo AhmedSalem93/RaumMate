@@ -59,6 +59,17 @@ export class AuthService {
     this.router.navigate(['/login']);
   }
 
+  //change password function
+  changePassword(form: NgForm): Observable<any> {
+    return this.http.post(`${this.apiUrl}/change-password`, form.value)
+      .pipe(
+        tap((response: any) => {
+          localStorage.setItem('token', response.token);
+          this.userSubject.next(response.user);
+        })
+      );
+  }
+
   //check if user is logged in
   isLoggedIn(): boolean {
     return !!localStorage.getItem('token');

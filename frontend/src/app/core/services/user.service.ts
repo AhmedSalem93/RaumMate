@@ -29,9 +29,12 @@ export class UserService {
       );
   }
 
-  //update user profile
-  updateProfile(form: any): Observable<any> { 
-    return this.http.put(`${this.apiUrl}/profile`, form)
+  //update user profile /update-profile
+  updateProfile(form: any): Observable<any> {
+    const headers = new HttpHeaders({
+      Authorization: `Bearer ${localStorage.getItem('token')}`
+    });
+    return this.http.put(`${this.apiUrl}/update-profile`, form, { headers })
       .pipe(
         tap((response: any) => {
           this.userSubject.next(response.user);
@@ -39,13 +42,21 @@ export class UserService {
       );
   }
 
-  //delete user profile
-  deleteProfile(): Observable<any> {  
-    return this.http.delete(`${this.apiUrl}/profile`)
+
+  //delete user profile and pass user object
+  deleteProfile(email: string): Observable<any> {
+    
+    const options = {
+      headers: new HttpHeaders({
+        Authorization: `Bearer ${localStorage.getItem('token')}`
+      }),
+      body: { email }
+    };
+    return this.http.delete(`${this.apiUrl}/delete-profile`, options)
       .pipe(
         tap(() => {
           this.userSubject.next(null);
-          this.router.navigate(['/login']);
+          localStorage.removeItem('token');
         })
       );
   }
