@@ -37,6 +37,7 @@ import { GoogleMapsModule, MapAdvancedMarker } from '@angular/google-maps';
 export class PropertyDetailComponent implements OnInit {
   private readonly route = inject(ActivatedRoute);
   private readonly authService = inject(AuthService);
+  private readonly userService = inject(UserService);
   private readonly dialog = inject(MatDialog);
   private propertyService = inject(PropertyService);
 
@@ -58,7 +59,7 @@ export class PropertyDetailComponent implements OnInit {
   };
 
   markerPosition: google.maps.LatLngLiteral = { lat: 40, lng: -20 };
-
+  constructor(private readonly router: Router) {}
   ngOnInit(): void {
     this.isAuthenticated = this.authService.isAuthenticated();
     // TODO - make isAuthenticated reactive to changes
@@ -115,8 +116,21 @@ export class PropertyDetailComponent implements OnInit {
   }
 
   sendMessage(): void {
-    // TODO: Implement message functionality
-    console.log('Send message to owner');
+    if (!this.authService.isAuthenticated()) {
+      this.router.navigate(['/auth/login']); // Redirect to login if not authenticated
+      return;
+    }
+    if (this.owner && this.userService) {
+      const sellerId = this.owner.id; // Owner of the property
+      const buyerId = this.userService.user; // Current logged-in user
+
+      // Navigate to the MessagesComponent with query parameters
+      this.router.navigate(['/messages'], {
+        queryParams: { sellerId, buyerId },
+      });
+    } else {
+      console.error('Owner or current user information is missing.');
+    }
   }
 
   nextImage(): void {

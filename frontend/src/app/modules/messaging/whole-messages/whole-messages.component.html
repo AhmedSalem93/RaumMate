@@ -1,0 +1,21 @@
+<div class="messages-container">
+    <h2>Chat History</h2>
+  
+    <div *ngIf="chatHistory.length === 0">
+      <p>No previous chats found.</p>
+    </div>
+  
+    <div *ngFor="let chat of chatHistory" class="chat-item">
+      <div class="chat-header">
+        <strong>
+          {{ chat.senderId === userId ? 'You' : chat.senderId }} →
+          {{ chat.receiverId === userId ? 'You' : chat.receiverId }}
+        </strong>
+        <small>{{ chat.timestamp | date: 'short' }}</small>
+      </div>
+      <div class="chat-message">
+        <p>{{ chat.message }}</p>
+      </div>
+    </div>
+  </div>
+  
