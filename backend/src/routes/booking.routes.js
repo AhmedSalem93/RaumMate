@@ -169,4 +169,36 @@ router.patch('/:id/status', async (req, res) => {
     }
 });
 
+// Check if user lives in a specific property (has a contract as tenant)
+router.get('/livesInProperty/:propertyId', authMiddleware, addUserToRequest, async (req, res) => {
+    try {
+        const userId = req.user.userId;
+        const { propertyId } = req.params;
+
+        // Check if there's a contract where the user is the tenant for this property
+        const contract = await Contract.findOne({
+            property: propertyId,
+            tenant: userId
+        });
+
+        // If contract exists, user lives in the property
+        res.json(!!contract);
+    } catch (error) {
+        console.error('Error checking if user lives in property:', error);
+        res.status(500).json({
+            message: 'Error checking property residency status',
+            error: error.message
+        });
+    }
+});
+
+
+
+
+
+
+
+
+
+
 module.exports = router;

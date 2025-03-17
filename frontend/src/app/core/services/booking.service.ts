@@ -127,4 +127,10 @@ export class BookingService {
       status: 'contract_done',
     });
   }
+
+  LivesInProperty(propId: String): Observable<boolean> {
+    return this.http.get<boolean>(`${this.apiUrl}/livesInProperty/${propId}`, {
+      headers: this.getHeaders(),
+    });
+  }
 }

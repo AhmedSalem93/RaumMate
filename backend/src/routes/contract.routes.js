@@ -54,6 +54,8 @@ router.get('/property/:propertyId', async (req, res) => {
     }
 });
 
+
+
 // Get a specific contract by ID
 router.get('/:id', async (req, res) => {
     try {

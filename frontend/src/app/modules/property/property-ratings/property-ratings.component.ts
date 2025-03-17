@@ -21,6 +21,7 @@ import {
   RatingStatsResponse,
 } from '../../../core/services/rating.service';
 import { finalize, retry, catchError, of } from 'rxjs';
+import { BookingService } from '../../../core/services/booking.service';
 
 @Component({
   selector: 'app-property-ratings',
@@ -46,7 +47,7 @@ export class PropertyRatingsComponent implements OnInit, AfterViewInit {
   private readonly router = inject(Router);
   private readonly authService = inject(AuthService);
   private readonly ratingService = inject(RatingService);
-
+  private readonly bookingService = inject(BookingService);
   ratings: Rating[] = [];
   ratingStats: RatingStatsResponse | null = null;
   isLoadingRatings = false;
@@ -75,6 +76,9 @@ export class PropertyRatingsComponent implements OnInit, AfterViewInit {
   get isAuthenticated(): boolean {
     return this.authService.isLoggedIn();
   }
+
+  canCreate = false;
+
   ngOnInit(): void {
     console.log(
       'PropertyRatingsComponent initialized with propertyId:',
@@ -98,6 +102,14 @@ export class PropertyRatingsComponent implements OnInit, AfterViewInit {
     } else {
       console.log('Property has no reviews yet');
     }
+    this.bookingService.LivesInProperty(this.propertyId).subscribe({
+      next: (result) => {
+        this.canCreate = result;
+      },
+      error: (err) => {
+        console.error('Error checking if user can create ratings:', err);
+      },
+    });
   }
 
   ngAfterViewInit(): void {
@@ -279,5 +291,9 @@ export class PropertyRatingsComponent implements OnInit, AfterViewInit {
     if (!this.ratingStats || this.ratingStats.totalReviews === 0) return 0;
     const count = this.getRatingCount(star);
     return (count / this.ratingStats.totalReviews) * 100;
+  }
+
+  CanCreateRatings(): boolean {
+    return this.isAuthenticated && !this.myRating && this.canCreate;
   }
 }
