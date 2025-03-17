@@ -11,7 +11,7 @@ const authMiddleware = (req, res, next) => {
   }
 
   const token = authHeader.split(' ')[1]; // Extract the token (remove "Bearer ")
-  
+
   try {
     const decoded = jwt.verify(token, process.env.JWT_SECRET); // Verify token
     req.user = decoded; // Attach user data to request object
@@ -35,15 +35,18 @@ const requireRole = (role) => {
 
 const addUserToRequest = (req, res, next) => {
   try {
-    if (!req.userId) {
+    if (!req.user.userId) {
       // try to get user id from token if not already set
       const token = req.header('Authorization').replace('Bearer ', '');
       const decoded = jwt.verify(token, process.env.JWT_SECRET);
-      req.userId = decoded.userId; // add user id to request
+      req.user.userId = decoded.user.userId; // add user id to request
     }
 
-    User.findById(req.userId).then(user => {
-      req.user = user;
+    User.findById(req.user.userId).then(user => {
+      req.user = {
+        userId: user._id, // for consistency
+        ...user
+      };
       next();
     });
   } catch (error) {

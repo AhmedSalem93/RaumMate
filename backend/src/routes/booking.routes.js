@@ -1,19 +1,18 @@
 const express = require('express');
 const router = express.Router();
-const authMiddleware = require('../middleware/auth.middleware');
+const { authMiddleware, requireRole } = require('../middleware/auth.middleware');
 const Booking = require('../models/booking.model');
 const Property = require('../models/property.model');
 const User = require('../models/user.model');
 
-
-// Protect all booking routes with authentication 
-router.use(authMiddleware.authenticate, authMiddleware.requireRole('verified'));
+// Apply auth middleware to all routes and require verified role
+router.use(authMiddleware, requireRole('verified'));
 
 // Create a new booking request
 router.post('/', async (req, res) => {
     try {
         const { propertyId, viewingDate, message } = req.body;
-        const userId = req.user._id; // Assuming user data is set by auth middleware
+        const userId = req.user.userId; // Assuming user data is set by auth middleware
 
         // Find the property and check if it exists
         const property = await Property.findById(propertyId);
@@ -54,7 +53,7 @@ router.post('/', async (req, res) => {
 // Get all bookings for the logged-in user (as requester or owner)
 router.get('/', async (req, res) => {
     try {
-        const userId = req.user._id;
+        const userId = req.user.userId;
         const { role } = req.query; // 'owner' or 'requester'
 
         let query = {};
@@ -90,7 +89,7 @@ router.get('/:id', async (req, res) => {
         }
 
         // Check if user has permission to view this booking
-        const userId = req.user._id;
+        const userId = req.user.userId;
         if (booking.requestedBy._id.toString() !== userId.toString() &&
             booking.owner._id.toString() !== userId.toString()) {
             return res.status(403).json({ message: 'Not authorized to view this booking' });
@@ -106,7 +105,7 @@ router.get('/:id', async (req, res) => {
 router.patch('/:id/status', async (req, res) => {
     try {
         const { status, ownerNotes } = req.body;
-        const userId = req.user._id;
+        const userId = req.user.userId;
 
         const booking = await Booking.findById(req.params.id);
 

@@ -165,10 +165,10 @@ router.post('/', authMiddleware, addUserToRequest, requireRole('propertyOwner'),
     const filePaths = req.files.map(file => `/static/${file.filename}`);
     const property = new Property({
       mediaPaths: filePaths,
-      owner: req.userId,
+      owner: req.user.userId,
       ...req.body
     });
-    console.log("UserID: " + req.userId);
+    console.log("UserID: " + req.user.userId);
     const savedProperty = await property.save();
     res.status(201).json(savedProperty);
   } catch (error) {
