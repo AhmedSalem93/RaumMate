@@ -6,6 +6,8 @@ const userModel = require('../models/user.model');
 const { body, validationResult } = require('express-validator');
 const nodemailer = require('nodemailer');
 const crypto = require('crypto');
+const bcrypt = require('bcryptjs');
+
 
 
 // Configure Nodemailer
@@ -222,5 +224,32 @@ router.post('/update-password', async (req, res) => {
   }
 });
 
+// change password route and find by email
+router.post('/change-password', async (req, res) => {
+  const { email, oldPassword, newPassword } = req.body;
+
+  try {
+    const user = await userModel
+      .findOne({ email });  // find by email
+
+    if (!user) {
+      return res.status(400).json({ message: 'User not found' });
+    }
+
+    const isMatch = await bycrypt.compare(oldPassword, user.password);
+    if (!isMatch) {
+      return res.status(400).json({ message: 'Current Password is Incorrect' });
+    }
+
+    user.password = newPassword;
+    await user.save();
+
+    res.status(200).json({ message: 'Password updated' });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: error.message });
+  }
+}
+);  
 
 module.exports = router;

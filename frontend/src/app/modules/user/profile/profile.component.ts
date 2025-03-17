@@ -3,16 +3,19 @@ import { CommonModule } from '@angular/common';
 import { UserService } from '../../../core/services/user.service';
 import { Router, RouterLink } from '@angular/router';
 import { ReviewService } from '../../../services/review.service';
+import { SlidebarComponent } from '../../../shared/components/slidebar/slidebar.component';
 
 @Component({
   selector: 'app-profile',
-  imports: [CommonModule, RouterLink],
+  imports: [CommonModule, SlidebarComponent],
   templateUrl: './profile.component.html',
   styleUrls: ['./profile.component.scss'],
 })
 export class ProfileComponent implements OnInit {
   user: any = null;
   reviews: any[] = [];
+  defaultProfilePicture: string =
+    'https://avatars.githubusercontent.com/u/47269252?v=1';
 
   constructor(
     private userService: UserService,
@@ -27,6 +30,9 @@ export class ProfileComponent implements OnInit {
 
     this.userService.getProfile().subscribe((user) => {
       this.user = user;
+      if (!user.profileCompleted) {
+        this.router.navigate(['user/complete-profile']);
+      }
       console.log('User ', this.user);
       this.reviewService.getUserReviews(this.user._id).subscribe((reviews) => {
         this.reviews = reviews;

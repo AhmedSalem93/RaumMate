@@ -1,0 +1,23 @@
+<div class="profile-dashboard">
+  
+    <!-- Sidebar -->
+    <app-slidebar [user]="user" [reviews]="reviews"></app-slidebar>
+  
+    <!-- Main Content -->
+    <section class="profile-content">
+      
+      <!-- Right Section -->
+
+      <ng-container *ngIf="properties?.length; else noProperties">
+        <div *ngFor="let property of properties">
+          <app-property-card [property]="property"></app-property-card>
+        </div>
+      </ng-container>
+      <ng-template #noProperties>
+        <p>No properties available</p>
+      </ng-template>
+      
+    </section>
+  
+  </div>
+  
