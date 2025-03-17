@@ -2,6 +2,7 @@ const express = require('express');
 const router = express.Router();
 
 const Property = require('../models/property.model');
+const User = require('../models/user.model'); // Add explicit import for User model
 const upload = require('../middleware/upload.middleware');
 const { authMiddleware, requireRole, addUserToRequest } = require('../middleware/auth.middleware');
 const fs = require('fs');
@@ -160,7 +161,7 @@ router.get('/', addUserToRequest, async (req, res) => {
 //   }
 // });
 
-router.post('/', authMiddleware, addUserToRequest, requireRole('propertyOwner'), upload.array('media'), async (req, res) => {
+router.post('/', authMiddleware, addUserToRequest, requireRole('verified'), upload.array('media'), async (req, res) => {
   try {
     const filePaths = req.files.map(file => `/static/${file.filename}`);
     const property = new Property({
@@ -170,6 +171,12 @@ router.post('/', authMiddleware, addUserToRequest, requireRole('propertyOwner'),
     });
     console.log("UserID: " + req.user.userId);
     const savedProperty = await property.save();
+
+    // If this is the user's first property, update their role to propertyOwner
+    if (req.user.role === 'verified') {
+      await User.findByIdAndUpdate(req.user.userId, { role: 'propertyOwner' });
+    }
+
     res.status(201).json(savedProperty);
   } catch (error) {
     // delete media files

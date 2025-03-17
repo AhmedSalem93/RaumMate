@@ -22,12 +22,19 @@ const authMiddleware = (req, res, next) => {
 };
 
 const requireRole = (role) => {
+  // Define role hierarchy (from lowest to highest privileges)
+  const roleHierarchy = ['guest', 'registered', 'verified', 'propertyOwner', 'admin'];
+
   return (req, res, next) => {
-    if (req.user.role !== role) {
-      console.log("Role: " + req.user.role);
-      console.log("Required Role: " + role
-      );
-      return res.status(403).json({ message: 'Forbidden' });
+    // Get indexes of user role and required role in the hierarchy
+    const userRoleIndex = roleHierarchy.indexOf(req.user.role);
+    const requiredRoleIndex = roleHierarchy.indexOf(role);
+
+    // Check if user's role is high enough in the hierarchy
+    if (userRoleIndex < requiredRoleIndex) {
+      console.log("User Role: " + req.user.role + " (level " + userRoleIndex + ")");
+      console.log("Required Role: " + role + " (level " + requiredRoleIndex + ")");
+      return res.status(403).json({ message: 'Forbidden: Insufficient privileges' });
     }
     next();
   };
