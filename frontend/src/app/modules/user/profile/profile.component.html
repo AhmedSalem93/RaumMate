@@ -2,7 +2,10 @@
   <!-- Sidebar -->
   <aside class="sidebar">
     <div class="profile-pic">
-      <img [src]="user.profilePicture" alt="Profile Picture" />
+      <img
+        [src]="user?.profilePicture ? user?.profilePicture : ''"
+        alt="Profile Picture"
+      />
       <!-- <img *ngIf="user.profilePicture; else defaultPic" [src]="user.profilePicture" alt="Profile Picture">
       <ng-template #defaultPic>
         <img [src]="defaultProfilePicture" alt="Default Profile Picture">

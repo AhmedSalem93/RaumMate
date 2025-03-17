@@ -11,7 +11,7 @@ const routes: Routes = [
   { path: 'profile', component: ProfileComponent },
   { path: 'complete-profile', component: CompleteProfileComponent },
   { path: 'booking', component: BookingListComponent },
-  { path: 'view-profile/:email', component:  ViewProfileComponent},
+  { path: 'view-profile/:email', component: ViewProfileComponent },
   { path: 'my-listing', component: MyListingComponent },
   { path: 'setting', component: SettingComponent },
   { path: '', redirectTo: 'profile', pathMatch: 'full' },

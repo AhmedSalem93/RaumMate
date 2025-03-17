@@ -7,7 +7,7 @@ import { SlidebarComponent } from '../../../shared/components/slidebar/slidebar.
 
 @Component({
   selector: 'app-profile',
-  imports: [CommonModule, SlidebarComponent],
+  imports: [CommonModule],
   templateUrl: './profile.component.html',
   styleUrls: ['./profile.component.scss'],
 })
@@ -39,29 +39,6 @@ export class ProfileComponent implements OnInit {
       });
     });
   }
-
-  // user = {
-  //   firstName: "Hunain",
-  //   lastName: "Murtaza",
-  //   email: "hunain@example.com",
-  //   role: "verified",
-  //   isVerified: true,
-  //   profilePicture: "https://avatars.githubusercontent.com/u/47269252?v=1",
-  //   phone: "+49 1573 9358892",
-  //   location: "Hildesheim, Germany",
-  //   bio: "Software Engineer & Tech Enthusiast. Passionate about AI, Web Development, and Open Source.",
-  //   createdAt: "January 5, 2024",
-  //   preferences: {
-  //     Smoking: "No",
-  //     Pets: "Yes",
-  //     Budget: "€500-€700",
-  //     RoommateGender: "Male",
-  //     Cleanliness: "High",
-  //     NoiseTolerance: "Low",
-  //     WorkFromHome: "Yes",
-  //     Interests: ["Gaming", "Reading", "Programming", "Gym"]
-  //   }
-  // };
 
   getPreferencesKeys(): (keyof typeof this.user.preferences)[] {
     if (this.user && this.user.preferences) {
