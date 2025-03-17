@@ -1,0 +1,84 @@
+<mat-card class="booking-card">
+  <div class="booking-container">
+    <!-- Left section with property image -->
+    <div class="property-image-section">
+      <img
+        [src]="getPropertyImage()"
+        alt="Property image"
+        onerror="this.onerror=null;this.src='https://placehold.co/400x200'"
+        [routerLink]="['/property', getPropertyId()]"
+        class="clickable"
+      />
+      <div class="status-badge" [ngClass]="getStatusClass()">
+        {{ getStatusText() }}
+      </div>
+    </div>
+
+    <!-- Right section with booking details -->
+    <div class="booking-details">
+      <div class="booking-header">
+        <h2 class="property-title">{{ getPropertyTitle() }}</h2>
+        <div class="location">
+          <mat-icon>location_on</mat-icon>
+          <span>{{ getPropertyLocation() }}</span>
+        </div>
+      </div>
+
+      <div class="booking-info">
+        <div class="info-row">
+          <mat-icon>event</mat-icon>
+          <span>Viewing Date: {{ booking.viewingDate | date : "medium" }}</span>
+        </div>
+
+        <div class="info-row">
+          <mat-icon>person</mat-icon>
+          <span>Requested by: {{ getRequesterName() }}</span>
+        </div>
+
+        <div class="info-row">
+          <mat-icon>house</mat-icon>
+          <span>Owner: {{ getOwnerName() }}</span>
+        </div>
+
+        <div class="info-row" *ngIf="booking.message">
+          <mat-icon>message</mat-icon>
+          <span class="message">{{ booking.message }}</span>
+        </div>
+
+        <div class="info-row" *ngIf="booking.ownerNotes">
+          <mat-icon>comment</mat-icon>
+          <span class="owner-notes">{{ booking.ownerNotes }}</span>
+        </div>
+      </div>
+
+      <!-- Action buttons based on booking status and user role -->
+      <div class="action-buttons">
+        <!-- Show accept/reject buttons if user is the property owner and status is 'requested' -->
+        <ng-container *ngIf="isOwner() && canProcessBooking()">
+          <button mat-raised-button color="primary" (click)="onAccept()">
+            Accept
+          </button>
+          <button mat-stroked-button color="warn" (click)="onReject()">
+            Reject
+          </button>
+        </ng-container>
+
+        <!-- Show cancel button if user is the requester and status allows cancellation -->
+        <button
+          mat-button
+          color="warn"
+          *ngIf="isRequester() && canCancelBooking()"
+          (click)="onCancel()"
+        >
+          Cancel Request
+        </button>
+      </div>
+
+      <div class="booking-footer">
+        <span class="booking-date"
+          >Booking created: {{ booking.createdAt | date : "medium" }}</span
+        >
+      </div>
+    </div>
+  </div>
+</mat-card>

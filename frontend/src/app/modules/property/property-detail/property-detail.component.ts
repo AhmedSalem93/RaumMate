@@ -16,7 +16,7 @@ import { PropertyRatingsComponent } from '../property-ratings/property-ratings.c
 import { MatDialog } from '@angular/material/dialog';
 import { ImagePreviewComponent } from '../../../shared/components/image-preview/image-preview.component';
 import { GoogleMapsModule } from '@angular/google-maps';
-import { BookingDialogComponent } from '../booking-dialog/booking-dialog.component';
+import { BookingDialogComponent } from '../../booking/booking-dialog/booking-dialog.component';
 
 @Component({
   selector: 'app-property-detail',

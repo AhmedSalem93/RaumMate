@@ -1,3 +1,4 @@
+import { BookingListComponent } from './../booking/booking-list/booking-list.component';
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
 import { ProfileComponent } from './profile/profile.component';
@@ -6,7 +7,8 @@ import { CompleteProfileComponent } from './complete-profile/complete-profile.co
 const routes: Routes = [
   { path: 'profile', component: ProfileComponent },
   { path: 'complete-profile', component: CompleteProfileComponent },
-  { path: '', redirectTo: 'profile', pathMatch: 'full' }
+  { path: 'booking', component: BookingListComponent },
+  { path: '', redirectTo: 'profile', pathMatch: 'full' },
 ];
 
 @NgModule({

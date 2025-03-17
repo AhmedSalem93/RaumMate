@@ -1,15 +1,17 @@
-import { ApplicationConfig, provideZoneChangeDetection } from '@angular/core';
+import { ApplicationConfig } from '@angular/core';
 import { provideRouter } from '@angular/router';
-import { routes } from './app.routes';
+import { provideAnimations } from '@angular/platform-browser/animations';
 import { provideHttpClient } from '@angular/common/http';
 import { GoogleMap } from '@angular/google-maps';
 import { provideNativeDateAdapter } from '@angular/material/core';
 
+import { routes } from './app.routes';
+
 export const appConfig: ApplicationConfig = {
   providers: [
-    provideZoneChangeDetection({ eventCoalescing: true }),
     provideRouter(routes),
     provideHttpClient(),
+    provideAnimations(), // This is critical for MatDialog to work properly
     provideNativeDateAdapter(),
     GoogleMap,
   ],

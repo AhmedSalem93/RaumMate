@@ -97,6 +97,7 @@ export class BookingService {
     id: string,
     notes?: string
   ): Observable<{ message: string; booking: Booking }> {
+    console.log(`Accepting booking ${id} with notes:`, notes);
     return this.updateBookingStatus(id, {
       status: 'accepted',
       ownerNotes: notes,

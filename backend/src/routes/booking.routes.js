@@ -65,9 +65,9 @@ router.get('/', async (req, res) => {
         }
 
         const bookings = await Booking.find(query)
-            .populate('property', 'title mediaPaths location price')
-            .populate('requestedBy', 'name email')
-            .populate('owner', 'name email')
+            .populate('property')
+            .populate('requestedBy')
+            .populate('owner')
             .sort({ createdAt: -1 });
 
         res.json(bookings);
@@ -81,8 +81,8 @@ router.get('/:id', async (req, res) => {
     try {
         const booking = await Booking.findById(req.params.id)
             .populate('property')
-            .populate('requestedBy', 'name email')
-            .populate('owner', 'name email');
+            .populate('requestedBy')
+            .populate('owner');
 
         if (!booking) {
             return res.status(404).json({ message: 'Booking not found' });

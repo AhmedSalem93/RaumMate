@@ -8,22 +8,32 @@ import { ReviewService } from '../../../services/review.service';
   selector: 'app-profile',
   imports: [CommonModule, RouterLink],
   templateUrl: './profile.component.html',
-  styleUrls: ['./profile.component.scss']
+  styleUrls: ['./profile.component.scss'],
 })
 export class ProfileComponent implements OnInit {
-   user: any = null;
-   reviews: any[] = [];
+  user: any = null;
+  reviews: any[] = [];
 
-  constructor(private userService: UserService, private router: Router, private reviewService: ReviewService) { }
+  constructor(
+    private userService: UserService,
+    private router: Router,
+    private reviewService: ReviewService
+  ) {}
 
   ngOnInit(): void {
     if (!localStorage.getItem('token')) {
       this.router.navigate(['/auth/login']);
     }
-    this.userService.getProfile().subscribe(user => this.user = user);
-    this.reviewService.getUserReviews(this.user.userId).subscribe(reviews => { this.reviews = reviews;});
+
+    this.userService.getProfile().subscribe((user) => {
+      this.user = user;
+      console.log('User ', this.user);
+      this.reviewService.getUserReviews(this.user._id).subscribe((reviews) => {
+        this.reviews = reviews;
+      });
+    });
   }
-  
+
   // user = {
   //   firstName: "Hunain",
   //   lastName: "Murtaza",
@@ -49,19 +59,25 @@ export class ProfileComponent implements OnInit {
 
   getPreferencesKeys(): (keyof typeof this.user.preferences)[] {
     if (this.user && this.user.preferences) {
-      return Object.keys(this.user.preferences) as (keyof typeof this.user.preferences)[];
+      return Object.keys(
+        this.user.preferences
+      ) as (keyof typeof this.user.preferences)[];
     }
     return [];
   }
 
   getInterestsKeys(): (keyof typeof this.user.interests)[] {
     if (this.user && this.user.interests) {
-      return Object.keys(this.user.interests) as (keyof typeof this.user.interests)[];
+      return Object.keys(
+        this.user.interests
+      ) as (keyof typeof this.user.interests)[];
     }
     return [];
   }
 
   formatKey(key: string): string {
-    return key.replace(/([A-Z])/g, ' $1').replace(/^./, str => str.toUpperCase());
+    return key
+      .replace(/([A-Z])/g, ' $1')
+      .replace(/^./, (str) => str.toUpperCase());
   }
 }
