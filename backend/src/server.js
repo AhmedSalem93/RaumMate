@@ -1,4 +1,3 @@
-
 const express = require('express');
 const cors = require('cors');
 const mongoose = require('mongoose');
@@ -28,6 +27,8 @@ app.use(cors());
 app.use(morgan('dev'))
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
+
+
 // Database connection
 mongoose.connect(process.env.MONGODB_URI, {
   useNewUrlParser: true,
@@ -43,6 +44,7 @@ app.use('/api/properties', require('./routes/property.routes'));
 app.use('/api/reviews', require('./routes/review.routes'));
 app.use('/api/static', express.static('static'));
 app.use('/api/ratings', require('./routes/rating.routes'));
+app.use('/api/bookings', require('./routes/booking.routes'));
 
 // Default route
 app.get("/", (req, res) => {
