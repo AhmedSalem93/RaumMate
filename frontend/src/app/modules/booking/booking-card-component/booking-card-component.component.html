@@ -63,6 +63,16 @@
           </button>
         </ng-container>
 
+        <!-- Show "Mark as Contract Done" button if user is the owner and booking is accepted -->
+        <button
+          mat-raised-button
+          color="accent"
+          *ngIf="isOwner() && canMarkContractDone()"
+          (click)="onContractDone()"
+        >
+          Mark as Contract Done
+        </button>
+
         <!-- Show cancel button if user is the requester and status allows cancellation -->
         <button
           mat-button

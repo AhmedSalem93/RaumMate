@@ -45,6 +45,7 @@ app.use('/api/reviews', require('./routes/review.routes'));
 app.use('/api/static', express.static('static'));
 app.use('/api/ratings', require('./routes/rating.routes'));
 app.use('/api/bookings', require('./routes/booking.routes'));
+app.use('/api/contracts', require('./routes/contract.routes'));
 
 // Default route
 app.get("/", (req, res) => {

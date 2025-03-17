@@ -3,6 +3,7 @@ const router = express.Router();
 const { authMiddleware, requireRole, addUserToRequest } = require('../middleware/auth.middleware');
 const Booking = require('../models/booking.model');
 const Property = require('../models/property.model');
+const Contract = require('../models/contract.model');
 
 // Apply auth middleware to all routes and require verified role
 router.use(authMiddleware, addUserToRequest, requireRole('verified'));
@@ -123,15 +124,46 @@ router.patch('/:id/status', async (req, res) => {
             return res.status(403).json({ message: 'Only the requester can cancel the booking' });
         }
 
+        // Only property owner can create a contract
+        if (status === 'contract_done' && booking.owner.toString() !== userId.toString()) {
+            return res.status(403).json({ message: 'Only the property owner can create a contract' });
+        }
+
         booking.status = status;
+
         if (ownerNotes) {
             booking.ownerNotes = ownerNotes;
         }
-        booking.updatedAt = Date.now();
 
+        // Create a contract if status is changed to contract_done
+        if (status === 'contract_done') {
+            // Verify this is the property owner
+            if (booking.owner.toString() !== userId.toString()) {
+                return res.status(403).json({ message: 'Only the property owner can create a contract' });
+            }
+
+            // Create the simple contract
+            const contract = new Contract({
+                property: booking.property,
+                tenant: booking.requestedBy,
+                owner: booking.owner
+                // issueDate will default to current date
+            });
+
+            await contract.save();
+
+            // Link the contract to the booking
+            booking.contract = contract._id;
+        }
+
+        booking.updatedAt = Date.now();
         await booking.save();
 
-        res.json({ message: 'Booking status updated successfully', booking });
+        res.json({
+            message: 'Booking status updated successfully',
+            booking,
+            contract: booking.contract ? await Contract.findById(booking.contract) : null
+        });
     } catch (error) {
         res.status(500).json({ message: 'Error updating booking', error: error.message });
     }

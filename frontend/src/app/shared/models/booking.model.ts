@@ -6,7 +6,8 @@ export type BookingStatus =
   | 'in_progress'
   | 'accepted'
   | 'rejected'
-  | 'cancelled';
+  | 'cancelled'
+  | 'contract_done';
 
 export interface Booking {
   _id: string;

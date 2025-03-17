@@ -106,6 +106,8 @@ export class BookingCardComponentComponent implements OnInit {
         return 'status-cancelled';
       case 'in_progress':
         return 'status-in-progress';
+      case 'contract_done':
+        return 'status-contract-done';
       default:
         return 'status-requested';
     }
@@ -115,6 +117,9 @@ export class BookingCardComponentComponent implements OnInit {
     // Convert status from snake_case to Title Case for display
     if (this.booking.status === 'in_progress') {
       return 'In Progress';
+    }
+    if (this.booking.status === 'contract_done') {
+      return 'Contract Done';
     }
     return (
       this.booking.status.charAt(0).toUpperCase() + this.booking.status.slice(1)
@@ -135,6 +140,14 @@ export class BookingCardComponentComponent implements OnInit {
    */
   canCancelBooking(): boolean {
     return ['requested', 'in_progress'].includes(this.booking.status);
+  }
+
+  /**
+   * Check if the booking can be marked as contract done
+   * (Only 'accepted' bookings can be marked as contract done)
+   */
+  canMarkContractDone(): boolean {
+    return this.booking.status === 'accepted';
   }
 
   getPropertyTitle(): string {
@@ -306,6 +319,32 @@ export class BookingCardComponentComponent implements OnInit {
         error: (error) => {
           console.error('Error cancelling booking', error);
           this.actionError.emit({ action: 'cancel', error });
+        },
+      });
+    }
+  }
+
+  /**
+   * Handle marking a booking as contract done
+   */
+  onContractDone(): void {
+    if (
+      confirm('Are you sure you want to mark this booking as Contract Done?')
+    ) {
+      this.bookingService.markContractDone(this.booking._id).subscribe({
+        next: (response) => {
+          console.log(
+            'Booking marked as contract done successfully:',
+            response
+          );
+          this.bookingUpdated.emit({
+            action: 'contract_done',
+            booking: response.booking,
+          });
+        },
+        error: (error) => {
+          console.error('Error marking booking as contract done', error);
+          this.actionError.emit({ action: 'contract_done', error });
         },
       });
     }

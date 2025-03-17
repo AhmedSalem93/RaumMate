@@ -116,4 +116,15 @@ export class BookingService {
       ownerNotes: notes,
     });
   }
+
+  /**
+   * Helper method for owners to mark a booking as contract done
+   */
+  markContractDone(
+    id: string
+  ): Observable<{ message: string; booking: Booking }> {
+    return this.updateBookingStatus(id, {
+      status: 'contract_done',
+    });
+  }
 }

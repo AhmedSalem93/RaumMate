@@ -22,7 +22,7 @@ const bookingSchema = new mongoose.Schema({
     },
     status: {
         type: String,
-        enum: ['requested', 'in_progress', 'accepted', 'rejected', 'cancelled'],
+        enum: ['requested', 'in_progress', 'accepted', 'rejected', 'cancelled', 'contract_done'],
         default: 'requested'
     },
     message: {
@@ -31,10 +31,15 @@ const bookingSchema = new mongoose.Schema({
     ownerNotes: {
         type: String
     },
+    contract: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'Contract'
+    },
     createdAt: {
         type: Date,
         default: Date.now
-    }, updatedAt: {
+    },
+    updatedAt: {
         type: Date,
         default: Date.now
     }

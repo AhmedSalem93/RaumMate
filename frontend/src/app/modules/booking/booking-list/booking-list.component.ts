@@ -136,6 +136,9 @@ export class BookingListComponent implements OnInit {
       case 'cancel':
         message = 'Booking cancelled';
         break;
+      case 'contract_done':
+        message = 'Booking marked as Contract Done';
+        break;
     }
 
     this.snackBar.open(message, 'Close', { duration: 3000 });
