@@ -15,7 +15,8 @@ import { AuthService } from '../../../core/services/auth.service';
 import { PropertyRatingsComponent } from '../property-ratings/property-ratings.component';
 import { MatDialog } from '@angular/material/dialog';
 import { ImagePreviewComponent } from '../../../shared/components/image-preview/image-preview.component';
-import { GoogleMapsModule, MapAdvancedMarker } from '@angular/google-maps';
+import { GoogleMapsModule } from '@angular/google-maps';
+import { BookingDialogComponent } from '../booking-dialog/booking-dialog.component';
 
 @Component({
   selector: 'app-property-detail',
@@ -59,7 +60,7 @@ export class PropertyDetailComponent implements OnInit {
   markerPosition: google.maps.LatLngLiteral = { lat: 40, lng: -20 };
 
   ngOnInit(): void {
-    this.isAuthenticated = this.authService.isAuthenticated();
+    this.isAuthenticated = this.authService.isLoggedIn();
     // TODO - make isAuthenticated reactive to changes
 
     this.route.params.subscribe((params) => {
@@ -194,6 +195,20 @@ export class PropertyDetailComponent implements OnInit {
         imageUrl,
         title: this.property?.title,
       },
+    });
+  }
+
+  openBookingDialog(): void {
+    const dialogRef = this.dialog.open(BookingDialogComponent, {
+      width: '600px',
+      data: { property: this.property },
+    });
+
+    dialogRef.afterClosed().subscribe((result) => {
+      if (result) {
+        // Booking was successful, maybe refresh property data or show a confirmation
+        console.log('Booking request submitted');
+      }
     });
   }
 }

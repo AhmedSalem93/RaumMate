@@ -73,7 +73,7 @@ export class PropertyRatingsComponent implements OnInit, AfterViewInit {
   }
 
   get isAuthenticated(): boolean {
-    return this.authService.isAuthenticated();
+    return this.authService.isLoggedIn();
   }
   ngOnInit(): void {
     console.log(

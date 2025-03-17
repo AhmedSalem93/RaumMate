@@ -1,0 +1,54 @@
+<h2 mat-dialog-title>Book "{{ property.title }}"</h2>
+
+<mat-dialog-content>
+  <form [formGroup]="bookingForm" class="booking-form">
+    <div class="dates-container">
+      <mat-form-field appearance="outline">
+        <mat-label>Viewing Date</mat-label>
+        <input
+          matInput
+          [matDatepicker]="vwpcer"
+          formControlName="viewingDate"
+          [max]="property.subletDates?.end || null"
+        />
+        <mat-datepicker-toggle matSuffix [for]="vwpcer"></mat-datepicker-toggle>
+        <mat-datepicker #vwpcer></mat-datepicker>
+        <mat-error *ngIf="bookingForm.get('viewingDate')?.hasError('required')">
+          Viewing Date is required
+        </mat-error>
+      </mat-form-field>
+    </div>
+
+    <mat-form-field appearance="outline" class="message-field">
+      <mat-label>Message to owner</mat-label>
+      <textarea
+        matInput
+        formControlName="message"
+        rows="4"
+        placeholder="Introduce yourself and explain why you're interested in this property"
+      ></textarea>
+      <mat-error *ngIf="bookingForm.get('message')?.hasError('required')">
+        Message is required
+      </mat-error>
+      <mat-error *ngIf="bookingForm.get('message')?.hasError('minlength')">
+        Message must be at least 10 characters
+      </mat-error>
+    </mat-form-field>
+  </form>
+
+  <div *ngIf="isLoading" class="spinner-container">
+    <mat-spinner diameter="40"></mat-spinner>
+  </div>
+</mat-dialog-content>
+
+<mat-dialog-actions align="end">
+  <button mat-button (click)="onCancel()">Cancel</button>
+  <button
+    mat-raised-button
+    color="primary"
+    [disabled]="bookingForm.invalid || isLoading"
+    (click)="onSubmit()"
+  >
+    Send Booking Request
+  </button>
+</mat-dialog-actions>

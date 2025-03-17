@@ -45,8 +45,11 @@ const addUserToRequest = (req, res, next) => {
     User.findById(req.user.userId).then(user => {
       req.user = {
         userId: user._id, // for consistency
-        ...user
+        ...user.toObject() // spread all user fields
       };
+      next();
+    }).catch(err => {
+      req.user = { role: 'guest' }; // guest user in case of error
       next();
     });
   } catch (error) {

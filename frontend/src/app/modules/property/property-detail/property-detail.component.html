@@ -72,7 +72,20 @@
             <mat-icon>message</mat-icon>
             Send Message
           </button>
-          <!-- New Edit Property button -->
+
+          <!-- Book Property button -->
+          <button
+            mat-raised-button
+            color="accent"
+            class="d-flex align-items-center justify-content-center gap-2"
+            (click)="openBookingDialog()"
+            *ngIf="isAuthenticated && property.isAvailable"
+          >
+            <mat-icon>event_available</mat-icon>
+            Book Property
+          </button>
+
+          <!-- Edit Property button -->
           <button
             mat-raised-button
             color="accent"

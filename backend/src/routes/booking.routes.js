@@ -1,12 +1,11 @@
 const express = require('express');
 const router = express.Router();
-const { authMiddleware, requireRole } = require('../middleware/auth.middleware');
+const { authMiddleware, requireRole, addUserToRequest } = require('../middleware/auth.middleware');
 const Booking = require('../models/booking.model');
 const Property = require('../models/property.model');
-const User = require('../models/user.model');
 
 // Apply auth middleware to all routes and require verified role
-router.use(authMiddleware, requireRole('verified'));
+router.use(authMiddleware, addUserToRequest, requireRole('verified'));
 
 // Create a new booking request
 router.post('/', async (req, res) => {
@@ -30,7 +29,7 @@ router.post('/', async (req, res) => {
             property: propertyId,
             requestedBy: userId,
             owner: property.owner,
-            viewingDate: new Date(viewingDate),
+            viewingDate: (new Date(viewingDate)).toISOString(),
             message: message || ''
         });
 
@@ -45,6 +44,7 @@ router.post('/', async (req, res) => {
             booking
         });
     } catch (error) {
+        console.error(error);
         res.status(500).json({ message: 'Error creating booking', error: error.message });
     }
 }
