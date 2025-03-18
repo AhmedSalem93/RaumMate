@@ -38,7 +38,6 @@ import { BookingDialogComponent } from '../../booking/booking-dialog/booking-dia
 export class PropertyDetailComponent implements OnInit {
   private readonly route = inject(ActivatedRoute);
   private readonly authService = inject(AuthService);
-  private readonly userService = inject(UserService);
   private readonly dialog = inject(MatDialog);
   private propertyService = inject(PropertyService);
   private userService = inject(UserService);
@@ -122,12 +121,12 @@ export class PropertyDetailComponent implements OnInit {
   }
 
   sendMessage(): void {
-    if (!this.authService.isAuthenticated()) {
+    if (!this.authService.isLoggedIn()) {
       this.router.navigate(['/auth/login']); // Redirect to login if not authenticated
       return;
     }
     if (this.owner && this.userService) {
-      const sellerId = this.owner.id; // Owner of the property
+      const sellerId = this.owner._id; // Owner of the property
       const buyerId = this.userService.user; // Current logged-in user
 
       // Navigate to the MessagesComponent with query parameters
