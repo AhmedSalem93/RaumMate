@@ -1,5 +1,7 @@
 import { Routes } from '@angular/router';
 import { LandingComponent } from './pages/landing/landing.component';
+import { MessagesComponent } from './modules/messaging/messages/messages.component';
+import { WholeMessagesComponent } from './modules/messaging/whole-messages/whole-messages.component';
 
 export const routes: Routes = [
   { path: '', component: LandingComponent, pathMatch: 'full' },
@@ -31,6 +33,14 @@ export const routes: Routes = [
       import('./modules/messaging/messaging.module').then(
         (m) => m.MessagingModule
       ),
+  },
+  {
+    path: 'messages',
+    component: MessagesComponent,
+  },
+  {
+    path: 'whole-messages',
+    component: WholeMessagesComponent, // For all previous chats
   },
   { path: '**', redirectTo: '' },
 ];

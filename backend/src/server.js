@@ -129,6 +129,31 @@ io.on("connection", (socket) => {
     }
   });
 
+  
+  app.get('/api/messages/:userId', async (req, res) => {
+    const { userId } = req.params;
+  
+    try {
+      const messages = await Message.find({
+        $or: [{ senderId: userId }, { receiverId: userId }],
+      }).sort({ timestamp: -1 });
+  
+      // Group messages by the other user
+      const groupedMessages = messages.reduce((acc, message) => {
+        const otherUserId = message.senderId === userId ? message.receiverId : message.senderId;
+        if (!acc[otherUserId]) {
+          acc[otherUserId] = [];
+        }
+        acc[otherUserId].push(message);
+        return acc;
+      }, {});
+  
+      res.status(200).json(groupedMessages);
+    } catch (err) {
+      console.error('Error fetching messages:', err);
+      res.status(500).json({ error: 'Failed to fetch messages' });
+    }
+  });
   // Handle user disconnect
   socket.on("disconnect", () => {
     console.log("A user disconnected:", socket.id);

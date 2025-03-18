@@ -1,14 +1,16 @@
 import { Injectable } from '@angular/core';
 import { io, Socket } from 'socket.io-client';
 import { Observable } from 'rxjs';
+import { HttpClient } from '@angular/common/http';
 
 @Injectable({
   providedIn: 'root',
 })
 export class MessageService {
   private socket: Socket;
+  private apiUrl = 'http://localhost:3000/api';
 
-  constructor() {
+  constructor(private http: HttpClient) {
     this.socket = io('http://localhost:3000'); // Connect to your Node.js server
   }
 
@@ -47,5 +49,8 @@ export class MessageService {
         observer.next(messageId);
       });
     });
+  }
+  getChatHistory(userId: string): Observable<any> {
+    return this.http.get(`${this.apiUrl}/messages/${userId}`);
   }
 }
