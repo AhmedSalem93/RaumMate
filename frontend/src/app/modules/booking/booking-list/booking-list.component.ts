@@ -10,6 +10,8 @@ import { MatSnackBar } from '@angular/material/snack-bar';
 import { MatDialog, MatDialogModule } from '@angular/material/dialog';
 import { UserService } from '../../../core/services/user.service';
 import { BookingResponseDialogComponent } from '../booking-response-dialog/booking-response-dialog.component';
+import { SlidebarComponent } from '../../../shared/components/slidebar/slidebar.component';
+import { ReviewService } from '../../../services/review.service';
 
 @Component({
   selector: 'app-booking-list',
@@ -20,6 +22,7 @@ import { BookingResponseDialogComponent } from '../booking-response-dialog/booki
     MatTabsModule,
     MatDialogModule, // Add this import
     MatProgressSpinnerModule,
+    SlidebarComponent
   ],
   templateUrl: './booking-list.component.html',
   styleUrl: './booking-list.component.scss',
@@ -30,12 +33,15 @@ export class BookingListComponent implements OnInit {
   loading = true;
   error = false;
   currentUserId: string = '';
+  user: any = null;
+  reviews: any[] = [];
 
   constructor(
     private bookingService: BookingService,
     private snackBar: MatSnackBar,
     private userService: UserService,
-    private dialog: MatDialog
+    private dialog: MatDialog,
+    private reviewService: ReviewService
   ) {}
 
   ngOnInit(): void {
@@ -57,6 +63,8 @@ export class BookingListComponent implements OnInit {
         this.loading = false;
       },
     });
+    this.userService.getProfile().subscribe(user => this.user = user);
+    this.reviewService.getUserReviews(this.user.userId).subscribe(reviews => { this.reviews = reviews;});
   }
 
   loadBookings(): void {
