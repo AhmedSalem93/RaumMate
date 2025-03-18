@@ -28,7 +28,7 @@ export const routes: Routes = [
       import('./modules/admin/admin.module').then((m) => m.AdminModule),
   },
   {
-    path: 'messaging',
+    path: 'messages',
     loadChildren: () =>
       import('./modules/messaging/messaging.module').then(
         (m) => m.MessagingModule
