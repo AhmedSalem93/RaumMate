@@ -38,7 +38,7 @@ describe('PropertyRatingsComponent', () => {
     {
       property: 'prop123',
       user: {
-        id: 'user1',
+        _id: 'user1',
         firstName: 'John',
         lastName: 'Doe',
         email: 'john@example.com',
@@ -52,7 +52,7 @@ describe('PropertyRatingsComponent', () => {
     {
       property: 'prop123',
       user: {
-        id: 'user2',
+        _id: 'user2',
         firstName: 'Jane',
         lastName: 'Smith',
         email: 'jane@example.com',
@@ -68,7 +68,7 @@ describe('PropertyRatingsComponent', () => {
   const mockMyRating: Rating = {
     property: 'prop123',
     user: {
-      id: 'currentUser',
+      _id: 'currentUser',
       firstName: 'Current',
       lastName: 'User',
       email: 'current@example.com',
@@ -113,7 +113,7 @@ describe('PropertyRatingsComponent', () => {
     routerSpy = TestBed.inject(Router) as jasmine.SpyObj<Router>;
 
     // Default mock responses
-    authServiceSpy.isAuthenticated.and.returnValue(true);
+    authServiceSpy.isLoggedIn.and.returnValue(true);
     ratingServiceSpy.getPropertyRatings.and.returnValue(
       of({ ratings: mockRatings } as RatingPaginatedResponse)
     );
@@ -140,11 +140,11 @@ describe('PropertyRatingsComponent', () => {
   });
 
   it('should check authentication status on init', () => {
-    expect(authServiceSpy.isAuthenticated).toHaveBeenCalled();
+    expect(authServiceSpy.isLoggedIn).toHaveBeenCalled();
     expect(component.isAuthenticated).toBeTrue();
 
     // Test unauthenticated state
-    authServiceSpy.isAuthenticated.and.returnValue(false);
+    authServiceSpy.isLoggedIn.and.returnValue(false);
     component.ngOnInit();
     expect(component.isAuthenticated).toBeFalse();
   });
@@ -272,7 +272,7 @@ describe('PropertyRatingsComponent', () => {
   });
 
   it('should navigate to login when user is not authenticated', () => {
-    authServiceSpy.isAuthenticated.and.returnValue(false);
+    authServiceSpy.isLoggedIn.and.returnValue(false);
     component.navigateToLogin();
 
     expect(routerSpy.navigate).toHaveBeenCalledWith(['/auth/login'], {
