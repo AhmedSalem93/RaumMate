@@ -135,7 +135,7 @@ describe('PropertyCardComponent', () => {
 
   it('should display owner information correctly', () => {
     const ownerNameElement = debugElement.query(By.css('.owner-name'));
-    expect(ownerNameElement.nativeElement.textContent).toBe('');
+    expect(ownerNameElement.nativeElement.textContent).toBe('John');
   });
 
   it('should display sublet dates when available', () => {
