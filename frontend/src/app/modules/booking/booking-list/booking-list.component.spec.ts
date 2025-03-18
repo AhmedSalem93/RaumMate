@@ -1,3 +1,4 @@
+import { HttpClientTestingModule } from '@angular/common/http/testing';
 import {
   ComponentFixture,
   TestBed,
@@ -121,6 +122,7 @@ describe('BookingListComponent', () => {
         MatProgressSpinnerModule,
         NoopAnimationsModule,
         MockBookingCardComponent,
+        HttpClientTestingModule,
       ],
       providers: [
         { provide: BookingService, useValue: mockBookingService },
