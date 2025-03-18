@@ -3,10 +3,11 @@ import { CommonModule } from '@angular/common';
 import { UserService } from '../../../core/services/user.service';
 import { Router, RouterLink } from '@angular/router';
 import { ReviewService } from '../../../services/review.service';
+import { SlidebarComponent } from '../../../shared/components/slidebar/slidebar.component';
 
 @Component({
   selector: 'app-profile',
-  imports: [CommonModule, RouterLink],
+  imports: [CommonModule, SlidebarComponent],
   templateUrl: './profile.component.html',
   styleUrls: ['./profile.component.scss']
 })

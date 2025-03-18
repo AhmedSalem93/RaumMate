@@ -108,3 +108,17 @@ mat-form-field {
 .sublet-option {
   margin: 10px 0;
 }
+
+.loading-spinner {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 50px 0;
+
+  p {
+    margin-top: 20px;
+    color: #666;
+    font-size: 16px;
+  }
+}

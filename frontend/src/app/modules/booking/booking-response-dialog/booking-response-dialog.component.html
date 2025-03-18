@@ -1,0 +1,26 @@
+<h2 mat-dialog-title>{{ getTitle() }}</h2>
+<div mat-dialog-content>
+  <p>
+    <strong>{{ data.action === "accept" ? "Accept" : "Reject" }}</strong>
+    booking request for <strong>{{ data.propertyTitle }}</strong
+    >?
+  </p>
+
+  <mat-form-field appearance="outline" class="full-width">
+    <mat-label>Add notes to the requester (optional)</mat-label>
+    <textarea
+      matInput
+      [(ngModel)]="notes"
+      rows="4"
+      placeholder="Add any information about the viewing or reason for rejection"
+    ></textarea>
+    <mat-hint align="end">{{ notes.length }}/500</mat-hint>
+  </mat-form-field>
+</div>
+
+<div mat-dialog-actions [align]="'end'">
+  <button mat-button (click)="onCancel()">Cancel</button>
+  <button mat-raised-button [color]="getActionColor()" (click)="onConfirm()">
+    {{ getActionText() }}
+  </button>
+</div>

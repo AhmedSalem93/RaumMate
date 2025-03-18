@@ -48,10 +48,10 @@
               </div>
               }
             </div>
-            <h3 class="h5 mb-1">
+            <a class="h5 mb-1" [routerLink]="['/user/view-profile', owner?.email]">
               {{ owner?.firstName || "Unknown" }}
               {{ owner?.lastName || "Owner" }}
-            </h3>
+            </a>
             <p class="text-muted small mb-1">
               Member since {{ getOwnerMemberSince() }}
             </p>
@@ -63,17 +63,8 @@
 
         <!-- Action buttons -->
         <div class="d-grid gap-2">
-          <button
-            mat-stroked-button
-            color="warn"
-            class="d-flex align-items-center justify-content-center gap-2"
-            (click)="toggleFavorite()"
-          >
-            <mat-icon>{{
-              isFavorite ? "favorite" : "favorite_border"
-            }}</mat-icon>
-            {{ isFavorite ? "Favorited" : "Favorite" }}
-          </button>
+          <!-- Only show Send Message and Book Property if NOT the owner -->
+          @if (isAuthenticated && !isOwner) {
           <button
             mat-raised-button
             color="primary"
@@ -84,6 +75,43 @@
             <mat-icon>message</mat-icon>
             Send Message
           </button>
+
+          <!-- Book Property button -->
+          @if (property.isAvailable) {
+          <button
+            mat-raised-button
+            color="accent"
+            class="d-flex align-items-center justify-content-center gap-2"
+            (click)="openBookingDialog()"
+          >
+            <mat-icon>event_available</mat-icon>
+            Book Property
+          </button>
+          } }
+
+          <!-- Edit Property button only for owners -->
+          @if (isAuthenticated && isOwner) {
+          <button
+            mat-raised-button
+            color="accent"
+            class="d-flex align-items-center justify-content-center gap-2"
+            [routerLink]="['/property/edit', id]"
+          >
+            <mat-icon>edit</mat-icon>
+            Edit Property
+          </button>
+
+          <!-- Make Unavailable button for owners -->
+          <button
+            mat-raised-button
+            color="warn"
+            class="d-flex align-items-center justify-content-center gap-2 mt-2"
+            (click)="toggleAvailability()"
+          >
+            <mat-icon>block</mat-icon>
+            {{ property.isAvailable ? "Make Unavailable" : "Make Available" }}
+          </button>
+          }
         </div>
       </div>
     </div>

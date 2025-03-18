@@ -1,0 +1,67 @@
+<div class="profile-dashboard">
+  
+  <!-- Sidebar -->
+  <app-slidebar [user]="user" [reviews]="reviews"></app-slidebar>
+
+  <!-- Main Content -->
+  <section class="profile-content">
+    
+    <!-- Right Section -->
+
+    <div class="booking-list-container">
+      <h1 class="page-title">My Bookings</h1>
+    
+      <div *ngIf="loading" class="loading-container">
+        <mat-spinner diameter="40"></mat-spinner>
+        <p>Loading bookings...</p>
+      </div>
+    
+      <div *ngIf="error" class="error-container">
+        <p>There was an error loading your bookings. Please try again later.</p>
+      </div>
+    
+      <div *ngIf="!loading && !error" class="bookings-view">
+        <mat-tab-group dynamicHeight>
+          <mat-tab label="My Booking Requests">
+            <div class="tab-content">
+              <div *ngIf="myBookings.length === 0" class="no-bookings">
+                <p>You haven't made any booking requests yet.</p>
+              </div>
+              <div *ngIf="myBookings.length > 0" class="bookings-grid">
+                <app-booking-card-component
+                  *ngFor="let booking of myBookings"
+                  [booking]="booking"
+                  [userId]="currentUserId"
+                  (bookingUpdated)="handleBookingUpdated($event)"
+                  (actionError)="handleActionError($event)"
+                ></app-booking-card-component>
+              </div>
+            </div>
+          </mat-tab>
+          <mat-tab label="Received Booking Requests">
+            <div class="tab-content">
+              <div *ngIf="receivedBookings.length === 0" class="no-bookings">
+                <p>You haven't received any booking requests.</p>
+              </div>
+              <div *ngIf="receivedBookings.length > 0" class="bookings-grid">
+                <!-- Add better debug logging for the event flow -->
+                <app-booking-card-component
+                  *ngFor="let booking of receivedBookings"
+                  [booking]="booking"
+                  [userId]="currentUserId"
+                  (bookingUpdated)="handleBookingUpdated($event)"
+                  (actionError)="handleActionError($event)"
+                ></app-booking-card-component>
+              </div>
+            </div>
+          </mat-tab>
+        </mat-tab-group>
+      </div>
+    </div>
+    
+  </section>
+
+</div>
+
+
+

@@ -1,0 +1,119 @@
+.profile-dashboard {
+  display: flex;
+  height: 100vh;
+  background: #f4f4f4;
+}
+
+/* Main Content */
+.profile-content {
+  flex: 1;
+  padding: 40px;
+  overflow-y: auto;
+}
+
+.profile-section {
+  background: white;
+  padding: 20px;
+  margin-bottom: 20px;
+  border-radius: 8px;
+  box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
+}
+
+.profile-section h2 {
+  border-bottom: 2px solid #0044cc;
+  padding-bottom: 10px;
+  margin-bottom: 15px;
+}
+
+.details {
+  display: flex;
+  gap: 30vh;
+  margin-bottom: 20px;
+}
+
+.left {
+  align-items: center;
+}
+
+.right {
+  align-items: center;
+}
+
+.tags {
+  display: flex;
+  flex-wrap: wrap;
+}
+
+.tags span {
+  background: #0044cc;
+  color: white;
+  padding: 5px 10px;
+  border-radius: 15px;
+  margin: 5px;
+  font-size: 14px;
+}
+
+.booking-list-container {
+  padding: 20px;
+  max-width: 900px; // Reduced max-width for a more compact list view
+  margin: 0 auto;
+}
+
+.page-title {
+  margin-bottom: 24px;
+  color: #333;
+  font-size: 28px;
+}
+
+.loading-container {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  height: 300px;
+
+  p {
+    margin-top: 16px;
+    color: #666;
+  }
+}
+
+.error-container {
+  padding: 20px;
+  background-color: #ffebee;
+  border: 1px solid #ffcdd2;
+  border-radius: 4px;
+  margin: 20px 0;
+  color: #c62828;
+}
+
+.bookings-view {
+  .tab-content {
+    padding: 20px 0;
+  }
+
+  .bookings-grid {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+
+    // Each booking card will render with space between them
+    app-booking-card-component {
+      width: 100%;
+      margin-bottom: 16px;
+      display: block;
+    }
+  }
+
+  .no-bookings {
+    padding: 40px 0;
+    text-align: center;
+    color: #666;
+    font-style: italic;
+  }
+}
+
+// Style the mat-tab headers
+::ng-deep .mat-mdc-tab-header {
+  margin-bottom: 16px;
+}

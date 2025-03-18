@@ -1,23 +1,6 @@
 <div class="profile-dashboard">
   <!-- Sidebar -->
-  <aside class="sidebar">
-    <div class="profile-pic">
-      <img [src]="user.profilePicture" alt="Profile Picture" />
-      <!-- <img *ngIf="user.profilePicture; else defaultPic" [src]="user.profilePicture" alt="Profile Picture">
-        <ng-template #defaultPic>
-          <img [src]="defaultProfilePicture" alt="Default Profile Picture">
-        </ng-template> -->
-      <h3>{{ user.firstName }} {{ user.lastName }}</h3>
-      <div *ngIf="reviews.length === 0">No reviews yet</div>
-      <p class="role">{{ user.role | uppercase }}</p>
-    </div>
-    <nav>
-      <a routerLink="/profile" class="active">Profile</a>
-      <a routerLink="/settings">Settings</a>
-      <a routerLink="/listings">My Listings</a>
-      <a routerLink="/whole-messages">Messages</a>
-    </nav>
-  </aside>
+  <app-slidebar [user]="user" [reviews]="reviews"></app-slidebar>
 
   <!-- Main Content -->
   <section class="profile-content">

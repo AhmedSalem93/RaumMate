@@ -18,6 +18,7 @@ import { MatInputModule } from '@angular/material/input';
 import { MatCheckboxModule } from '@angular/material/checkbox';
 import { CommonModule } from '@angular/common';
 import { Property } from '../../../shared/models/property.model';
+import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 
 @Component({
   selector: 'app-search',
@@ -34,6 +35,7 @@ import { Property } from '../../../shared/models/property.model';
     MatSelectModule,
     MatPaginatorModule,
     MatCheckboxModule,
+    MatProgressSpinnerModule,
   ],
   templateUrl: './search.component.html',
   styleUrl: './search.component.scss',
@@ -44,6 +46,7 @@ export class SearchComponent implements OnInit {
   totalItems = 0;
   itemsPerPage = 10;
   amenitiesList: string[] = []; // Will be loaded from backend
+  isLoading = false; // Added loading state variable
 
   sortOptions = [
     { value: 'price_asc', label: 'Price (Low to High)' },
@@ -83,9 +86,11 @@ export class SearchComponent implements OnInit {
   }
 
   loadAmenities() {
+    this.isLoading = true;
     this.propertyService.getAmenities().subscribe({
       next: (amenities) => {
         this.amenitiesList = amenities;
+        this.isLoading = false;
       },
       error: (error) => {
         console.error('Error loading amenities:', error);
@@ -97,6 +102,7 @@ export class SearchComponent implements OnInit {
           'Parking',
           'Pet Friendly',
         ];
+        this.isLoading = false;
       },
     });
   }
@@ -144,12 +150,18 @@ export class SearchComponent implements OnInit {
       params.sortBy = formValue.sortBy;
     }
 
+    this.isLoading = true; // Set loading to true before API call
     this.propertyService.searchProperties(params).subscribe({
       next: (response) => {
         this.properties = response.properties;
+        console.log('Search results:', this.properties);
         this.totalItems = response.pagination.total;
+        this.isLoading = false; // Set loading to false after response
       },
-      error: (error) => console.error('Search error:', error),
+      error: (error) => {
+        console.error('Search error:', error);
+        this.isLoading = false; // Also set loading to false on error
+      },
     });
   }
 

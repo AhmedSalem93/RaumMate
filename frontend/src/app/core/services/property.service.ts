@@ -1,6 +1,6 @@
 import { inject, Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
-import { Observable } from 'rxjs';
+import { BehaviorSubject, Observable, tap } from 'rxjs';
 import { environment } from '../../../environments/environment';
 import { Property } from '../../shared/models/property.model';
 
@@ -26,6 +26,10 @@ export interface SearchParams {
   providedIn: 'root',
 })
 export class PropertyService {
+  private apiUrl = 'http://localhost:3000/api/properties';
+  private userSubject = new BehaviorSubject<any>(null);
+  user = this.userSubject.asObservable();
+
   private http = inject(HttpClient);
   constructor() {}
 
@@ -55,6 +59,16 @@ export class PropertyService {
     );
   }
 
+  // get properties of a specifi user
+  getMyProperties(id: string): Observable<any> {
+    return this.http.get(`${this.apiUrl}/mylisting/${id}`).pipe(
+      tap((response: any) => {
+        this.userSubject.next(response.properties);
+        console.log('response: ' + response.length);
+      })
+    );
+  }
+
   searchListings(query: string): Observable<any[]> {
     // Adjust endpoint URL as needed
     return this.http.get<any[]>(`/api/listings?query=${query}`, {
@@ -69,16 +83,8 @@ export class PropertyService {
     });
   }
 
-  updateListing(id: string, listing: Property): Observable<any> {
-    // Adjust endpoint URL as needed
-    return this.http.put(`/api/listings/${id}`, listing, {
-      headers: this.getHeaders(),
-    });
-  }
-
-  deleteListing(id: string): Observable<any> {
-    // Adjust endpoint URL as needed
-    return this.http.delete(`/api/listings/${id}`, {
+  updateListing(id: string, formData: FormData): Observable<any> {
+    return this.http.put(`${environment.apiUrl}/properties/${id}`, formData, {
       headers: this.getHeaders(),
     });
   }
@@ -137,6 +143,16 @@ export class PropertyService {
   getAmenities(): Observable<string[]> {
     return this.http.get<string[]>(
       `${environment.apiUrl}/properties/amenities`,
+      {
+        headers: this.getHeaders(),
+      }
+    );
+  }
+  // show or not
+  toggleAvailability(id: string): Observable<boolean> {
+    return this.http.patch<boolean>(
+      `${environment.apiUrl}/properties/${id}/availability`,
+      {}, // Empty body, but needed as second parameter
       {
         headers: this.getHeaders(),
       }

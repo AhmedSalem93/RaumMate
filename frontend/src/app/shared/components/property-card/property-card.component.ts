@@ -1,4 +1,4 @@
-import { Component, Input, Output, EventEmitter } from '@angular/core';
+import { Component, Input, Output, EventEmitter, inject } from '@angular/core';
 import { MatCardModule } from '@angular/material/card';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
@@ -7,6 +7,9 @@ import { CurrencyPipe, NgIf, DatePipe, NgFor } from '@angular/common';
 import { Property } from '../../models/property.model';
 import { User } from '../../models/user.model';
 import { RouterLink } from '@angular/router';
+import { Router } from '@angular/router';
+import { PropertyService } from '../../../core/services/property.service';
+import { UserService } from '../../../core/services/user.service';
 
 interface StarDisplay {
   full: boolean;
@@ -31,11 +34,35 @@ interface StarDisplay {
 export class PropertyCardComponent {
   @Input({ required: true }) property!: Property;
   @Output() favorite = new EventEmitter<{ id: string; value: boolean }>();
+  @Output() availabilityChanged = new EventEmitter<{
+    propId: string;
+    available: boolean;
+  }>();
 
-  isFavorite = false;
+  private userService = inject(UserService);
+  private propertyService = inject(PropertyService);
+  private router = inject(Router);
+
+  currentUserId: string = '';
+  isOwner: boolean = false;
   ownerAvatarFallback = 'https://avatar.iran.liara.run/public/48';
 
-  constructor() {}
+  constructor() {
+    // Get current user ID
+    this.userService.getProfile().subscribe({
+      next: (user) => {
+        this.currentUserId = user._id!;
+        // Check if the current user is the owner
+        if (typeof this.property.owner === 'object') {
+          this.isOwner =
+            (this.property.owner as User)._id === this.currentUserId;
+        } else if (typeof this.property.owner === 'string') {
+          this.isOwner = this.property.owner === this.currentUserId;
+        }
+      },
+      error: (err) => console.error('Error getting user profile:', err),
+    });
+  }
 
   isImgUrl(url: string): boolean {
     return /\.(jpg|jpeg|png|webp|avif|gif|bmp|tiff|tif|svg|heif|heic)$/i.test(
@@ -105,11 +132,6 @@ export class PropertyCardComponent {
     return date.toLocaleDateString();
   }
 
-  toggleFavorite(): void {
-    this.isFavorite = !this.isFavorite;
-    this.favorite.emit({ id: this.property._id!, value: this.isFavorite });
-  }
-
   hasReviews(): boolean {
     return (
       this.property.reviews &&
@@ -141,5 +163,32 @@ export class PropertyCardComponent {
     }
 
     return stars;
+  }
+
+  // Navigate to edit page
+  editProperty(event: Event): void {
+    event.stopPropagation(); // Prevent navigation to detail page
+    if (this.property._id) {
+      this.router.navigate(['/property/edit', this.property._id]);
+    }
+  }
+
+  // Toggle property availability
+  toggleAvailability(event: Event): void {
+    event.stopPropagation(); // Prevent navigation to detail page
+    if (this.property._id) {
+      this.propertyService.toggleAvailability(this.property._id).subscribe({
+        next: (isAvailable) => {
+          if (this.property) {
+            this.property.isAvailable = isAvailable;
+            this.availabilityChanged.emit({
+              propId: this.property._id!,
+              available: isAvailable,
+            });
+          }
+        },
+        error: (err) => console.error('Error toggling availability:', err),
+      });
+    }
   }
 }

@@ -1,0 +1,168 @@
+<div class="profile-dashboard">
+  
+    <!-- Sidebar -->
+    <app-slidebar [user]="user" [reviews]="reviews"></app-slidebar>
+  
+    <!-- Main Content -->
+    <section class="profile-content">
+        <!-- Error message -->
+        <p *ngIf="errorMessage" class="Message" style="color: red;">{{errorMessage}}</p>
+  
+      <!-- Change Password -->
+      <div class="profile-section">
+        <h2>Account Settings</h2>
+        <form class="password-form" (ngSubmit)="changePassword(passwordform)" #passwordform="ngForm">
+            <!--Old Password-->
+            <label for="oldPassword">Enter Old Password</label>
+            <input
+                type="password"
+                id="oldPassword"
+                name="oldPassword"
+                [(ngModel)]="passwordForm.oldPassword"
+                required
+                minlength="6"
+                #oldPassword="ngModel"
+            />
+            <!-- Password -->
+            <label for="newPassword">newPassword:</label>
+            <input
+                type="password"
+                id="newPassword"
+                name="newPassword"
+                [(ngModel)]="passwordForm.newPassword"
+                required
+                minlength="6"
+                #newPassword="ngModel"
+            />
+            @if (newPassword.invalid && (newPassword.dirty || newPassword.touched)) {
+                <div class="error-message">
+                    @if (newPassword.errors?.['required']) {
+                        <div>Password is required.</div>
+                        } 
+                    @if (newPassword.errors?.['minlength']) {
+                        <div>Password must be at least 6 characters long.</div>
+                        }
+                </div>
+            }
+
+            <!-- Confirm Password -->
+            <label for="confirmNewPassword">Confirm New Password:</label>
+            <input
+                type="password"
+                id="confirmNewPassword"
+                name="confirmNewPassword"
+                [(ngModel)]="passwordForm.confirmNewPassword"
+                required
+            />
+            @if (passwordForm.newPassword && passwordForm.confirmNewPassword && passwordForm.newPassword !==
+            passwordForm.confirmNewPassword) {
+            <div class="error-message">Passwords do not match.</div>
+            }
+
+            <!-- Submit Button -->
+            <button
+                type="submit"
+                [disabled]="
+                    passwordform.invalid ||
+                    passwordForm.newPassword !== passwordForm.confirmNewPassword
+                "
+            >
+            Change Password
+            </button>
+        </form>
+      </div>
+
+      <!-- Update Profile-->
+       <div class="profile-section">
+        <h2>Update Profile Details</h2>
+
+        <form #profileform="ngForm" (ngSubmit)="updateProfile(profileform)">
+      
+            <label for="address">Street Address</label>
+            <input type="text" id="address" [(ngModel)]="profile.address" name="address" [placeholder]="user.address" required>
+    
+            <div class="row">
+              <div>
+                <label for="city">City</label>
+                <input type="text" id="city" [(ngModel)]="profile.city" name="city" [placeholder]="user.city"  required>
+              </div>
+            </div>
+    
+            <div class="row">
+              <div>
+                <label for="postalCode">Postal Code</label>
+                <input type="text" name="postalCode" id="postalCode" [(ngModel)]="profile.postalCode" name="postalCode" [placeholder]="user.postalCode" required>
+              </div>
+              <div>
+                <label for="country">Country</label>
+                <input type="text" id="country" [(ngModel)]="profile.country" name="country" [placeholder]="user.country" required>
+              </div>
+            </div>
+      
+            <label for="bio">Bio</label>
+            <textarea id="bio" [(ngModel)]="profile.bio" name="bio" [placeholder]="user.bio" required></textarea>
+      
+            <!-- Preferences -->
+             <br>
+            <h3>Preferences</h3>
+            
+            <div class="row">
+              <div>
+                <label for="smoking">Smoking</label>
+                <select id="smoking" [(ngModel)]="profile.preferences.Smoking" name="preferencesSmoking">
+                  <option>No</option>
+                  <option>Yes</option>
+                  <option>Occasionally</option>
+                </select>
+              </div>
+              <div>
+                <label for="pets">Pets</label>
+                <select id="pets" [(ngModel)]="profile.preferences.Pets" name="preferencesPets" >
+                  <option>Yes</option>
+                  <option>No</option>
+                </select>
+              </div>
+            </div>
+      
+            <div class="row">
+              <div>
+                <label for="budget">Budget (€)</label>
+                <input type="text" id="budget" [(ngModel)]="profile.preferences.Budget" name="budget" required>
+              </div>
+              <div>
+                <label for="roommateGender">Preferred Roommate Gender</label>
+                <select id="roommateGender" [(ngModel)]="profile.preferences.RoommateGender" name="RoommateGender" >
+                  <option>Male</option>
+                  <option>Female</option>
+                  <option>No Preference</option>
+                </select>
+              </div>
+            </div>
+      
+            <!-- Interests -->
+             <br>
+            <h3>Interests</h3>
+            <div class="interests-container">
+              <div *ngFor="let interest of getInterests()" class="interest-item">
+                <label>
+                  <input type="checkbox" [(ngModel)]="profile.interests[interest]" [name]="interest">
+                  {{ interest }}
+                </label>
+              </div>
+            </div>      
+            
+            <button type="submit" class="submit-btn">Update Profile</button>
+          </form>
+       </div>
+
+      <!-- Delete Profile -->
+      <div class="profile-section">
+        <h2>Delete Profile</h2>
+        <form (ngSubmit)="deleteProfile()">
+            <button type="submit" class="settings-btn" style="background-color: red;">Delete Profile</button>
+        </form>
+      </div>
+
+    </section>
+  
+  </div>

@@ -24,7 +24,7 @@
       <img [src]="listing.image" alt="Property Image" />
       <h3>{{ listing.title }}</h3>
       <p>{{ listing.location }} - €{{ listing.price }}/month</p>
-      <a routerLink="/property/{{ listing.id }}" class="view-details"
+      <a routerLink="/property/search" class="view-details"
         >View Details</a
       >
     </div>
@@ -35,5 +35,5 @@
 <section class="owner-section">
   <h2>Looking for a roommate?</h2>
   <p>Find your future flatmate now. List your property on RaumMate.</p>
-  <a routerLink="/list-property" class="btn list-btn">List Your Property</a>
+  <a routerLink="/property/create" class="btn list-btn">List Your Property</a>
 </section>

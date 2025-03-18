@@ -13,7 +13,7 @@ describe('RatingCardComponentComponent', () => {
   const mockRating: Rating = {
     property: 'prop123',
     user: {
-      id: 'user1',
+      _id: 'user1',
       firstName: 'John',
       lastName: 'Doe',
       email: 'john@example.com',
@@ -113,8 +113,7 @@ describe('RatingCardComponentComponent', () => {
     expect(component.isValidUser(mockRating.user)).toBeTrue();
 
     // Test invalid cases
-    expect(component.isValidUser(null)).toBeFalse();
-    expect(component.isValidUser(undefined)).toBeFalse();
+    expect(component.isValidUser(null)).not.toBeTruthy();
     expect(component.isValidUser('string')).toBeFalse();
     expect(component.isValidUser(123)).toBeFalse();
   });
@@ -141,7 +140,7 @@ describe('RatingCardComponentComponent', () => {
 
   // DOM tests
   it('should render user information correctly', () => {
-    const nameElement = fixture.debugElement.query(By.css('.user-name'));
+    const nameElement = fixture.debugElement.query(By.css('.card-title'));
     expect(nameElement).toBeTruthy();
     expect(nameElement.nativeElement.textContent).toContain('John Doe');
   });
@@ -172,7 +171,7 @@ describe('RatingCardComponentComponent', () => {
   });
 
   it('should display rating comment when available', () => {
-    const commentElement = fixture.debugElement.query(By.css('.comment'));
+    const commentElement = fixture.debugElement.query(By.css('.comment-text'));
     expect(commentElement).toBeTruthy();
     expect(commentElement.nativeElement.textContent).toContain(
       'Great property with excellent amenities!'

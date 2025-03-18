@@ -2,13 +2,14 @@ const express = require('express');
 const router = express.Router();
 
 const Property = require('../models/property.model');
+const User = require('../models/user.model'); // Add explicit import for User model
 const upload = require('../middleware/upload.middleware');
 const { authMiddleware, requireRole, addUserToRequest } = require('../middleware/auth.middleware');
 const fs = require('fs');
 
 require("../models/user.model");
 
-// get endpoint with multi-criteria search filtering
+// get endpoint with multi-criteria search filtering and returning only available properties
 router.get('/', addUserToRequest, async (req, res) => {
   try {
     console.log(req.query);
@@ -165,11 +166,17 @@ router.post('/', authMiddleware, addUserToRequest, requireRole('verified'), uplo
     const filePaths = req.files.map(file => `/static/${file.filename}`);
     const property = new Property({
       mediaPaths: filePaths,
-      owner: req.userId,
+      owner: req.user.userId,
       ...req.body
     });
-    console.log("UserID: " + req.userId);
+    console.log("UserID: " + req.user.userId);
     const savedProperty = await property.save();
+
+    // If this is the user's first property, update their role to propertyOwner
+    if (req.user.role === 'verified') {
+      await User.findByIdAndUpdate(req.user.userId, { role: 'propertyOwner' });
+    }
+
     res.status(201).json(savedProperty);
   } catch (error) {
     // delete media files
@@ -219,7 +226,7 @@ router.get('/:id', addUserToRequest, async (req, res) => {
   }
 });
 
-router.put('/:id', addUserToRequest, upload.array('media'), async (req, res) => {
+router.put('/:id', authMiddleware, addUserToRequest, upload.array('media'), async (req, res) => {
   try {
     const property = await Property.findById(req.params.id);
     if (!property) {
@@ -235,8 +242,14 @@ router.put('/:id', addUserToRequest, upload.array('media'), async (req, res) => 
         mediaPaths: filePaths,
         ...req.body
       },
-      { new: true }
+      { new: true } // return the updated property
     );
+
+    if (!updatedProperty) {
+      return res.status(404).json({
+        message: 'Property not found, Couldn\'t update'
+      });
+    }
 
     // delete old media files
     oldMediaPaths.forEach(path => {
@@ -251,6 +264,59 @@ router.put('/:id', addUserToRequest, upload.array('media'), async (req, res) => 
   }
   catch (error) {
     console.error("Error updating property:", error.message);
+    res.status(500).json({ message: error.message });
+  }
+});
+
+
+// Toggle property availability
+router.patch('/:id/availability', authMiddleware, addUserToRequest, async (req, res) => {
+  try {
+    const propertyId = req.params.id;
+    const userId = req.user.userId;
+    console.log("UserID: " + userId);
+    console.log("PropertyID: " + propertyId);
+
+    // Find the property
+    const property = await Property.findById(propertyId);
+
+    if (!property) {
+      return res.status(404).json({ message: 'Property not found' });
+    }
+
+    console.log("Property Owner: " + property.owner);
+    console.log("Property Owner: " + property.owner.toString());
+
+    // Check if the user is the owner of the property - use String() for safer comparison
+    if (String(property.owner) !== String(userId)) {
+      console.log("Authorization failed: Owner ID doesn't match User ID");
+      console.log(`Owner ID type: ${typeof property.owner}, value: ${property.owner}`);
+      console.log(`User ID type: ${typeof userId}, value: ${userId}`);
+      return res.status(403).json({ message: 'You are not authorized to update this property' });
+    }
+
+    // Toggle the availability
+    property.isAvailable = !property.isAvailable;
+    await property.save();
+
+    res.json(property.isAvailable);
+  } catch (error) {
+    console.error('Error toggling property availability:', error);
+    res.status(500).json({
+      message: 'Error updating property availability',
+      error: error.message
+    });
+  }
+});
+
+router.get('/mylisting/:user', async (req, res) => {
+  try {
+    const property = await Property.find({ owner: req.params.user });
+    if (!property) {
+      return res.status(404).json({ message: 'Property not found' });
+    }
+    res.status(200).json(property);
+  } catch (error) {
     res.status(500).json({ message: error.message });
   }
 });
