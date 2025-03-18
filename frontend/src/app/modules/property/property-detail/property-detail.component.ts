@@ -15,7 +15,8 @@ import { AuthService } from '../../../core/services/auth.service';
 import { PropertyRatingsComponent } from '../property-ratings/property-ratings.component';
 import { MatDialog } from '@angular/material/dialog';
 import { ImagePreviewComponent } from '../../../shared/components/image-preview/image-preview.component';
-import { GoogleMapsModule, MapAdvancedMarker } from '@angular/google-maps';
+import { GoogleMapsModule } from '@angular/google-maps';
+import { BookingDialogComponent } from '../../booking/booking-dialog/booking-dialog.component';
 
 @Component({
   selector: 'app-property-detail',
@@ -39,15 +40,16 @@ export class PropertyDetailComponent implements OnInit {
   private readonly authService = inject(AuthService);
   private readonly dialog = inject(MatDialog);
   private propertyService = inject(PropertyService);
-
+  private userService = inject(UserService);
   id = '';
   property: Property | null = null;
   owner: User | null = null;
   currentImageIndex = 0;
   isLoading = true;
   error: string | null = null;
-  isFavorite = false;
   isAuthenticated = false;
+  CurrentuserId = '';
+
   mapsOptions: google.maps.MapOptions = {
     center: { lat: 40, lng: -20 },
     zoom: 14,
@@ -60,13 +62,21 @@ export class PropertyDetailComponent implements OnInit {
   markerPosition: google.maps.LatLngLiteral = { lat: 40, lng: -20 };
 
   ngOnInit(): void {
-    this.isAuthenticated = this.authService.isAuthenticated();
+    this.isAuthenticated = this.authService.isLoggedIn();
     // TODO - make isAuthenticated reactive to changes
-
     this.route.params.subscribe((params) => {
       this.id = params['id'];
       this.fetchPropertyDetails();
     });
+
+    // get my user id from profile
+    this.userService.getProfile().subscribe((user) => {
+      this.CurrentuserId = user._id!;
+    });
+  }
+
+  get isOwner(): boolean {
+    return this.owner?._id === this.CurrentuserId;
   }
 
   fetchPropertyDetails(): void {
@@ -80,6 +90,7 @@ export class PropertyDetailComponent implements OnInit {
         if (typeof data.owner === 'object') {
           this.owner = data.owner as User;
         }
+        console.log('Owner data:', this.owner);
 
         // Configure the Google Map with property location
         if (
@@ -107,11 +118,6 @@ export class PropertyDetailComponent implements OnInit {
         this.isLoading = false;
       },
     });
-  }
-
-  toggleFavorite(): void {
-    this.isFavorite = !this.isFavorite;
-    // TODO: Implement actual favorite functionality
   }
 
   sendMessage(): void {
@@ -199,6 +205,38 @@ export class PropertyDetailComponent implements OnInit {
       data: {
         imageUrl,
         title: this.property?.title,
+      },
+    });
+  }
+
+  openBookingDialog(): void {
+    const dialogRef = this.dialog.open(BookingDialogComponent, {
+      width: '600px',
+      data: { property: this.property },
+    });
+
+    dialogRef.afterClosed().subscribe((result) => {
+      if (result) {
+        // Booking was successful, maybe refresh property data or show a confirmation
+        console.log('Booking request submitted');
+      }
+    });
+  }
+
+  toggleAvailability(): void {
+    if (!this.property) return;
+    this.propertyService.toggleAvailability(this.id).subscribe({
+      next: (res) => {
+        // Update the local property object to reflect the change
+        if (this.property) {
+          this.property.isAvailable = res;
+        }
+      },
+      error: (err) => {
+        console.error('Error updating property availability:', err);
+        this.error = `Failed to update property availability: ${
+          err.message || 'Unknown error'
+        }`;
       },
     });
   }

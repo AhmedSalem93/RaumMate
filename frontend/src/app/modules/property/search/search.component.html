@@ -108,11 +108,21 @@
           </mat-select>
         </mat-form-field>
       </div>
-      <p *ngIf="properties.length === 0">
+
+      <!-- Loading spinner -->
+      <div class="loading-spinner" *ngIf="isLoading">
+        <mat-spinner diameter="50"></mat-spinner>
+        <p>Loading properties...</p>
+      </div>
+
+      <p *ngIf="properties.length === 0 && !isLoading">
         No properties found. Try adjusting your search criteria.
       </p>
 
-      <app-property-list [properties]="properties"></app-property-list>
+      <app-property-list
+        [properties]="properties"
+        *ngIf="!isLoading"
+      ></app-property-list>
 
       <mat-paginator
         *ngIf="totalItems > 0"

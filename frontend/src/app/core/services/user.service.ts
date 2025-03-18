@@ -4,22 +4,22 @@ import { Router } from '@angular/router';
 import { Observable } from 'rxjs';
 import { tap } from 'rxjs/operators';
 import { BehaviorSubject } from 'rxjs';
+import { User } from '../../shared/models/user.model';
 
 @Injectable({
-  providedIn: 'root'
+  providedIn: 'root',
 })
 export class UserService {
-
   private apiUrl = 'http://localhost:3000/api/users';
   private userSubject = new BehaviorSubject<any>(null);
   user = this.userSubject.asObservable();
 
-  constructor(private http: HttpClient, private router: Router) { }
+  constructor(private http: HttpClient, private router: Router) {}
 
   //get user profile
-  getProfile(): Observable<any> {
+  getProfile(): Observable<User> {
     const headers = new HttpHeaders({
-      Authorization: `Bearer ${localStorage.getItem('token')}`
+      Authorization: `Bearer ${localStorage.getItem('token')}`,
     });
     return this.http.get(`${this.apiUrl}/profile`, { headers })
       .pipe(
@@ -45,7 +45,7 @@ export class UserService {
 
   //delete user profile and pass user object
   deleteProfile(email: string): Observable<any> {
-    
+
     const options = {
       headers: new HttpHeaders({
         Authorization: `Bearer ${localStorage.getItem('token')}`
@@ -64,9 +64,10 @@ export class UserService {
   //complete user profile
   completeProfile(form: any): Observable<any> {
     const headers = new HttpHeaders({
-      Authorization: `Bearer ${localStorage.getItem('token')}`
+      Authorization: `Bearer ${localStorage.getItem('token')}`,
     });
-    return this.http.post(`${this.apiUrl}/complete-profile`, form, { headers })
+    return this.http
+      .post(`${this.apiUrl}/complete-profile`, form, { headers })
       .pipe(
         tap((response: any) => {
           this.userSubject.next(response.user);
@@ -74,6 +75,32 @@ export class UserService {
       );
   }
 
+  //get user preferences
+  getPreferences(): Observable<any> {
+    return this.http.get(`${this.apiUrl}/preferences`).pipe(
+      tap((response: any) => {
+        this.userSubject.next(response.user);
+      })
+    );
+  }
+
+  //update user preferences
+  updatePreferences(form: any): Observable<any> {
+    return this.http.put(`${this.apiUrl}/preferences`, form).pipe(
+      tap((response: any) => {
+        this.userSubject.next(response.user);
+      })
+    );
+  }
+
+  //delete user preferences
+  deletePreferences(): Observable<any> {
+    return this.http.delete(`${this.apiUrl}/preferences`).pipe(
+      tap(() => {
+        this.userSubject.next(null);
+      })
+    );
+  }
   // Upload profile picture
   uploadProfilePicture(formData: FormData): Observable<any> {
     const headers = new HttpHeaders({

@@ -1,72 +1,82 @@
 <div class="profile-dashboard">
-  
-    <!-- Sidebar -->
-    <aside class="sidebar">
-      <div class="profile-pic">
-        <img [src]="user.profilePicture" alt="Profile Picture">
-        <!-- <img *ngIf="user.profilePicture; else defaultPic" [src]="user.profilePicture" alt="Profile Picture">
-        <ng-template #defaultPic>
-          <img [src]="defaultProfilePicture" alt="Default Profile Picture">
-        </ng-template> -->
-        <h3>{{ user.firstName }} {{ user.lastName }}</h3>
-        <div *ngIf="reviews.length === 0">No reviews yet</div>
-        <p class="role">{{ user.role | uppercase }}</p>
-      </div>
-      <nav>
-        <a routerLink="/profile" class="active">Profile</a>
-        <a routerLink="/settings">Settings</a>
-        <a routerLink="/listings">My Listings</a>
-        <a routerLink="/messages">Messages</a>
-      </nav>
-    </aside>
-  
-    <!-- Main Content -->
-    <section class="profile-content">
-      
-      <!-- Personal Details -->
-      <div class="profile-section">
-        <h2>Personal Details</h2>
-        <div class="details">
-          <div class="left">
-            <p><strong>Name:</strong> {{ user.firstName }} {{ user.lastName }}</p>
-            <p><strong>Date of Birth:</strong> {{ user.dateofBirth | date }}</p>
-            <p><strong>Address:</strong> {{ user.address }}</p>
-            <p><strong>Postal Code:</strong> {{ user.postalCode }}</p>
-            <p><strong>Joined On:</strong> {{ user.createdAt | date }}</p>
-          </div>
-          <div class="right">
-            <p><strong>Email:</strong> {{ user.email }}</p>
-            <p><strong>Phone:</strong> {{ user.phone }}</p>
-            <p><strong>City:</strong> {{ user.city }}</p>
-            <p><strong>Country:</strong> {{ user.country }}</p>
-          </div>
+  <!-- Sidebar -->
+  <aside class="sidebar">
+    <div class="profile-pic">
+      <img
+        [src]="user?.profilePicture ? user?.profilePicture : ''"
+        alt="Profile Picture"
+      />
+      <!-- <img *ngIf="user.profilePicture; else defaultPic" [src]="user.profilePicture" alt="Profile Picture">
+      <ng-template #defaultPic>
+        <img [src]="defaultProfilePicture" alt="Default Profile Picture">
+      </ng-template> -->
+      <h3>{{ user.firstName }} {{ user.lastName }}</h3>
+      <div *ngIf="reviews.length === 0">No reviews yet</div>
+      <p class="role">{{ user.role | uppercase }}</p>
+    </div>
+    <nav>
+      <a routerLink="/profile" class="active">Profile</a>
+      <a routerLink="/settings">Settings</a>
+      <a routerLink="/listings">My Listings</a>
+      <a routerLink="/messages">Messages</a>
+    </nav>
+  </aside>
+
+  <!-- Main Content -->
+  <section class="profile-content">
+    <!-- Personal Details -->
+    <div class="profile-section">
+      <h2>Personal Details</h2>
+      <div class="details">
+        <div class="left">
+          <p><strong>Name:</strong> {{ user.firstName }} {{ user.lastName }}</p>
+          <p><strong>Date of Birth:</strong> {{ user.dateofBirth | date }}</p>
+          <p><strong>Address:</strong> {{ user.address }}</p>
+          <p><strong>Postal Code:</strong> {{ user.postalCode }}</p>
+          <p><strong>Joined On:</strong> {{ user.createdAt | date }}</p>
+        </div>
+        <div class="right">
+          <p><strong>Email:</strong> {{ user.email }}</p>
+          <p><strong>Phone:</strong> {{ user.phone }}</p>
+          <p><strong>City:</strong> {{ user.city }}</p>
+          <p><strong>Country:</strong> {{ user.country }}</p>
         </div>
       </div>
-  
-      <!-- Bio -->
-      <div class="profile-section">
-        <h2>Bio</h2>
-        <p>{{ user.bio }}</p>
+    </div>
+
+    <!-- Bio -->
+    <div class="profile-section">
+      <h2>Bio</h2>
+      <p>{{ user.bio }}</p>
+    </div>
+
+    <!-- Preferences -->
+    <div class="profile-section">
+      <h2>Preferences</h2>
+      <ul>
+        <li *ngFor="let key of getPreferencesKeys()">
+          <strong>{{ formatKey(key.toString()) }}:</strong>
+          {{ user.preferences[key] }}
+        </li>
+      </ul>
+    </div>
+
+    <!-- Interests -->
+    <div class="profile-section">
+      <h2>Interests</h2>
+      <div class="interests" *ngFor="let key of getInterestsKeys()">
+        <strong
+          *ngIf="user.interests[key] === 'true'"
+          style="background-color: green"
+          >{{ formatKey(key.toString()) }}</strong
+        >
+        <strong
+          *ngIf="user.interests[key] == 'false'"
+          style="background-color: red"
+          >{{ formatKey(key.toString()) }}</strong
+        >
       </div>
-  
-      <!-- Preferences -->
-      <div class="profile-section">
-        <h2>Preferences</h2>
-        <ul>
-          <li *ngFor="let key of getPreferencesKeys()">
-            <strong>{{ formatKey(key.toString()) }}:</strong> {{ user.preferences[key] }}
-          </li>
-        </ul>
-      </div>
-  
-      <!-- Interests -->
-      <div class="profile-section">
-        <h2>Interests</h2>
-        <div class="interests" *ngFor="let key of getInterestsKeys()">
-          <strong *ngIf="user.interests[key] === 'true'" style="background-color: green;">{{ formatKey(key.toString() )}}</strong>
-          <strong *ngIf="user.interests[key] == 'false'" style="background-color: red;">{{ formatKey(key.toString() )}}</strong>
-        </div>
-      </div>
+    </div>
 
     <!-- Reviews Section -->
     <div class="profile-section">

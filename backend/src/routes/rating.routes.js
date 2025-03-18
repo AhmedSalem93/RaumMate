@@ -10,7 +10,7 @@ router.post('/:propertyId', authMiddleware, async (req, res) => {
     try {
         const { rating, comment } = req.body;
         const { propertyId } = req.params;
-        const userId = req.userId;
+        const userId = req.user.userId;
 
         // Validate rating
         if (rating < 1 || rating > 5) {
@@ -62,7 +62,7 @@ router.post('/:propertyId', authMiddleware, async (req, res) => {
 router.get('/myratings/:propertyId', authMiddleware, async (req, res) => {
     try {
         const { propertyId } = req.params;
-        const userId = req.userId;
+        const userId = req.user.userId;
 
         // Check if property exists
         const property = await Property.findById(propertyId);
@@ -93,7 +93,7 @@ router.get('/myratings/:propertyId', authMiddleware, async (req, res) => {
 });
 
 // Get all ratings by a user
-router.get('/user/:userId', authMiddleware, async (req, res) => {
+router.get('/user/:userId', authMiddleware, addUserToRequest, async (req, res) => {
     // TODO: Only verified users can access this route
     try {
         const { userId } = req.params;
@@ -102,7 +102,7 @@ router.get('/user/:userId', authMiddleware, async (req, res) => {
         const skip = (page - 1) * limit;
 
         // Verify the user exists or is the same user requesting (if not admin)
-        if (req.userId !== userId && req.userRole !== 'admin') {
+        if (req.user.userId !== userId && req.user.role !== 'admin') {
             return res.status(403).json({ message: 'Unauthorized to access these ratings' });
         }
 
@@ -175,7 +175,7 @@ router.get('/:propertyId', authMiddleware, async (req, res) => {
         const page = parseInt(req.query.page) || 1;
         const limit = parseInt(req.query.limit) || 10;
         const skip = (page - 1) * limit;
-        const userId = req.userId; // Get the authenticated user's ID
+        const userId = req.user.userId; // Get the authenticated user's ID
 
         // Check if property exists
         const property = await Property.findById(propertyId);
@@ -221,7 +221,7 @@ router.get('/:propertyId', authMiddleware, async (req, res) => {
 router.delete('/:ratingId', authMiddleware, async (req, res) => {
     try {
         const { ratingId } = req.params;
-        const userId = req.userId;
+        const userId = req.user.userId;
 
         const rating = await Rating.findById(ratingId);
         if (!rating) {

@@ -1,0 +1,46 @@
+.booking-form {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  min-width: 300px;
+  width: 100%;
+  max-width: 500px;
+  padding: 10px;
+}
+
+.dates-container {
+  display: flex;
+  gap: 16px;
+
+  mat-form-field {
+    flex: 1;
+  }
+
+  @media (max-width: 600px) {
+    flex-direction: column;
+  }
+}
+
+.message-field {
+  width: 100%;
+}
+
+.date-range-error {
+  margin-top: -8px;
+  margin-bottom: 8px;
+  font-size: 0.75rem;
+}
+
+.spinner-container {
+  display: flex;
+  justify-content: center;
+  margin: 20px 0;
+}
+
+mat-dialog-content {
+  min-height: 300px;
+}
+
+mat-dialog-actions {
+  padding: 16px 0;
+}

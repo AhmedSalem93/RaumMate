@@ -11,7 +11,7 @@
           <mat-icon [class.favorited]="isFavorite">favorite</mat-icon>
         </div>
       </div>
-  
+
       <!-- Right Section -->
       <div class="details-section">
         <div class="header">
@@ -23,7 +23,7 @@
             <span class="separator">|</span>
             <span>{{ property.location.city }}</span>
           </div>
-  
+
           <!-- Star Rating Display -->
           <div class="rating-container" *ngIf="hasReviews()">
             <div class="stars">
@@ -37,16 +37,16 @@
             </div>
             <span class="rating-count">({{ property.reviews.count }})</span>
           </div>
-  
+
           <div class="posted-date">Posted {{ getFormattedCreatedAt() }}</div>
         </div>
-  
+
         <div class="price-info">
           <span class="price">{{
             property.price | currency : "EUR" : "symbol" : "1.0-0"
           }}</span>
         </div>
-  
+
         <div class="rental-period" *ngIf="property.subletDates">
           <mat-icon>date_range</mat-icon>
           <span
@@ -54,7 +54,7 @@
             {{ property.subletDates.end | date : "dd.MM.yyyy" }}</span
           >
         </div>
-  
+
         <div class="owner-section">
           <div class="owner-info">
             <img [src]="ownerAvatarUrl" alt="Owner avatar" class="owner-avatar" />
@@ -70,4 +70,3 @@
       </div>
     </div>
   </mat-card>
-  

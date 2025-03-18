@@ -1,5 +1,7 @@
 <div class="container py-4">
-  <h1 class="page-title text-center mb-4 fs-1">Create Property Listing</h1>
+  <h1 class="page-title text-center mb-4 fs-1">
+    {{ editMode ? "Edit" : "Create" }} Property Listing
+  </h1>
 
   <form (ngSubmit)="onSubmit($event)" class="mx-auto" style="max-width: 800px">
     <!-- Basic Information Card -->
@@ -124,7 +126,6 @@
                   [options]="mapsOptions"
                   (mapClick)="onMapClick($event)"
                 >
-                
                   <map-advanced-marker
                     [position]="markerPosition"
                     (mapDragend)="onMarkerDragEnd($event)"
@@ -216,29 +217,60 @@
             class="d-none"
           />
 
-          <div class="preview-grid" *ngIf="mediaPreviewUrls.length > 0">
-            <div
-              *ngFor="let url of mediaPreviewUrls; let i = index"
-              class="preview-item"
-            >
-              <ng-container *ngIf="selectedMedia[i].type.startsWith('image')">
-                <img [src]="url" [alt]="'Media ' + (i + 1)" class="img-fluid" />
-              </ng-container>
-              <ng-container *ngIf="selectedMedia[i].type.startsWith('video')">
-                <video controls class="w-100">
-                  <source [src]="url" />
-                </video>
-              </ng-container>
-              <button
-                mat-mini-fab
-                color="warn"
-                class="remove-button"
-                type="button"
-                (click)="removeMedia(i)"
+          <!-- Media Preview Grid -->
+          <div *ngIf="mediaItems.length > 0">
+            <div class="preview-grid">
+              <div
+                *ngFor="let item of mediaItems; let i = index"
+                class="preview-item"
               >
-                <mat-icon>close</mat-icon>
-              </button>
+                <!-- Image preview -->
+                <ng-container *ngIf="item.type === 'image'">
+                  <img
+                    [src]="item.url"
+                    [alt]="'Media ' + (i + 1)"
+                    class="img-fluid"
+                  />
+                </ng-container>
+
+                <!-- Video preview -->
+                <ng-container *ngIf="item.type === 'video'">
+                  <video controls class="w-100">
+                    <source [src]="item.url" />
+                  </video>
+                </ng-container>
+
+                <!-- Other file types -->
+                <ng-container *ngIf="item.type === 'other'">
+                  <div class="file-preview">
+                    <mat-icon>insert_drive_file</mat-icon>
+                    <p>File</p>
+                  </div>
+                </ng-container>
+
+                <!-- Remove button for all media items -->
+                <button
+                  mat-mini-fab
+                  color="warn"
+                  class="remove-button"
+                  type="button"
+                  (click)="removeMedia(i)"
+                >
+                  <mat-icon>close</mat-icon>
+                </button>
+              </div>
             </div>
+          </div>
+
+          <!-- Empty state message -->
+          <div
+            *ngIf="mediaItems.length === 0"
+            class="text-center text-muted mt-3"
+          >
+            <mat-icon class="large-icon">image</mat-icon>
+            <p>
+              No media added yet. Click 'Add Media' to upload images or videos.
+            </p>
           </div>
         </div>
       </mat-card-content>
@@ -253,7 +285,7 @@
         [disabled]="!basicInfoForm.valid"
         class="px-4 py-2"
       >
-        Submit
+        {{ editMode ? "Update" : "Submit" }}
       </button>
     </div>
   </form>

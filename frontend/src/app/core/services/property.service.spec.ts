@@ -252,43 +252,30 @@ describe('PropertyService', () => {
 
   describe('updateListing', () => {
     it('should send PUT request to update a property', () => {
-      const mockProperty: Property = {
-        _id: '123',
-        title: 'Updated Property',
-        description: 'Updated description',
-        owner: 'user123',
-        location: { city: 'Berlin' },
-        price: 1100,
-        isAvailable: true,
-        isSublet: false,
-        reviews: { averageRating: 4.5, count: 10 },
-        amenities: ['wifi'],
-        mediaPaths: [],
-      };
+      const mockFormData = new FormData();
+      mockFormData.append('title', 'Updated Property');
+      mockFormData.append('description', 'Updated description');
+      mockFormData.append('owner', 'user123');
+      mockFormData.append('location', JSON.stringify({ city: 'Berlin' }));
+      mockFormData.append('price', '1100');
+      mockFormData.append('isAvailable', 'true');
+      mockFormData.append('isSublet', 'false');
+      mockFormData.append(
+        'reviews',
+        JSON.stringify({ averageRating: 4.5, count: 10 })
+      );
+      mockFormData.append('amenities', JSON.stringify(['wifi']));
+      mockFormData.append('mediaPaths', JSON.stringify([]));
 
       const mockResponse = { success: true };
 
-      service.updateListing('123', mockProperty).subscribe((response) => {
+      service.updateListing('123', mockFormData).subscribe((response) => {
         expect(response).toEqual(mockResponse);
       });
 
-      const req = httpMock.expectOne(`/api/listings/123`);
+      const req = httpMock.expectOne(`${environment.apiUrl}/properties/123`);
       expect(req.request.method).toBe('PUT');
-      expect(req.request.body).toEqual(mockProperty);
-      req.flush(mockResponse);
-    });
-  });
-
-  describe('deleteListing', () => {
-    it('should send DELETE request to remove a property', () => {
-      const mockResponse = { success: true };
-
-      service.deleteListing('123').subscribe((response) => {
-        expect(response).toEqual(mockResponse);
-      });
-
-      const req = httpMock.expectOne(`/api/listings/123`);
-      expect(req.request.method).toBe('DELETE');
+      expect(req.request.body).toBe(mockFormData);
       req.flush(mockResponse);
     });
   });

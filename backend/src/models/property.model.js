@@ -55,6 +55,11 @@ const propertySchema = new mongoose.Schema({
     },
   },
 
+  bookings: [{
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'Booking'
+  }],
+
   createdAt: {
     type: Date,
     default: Date.now
