@@ -36,9 +36,9 @@ npm run dev
 ```
 
 ## Team Members
-- Hunain Murtaza (Team Lead)
-- Ahmed Abdelhay
 - Salem, Ahmed Gamal Attia Mansour
+- Hunain Murtaza 
+- Ahmed Abdelhay
 
 ## Development Guidelines
 - Follow Angular best practices
