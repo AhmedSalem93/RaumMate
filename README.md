@@ -36,10 +36,9 @@ npm run dev
 ```
 
 ## Team Members
-- Salem, Ahmed Gamal Attia Mansour
-- Hunain Murtaza 
+- Hunain Murtaza (Team Lead)
 - Ahmed Abdelhay
-
+- Salem, Ahmed Gamal Attia Mansour
 ## Development Guidelines
 - Follow Angular best practices
 - Use RESTful API design principles
